@@ -1,4 +1,4 @@
-<?php // v3.0
+<?php // v3.1
 
 class block_grade_me extends block_base {
     
@@ -136,11 +136,11 @@ class block_grade_me extends block_base {
         $wheres = array();
     
         if ($isfrontpage) {
-            $select = "SELECT u.id";
+            $select = "SELECT GROUP_CONCAT(u.id) ids";
             $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually
     
         } else {
-            $select = "SELECT u.id";
+            $select = "SELECT GROUP_CONCAT(u.id) ids";
             $joins[] = "JOIN ($esql) e ON e.id = u.id"; // course enrolled users only
             $joins[] = "LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)"; // not everybody accessed course yet
             $params['courseid'] = $COURSE->id;
@@ -158,157 +158,158 @@ class block_grade_me extends block_base {
         }
         
         $userlist = $DB->get_recordset_sql("$select $from $where", $params);
-        foreach ($userlist AS $user) $gradebookusers[] = $user->id;
-        $gradebookusers = $this->array2str($gradebookusers);
+        foreach ($userlist AS $user) $gradebookusers = $user->ids;
         
         
-        $query_assignment = "SELECT c.id course_id 
-                       , c.shortname course_name 
-                       , 'assignment' type
-                       , a_s.id sub_id 
-                       , a.id mod_id 
-                       , a.name mod_name 
-                       , c_m.id cm_id 
-                       , u.id user_id 
-                       , u.lastname last_name 
-                       , u.firstname first_name 
-                       , a_s.timemodified time_submitted 
-                    FROM {assignment_submissions} a_s 
-              INNER JOIN {assignment} a 
-                      ON (a.id = a_s.assignment)
-              INNER JOIN {user} u 
-                      ON (u.id = a_s.userid)
-              INNER JOIN {course} c 
-                      ON (c.id = a.course)
-               LEFT JOIN {course_modules} c_m 
-                      ON (c_m.instance = a.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='assignment')) 
-                   WHERE a.grade > 0
-                     AND a_s.timemodified > a_s.timemarked 
-                     AND u.id IN ({$gradebookusers}) 
-                ";
-        
-        $query_data = "SELECT c.id course_id 
-                       , c.shortname course_name 
-                       , 'data' type
-                       , dr.id sub_id 
-                       , d.id mod_id 
-                       , d.name mod_name 
-                       , cm.id cm_id 
-                       , u.id user_id 
-                       , u.lastname last_name 
-                       , u.firstname first_name 
-                       , dr.timemodified time_submitted 
-                    FROM {data_records} dr 
-              INNER JOIN {data} d 
-                      ON (d.id = dr.dataid)
-              INNER JOIN {user} u 
-                      ON (u.id = dr.userid)
-              INNER JOIN {course} c 
-                      ON (c.id = d.course)
-               LEFT JOIN {course_modules} cm 
-                      ON (cm.instance = d.id  AND  cm.module IN (SELECT m.id FROM {modules} m WHERE m.name='data')) 
-                   WHERE d.assessed = 1
-                     AND CONCAT(dr.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = cm.id))
-                     AND u.id IN ({$gradebookusers}) 
-                ";
-        
-        $query_forum = "SELECT c.id course_id 
-                       , c.shortname course_name 
-                       , 'forum' type
-                       , fp.id sub_id 
-                       , fd.id mod_id 
-                       , f.name mod_name 
-                       , c_m.id cm_id 
-                       , u.id user_id 
-                       , u.lastname last_name 
-                       , u.firstname first_name 
-                       , fp.modified time_submitted 
-                    FROM {forum_posts} fp 
-              INNER JOIN {forum_discussions} fd 
-                      ON (fd.id = fp.discussion)
-              INNER JOIN {forum} f 
-                      ON (f.id = fd.forum)
-              INNER JOIN {user} u 
-                      ON (u.id = fp.userid)
-              INNER JOIN {course} c 
-                      ON (c.id = f.course)
-               LEFT JOIN {course_modules} c_m 
-                      ON (c_m.instance = f.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='forum')) 
-                   WHERE f.assessed = 1
-                     AND CONCAT(fp.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = c_m.id))
-                     AND u.id IN ({$gradebookusers})
-                ";
-        
-        $query_glossary = "SELECT c.id course_id 
-                       , c.shortname course_name 
-                       , 'glossary' type
-                       , ge.id sub_id 
-                       , g.id mod_id 
-                       , g.name mod_name 
-                       , cm.id cm_id 
-                       , u.id user_id 
-                       , u.lastname last_name 
-                       , u.firstname first_name 
-                       , ge.timemodified time_submitted  
-                    FROM {glossary_entries} ge
-              INNER JOIN {glossary} g ON (g.id = ge.glossaryid)
-              INNER JOIN {user} u 
-                      ON (u.id = ge.userid)
-              INNER JOIN {course} c 
-                      ON (c.id = g.course)
-               LEFT JOIN {course_modules} cm 
-                      ON (cm.instance = g.id  AND  cm.module IN (SELECT m.id FROM {modules} m WHERE m.name='glossary')) 
-                   WHERE g.assessed = 1 
-                     AND CONCAT(ge.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = cm.id)) 
-                     AND u.id IN ({$gradebookusers}) 
-                ";
-/*        
-        $query_lesson = "SELECT 
-                ";
-*/        
-        $query_quiz = "SELECT c.id course_id
-                       , c.shortname course_name
-                       , 'quiz' type
-                       , qs.attemptid state_id 
-                       , q.id mod_id
-                       , q.name mod_name
-                       , c_m.id cm_id 
-                       , u.id user_id
-                       , u.lastname last_name
-                       , u.firstname first_name
-                       , qa.timefinish time_submitted
-                    FROM {quiz_attempts} qa
-              INNER JOIN {question_sessions} qs 
-                      ON (qs.attemptid = qa.id) 
-              INNER JOIN {quiz} q 
-                      ON (q.id = qa.quiz)  
-              INNER JOIN {quiz_question_instances} qqi 
-                      ON (qqi.quiz = q.id  AND  qqi.question = qs.questionid) 
-              INNER JOIN {user} u 
-                      ON (qa.userid = u.id) 
-              INNER JOIN {course} c 
-                      ON (c.id = q.course) 
-               LEFT JOIN {course_modules} c_m 
-                      ON (c_m.instance = q.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='quiz')) 
-                   WHERE qa.timefinish != 0
-                     AND qqi.grade > 0
-                     AND qs.newgraded != qs.newest
-                     AND u.id IN ({$gradebookusers}) 
-                ";
-/*        
-        $query_workshop = "SELECT 
-                ";
-*/        
-        
-        $query_groups = "AND (g.id IN (SELECT {groups}.id 
-                        FROM {groups} 
-                           , {groups_members} 
-                       WHERE {groups}.id = {groups_members}.groupid 
-                         AND {groups_members}.userid = u.id 
-                         AND {groups}.id IN ({$groups}) 
-                         ) 
-                      OR g.id IS NULL)
-                ";
+        if ($gradebookusers != '') {
+            $query_assignment = "SELECT c.id course_id 
+                           , c.shortname course_name 
+                           , 'assignment' type
+                           , a_s.id sub_id 
+                           , a.id mod_id 
+                           , a.name mod_name 
+                           , c_m.id cm_id 
+                           , u.id user_id 
+                           , u.lastname last_name 
+                           , u.firstname first_name 
+                           , a_s.timemodified time_submitted 
+                        FROM {assignment_submissions} a_s 
+                  INNER JOIN {assignment} a 
+                          ON (a.id = a_s.assignment)
+                  INNER JOIN {user} u 
+                          ON (u.id = a_s.userid)
+                  INNER JOIN {course} c 
+                          ON (c.id = a.course)
+                   LEFT JOIN {course_modules} c_m 
+                          ON (c_m.instance = a.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='assignment')) 
+                       WHERE a.grade > 0
+                         AND a_s.timemodified > a_s.timemarked 
+                         AND u.id IN ({$gradebookusers}) 
+                    ";
+            
+            $query_data = "SELECT c.id course_id 
+                           , c.shortname course_name 
+                           , 'data' type
+                           , dr.id sub_id 
+                           , d.id mod_id 
+                           , d.name mod_name 
+                           , cm.id cm_id 
+                           , u.id user_id 
+                           , u.lastname last_name 
+                           , u.firstname first_name 
+                           , dr.timemodified time_submitted 
+                        FROM {data_records} dr 
+                  INNER JOIN {data} d 
+                          ON (d.id = dr.dataid)
+                  INNER JOIN {user} u 
+                          ON (u.id = dr.userid)
+                  INNER JOIN {course} c 
+                          ON (c.id = d.course)
+                   LEFT JOIN {course_modules} cm 
+                          ON (cm.instance = d.id  AND  cm.module IN (SELECT m.id FROM {modules} m WHERE m.name='data')) 
+                       WHERE d.assessed = 1
+                         AND CONCAT(dr.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = cm.id))
+                         AND u.id IN ({$gradebookusers}) 
+                    ";
+            
+            $query_forum = "SELECT c.id course_id 
+                           , c.shortname course_name 
+                           , 'forum' type
+                           , fp.id sub_id 
+                           , fd.id mod_id 
+                           , f.name mod_name 
+                           , c_m.id cm_id 
+                           , u.id user_id 
+                           , u.lastname last_name 
+                           , u.firstname first_name 
+                           , fp.modified time_submitted 
+                        FROM {forum_posts} fp 
+                  INNER JOIN {forum_discussions} fd 
+                          ON (fd.id = fp.discussion)
+                  INNER JOIN {forum} f 
+                          ON (f.id = fd.forum)
+                  INNER JOIN {user} u 
+                          ON (u.id = fp.userid)
+                  INNER JOIN {course} c 
+                          ON (c.id = f.course)
+                   LEFT JOIN {course_modules} c_m 
+                          ON (c_m.instance = f.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='forum')) 
+                       WHERE f.assessed = 1
+                         AND CONCAT(fp.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = c_m.id))
+                         AND u.id IN ({$gradebookusers})
+                    ";
+            
+            $query_glossary = "SELECT c.id course_id 
+                           , c.shortname course_name 
+                           , 'glossary' type
+                           , ge.id sub_id 
+                           , g.id mod_id 
+                           , g.name mod_name 
+                           , cm.id cm_id 
+                           , u.id user_id 
+                           , u.lastname last_name 
+                           , u.firstname first_name 
+                           , ge.timemodified time_submitted  
+                        FROM {glossary_entries} ge
+                  INNER JOIN {glossary} g ON (g.id = ge.glossaryid)
+                  INNER JOIN {user} u 
+                          ON (u.id = ge.userid)
+                  INNER JOIN {course} c 
+                          ON (c.id = g.course)
+                   LEFT JOIN {course_modules} cm 
+                          ON (cm.instance = g.id  AND  cm.module IN (SELECT m.id FROM {modules} m WHERE m.name='glossary')) 
+                       WHERE g.assessed = 1 
+                         AND CONCAT(ge.id,'-',{$USER->id}) NOT IN (SELECT CONCAT(r.itemid,'-',r.userid) FROM {rating} r WHERE r.contextid IN (SELECT cx.id FROM {context} cx WHERE cx.contextlevel = 70 AND cx.instanceid = cm.id)) 
+                         AND u.id IN ({$gradebookusers}) 
+                    ";
+    /*        
+            $query_lesson = "SELECT 
+                    ";
+    */        
+            $query_quiz = "SELECT c.id course_id
+                           , c.shortname course_name
+                           , 'quiz' type
+                           , qs.attemptid state_id 
+                           , q.id mod_id
+                           , q.name mod_name
+                           , c_m.id cm_id 
+                           , u.id user_id
+                           , u.lastname last_name
+                           , u.firstname first_name
+                           , qa.timefinish time_submitted
+                        FROM {quiz_attempts} qa
+                  INNER JOIN {question_sessions} qs 
+                          ON (qs.attemptid = qa.id) 
+                  INNER JOIN {quiz} q 
+                          ON (q.id = qa.quiz)  
+                  INNER JOIN {quiz_question_instances} qqi 
+                          ON (qqi.quiz = q.id  AND  qqi.question = qs.questionid) 
+                  INNER JOIN {user} u 
+                          ON (qa.userid = u.id) 
+                  INNER JOIN {course} c 
+                          ON (c.id = q.course) 
+                   LEFT JOIN {course_modules} c_m 
+                          ON (c_m.instance = q.id  AND  c_m.module IN (SELECT m.id FROM {modules} m WHERE m.name='quiz')) 
+                       WHERE qa.timefinish != 0
+                         AND qqi.grade > 0
+                         AND qs.newgraded != qs.newest
+                         AND u.id IN ({$gradebookusers}) 
+                    ";
+    /*        
+            $query_workshop = "SELECT 
+                    ";
+    */        
+            
+            $query_groups = "AND (g.id IN (SELECT {groups}.id 
+                            FROM {groups} 
+                               , {groups_members} 
+                           WHERE {groups}.id = {groups_members}.groupid 
+                             AND {groups_members}.userid = u.id 
+                             AND {groups}.id IN ({$groups}) 
+                             ) 
+                          OR g.id IS NULL)
+                    ";
+        }
         
         foreach ($supported_mods AS $mod => $permission) {
         
@@ -325,7 +326,7 @@ class block_grade_me extends block_base {
         }
          
         
-        if (count($count['grader'])) {
+        if (count($count['grader']) && count($ungraded_queries) > 0) {
             
             $query = '('.implode(') UNION (',$ungraded_queries).') ORDER BY course_name, course_id, mod_name, cm_id LIMIT '.($maxitems+1);
             $rs = $DB->get_recordset_sql($query);
