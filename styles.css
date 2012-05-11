@@ -1,0 +1,93 @@
+.block_grade_me .content {
+    font-size: 0.75em !important;
+    padding: 0 4px 4px 4px;
+}
+
+.block_grade_me dl
+, .block_grade_me dt
+, .block_grade_me dd
+, .block_grade_me ul
+, .block_grade_me li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.block_grade_me .gm_icon {
+    width: 16px;
+    height: 16px;
+    float: left;
+    margin-right: 4px;
+}
+
+.block_grade_me .cmod {
+    line-height: 16px;
+    margin: 6px 0 2px 0;
+}
+
+.block_grade_me .module {
+    line-height: 16px;
+    position: relative;
+    padding: 3px 0 3px 20px;
+}
+
+.block_grade_me .toggle {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 16px;
+    height: 16px;
+    float: left;
+    cursor: pointer;
+    background: transparent url('/blocks/grade_me/pix/open.png') no-repeat 50% 50%;
+}
+
+.jsenabled .toggle {
+    background: transparent url('/blocks/grade_me/pix/closed.png') no-repeat 50% 50% !important;
+}
+
+.block_grade_me .toggle.open {
+    background: transparent url('/blocks/grade_me/pix/open.png') no-repeat 50% 50% !important;
+}
+
+.jsenabled .block_grade_me_hide {
+    display: none;
+}
+
+.block_grade_me .cloakable {
+    line-height: 1em;
+    margin: 0 0 3px 0;
+    border-top: 1px dotted #ccc;
+}
+
+.block_grade_me .gradable {
+    padding: 2px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.block_grade_me .gradable .gm_icon {
+    margin-top: 1px;
+}
+
+.block_grade_me .cloakable * {
+    font-size: 9px;
+}
+
+.block_grade_me .empty {
+    line-height: 15px;
+}
+
+.block_grade_me .empty img {
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-right: 4px;
+}
+
+.block_grade_me .excess {
+    margin-top: 4px;
+    padding: 4px 16px;
+    text-align: center;
+    font-weight: bold;
+    color: rgb(205,0,0);
+}
