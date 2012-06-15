@@ -32,9 +32,9 @@ $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '3.1 (Build: 2012050323)';
  
 $plugin->dependencies = array(
-    'mod_assignment' => ANY_VERSION,
-    'mod_data'  => ANY_VERSION,
-    'mod_forum' => ANY_VERSION,
-    'mod_glossary' => ANY_VERSION,
-    'mod_quiz' => ANY_VERSION
+    'mod_assignment' => 'ANY_VERSION',
+    'mod_data'  => 'ANY_VERSION',
+    'mod_forum' => 'ANY_VERSION',
+    'mod_glossary' => 'ANY_VERSION',
+    'mod_quiz' => 'ANY_VERSION'
 );

@@ -137,8 +137,7 @@ class block_grade_me extends block_base {
     
         if ($isfrontpage) {
             $select = "SELECT GROUP_CONCAT(u.id) ids";
-            $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually
-    
+            $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually 
         } else {
             $select = "SELECT GROUP_CONCAT(u.id) ids";
             $joins[] = "JOIN ($esql) e ON e.id = u.id"; // course enrolled users only
