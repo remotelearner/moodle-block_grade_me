@@ -136,10 +136,10 @@ class block_grade_me extends block_base {
         $wheres = array();
     
         if ($isfrontpage) {
-            $select = "SELECT GROUP_CONCAT(u.id) ids";
+            $select = ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'mysqli') ? "SELECT GROUP_CONCAT(u.id) ids" : "SELECT u.id";
             $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually 
         } else {
-            $select = "SELECT GROUP_CONCAT(u.id) ids";
+            $select = ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'mysqli') ? "SELECT GROUP_CONCAT(u.id) ids" : "SELECT u.id";
             $joins[] = "JOIN ($esql) e ON e.id = u.id"; // course enrolled users only
             $joins[] = "LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)"; // not everybody accessed course yet
             $params['courseid'] = $COURSE->id;
@@ -157,7 +157,12 @@ class block_grade_me extends block_base {
         }
         
         $userlist = $DB->get_recordset_sql("$select $from $where", $params);
-        foreach ($userlist AS $user) $gradebookusers = $user->ids;
+        if ($CFG->dbtype == 'mysql' || $CFG->dbtype == 'mysqli') {
+            foreach ($userlist AS $user) $gradebookusers = $user->ids;
+        } else {
+            foreach ($userlist AS $user) $gradebookusers[] = $user->id;
+            $gradebookusers = $this->array2str($gradebookusers);
+        }
         
         
         if ($gradebookusers != '') {

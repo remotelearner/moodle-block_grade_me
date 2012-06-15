@@ -24,12 +24,12 @@
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2012050323;
+$plugin->version   = 2012061400;
 $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versions
 $plugin->cron      = 0;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '3.1 (Build: 2012050323)';
+$plugin->release   = '3.2 (Build: 2012061400)';
  
 $plugin->dependencies = array(
     'mod_assignment' => 'ANY_VERSION',
