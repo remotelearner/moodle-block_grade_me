@@ -108,7 +108,7 @@ class block_grade_me extends block_base {
         // get groups for forced separate courses
         if (isset($separategroups)  &&  (count($count['grader_grouped']))) {
             $groups = array();
-            $query = "SELECT g.id id 
+            $query = "SELECT g.id ids 
                         FROM {course} c 
                            , {groups} g 
                            , {groups_members} g_m 
@@ -116,7 +116,9 @@ class block_grade_me extends block_base {
                          AND g.id = g_m.groupid 
                          AND g_m.userid = :userid
                          AND c.id IN ({$separategroups})";
-            $groups = $DB->get_recordset_sql($query,$params);
+            $params['userid'] = $USER->id;
+            $grouplist = $DB->get_recordset_sql($query,$params);
+            foreach ($grouplist AS $group) $groups[] = $group->ids;
             $groups = $this->array2str($groups);
         }
         
@@ -318,21 +320,21 @@ class block_grade_me extends block_base {
         foreach ($supported_mods AS $mod => $permission) {
         
             // check if user has permission to grade this mod
-            if (isset($count['grader_grouped'][$mod])  &&  isset($groups)) {
+            if (isset($count['grader_grouped'][$mod])  &&  isset($groups)  &&  $gradebookusers != '') {
                 $courselist = $grader[$mod]['grouped'];
                 $ungraded_queries[] = ${'query_'.$mod}." AND c.id IN ({$courselist}) ".$query_groups;
             }
             
-            if (isset($count['grader'][$mod])) {
+            if (isset($count['grader'][$mod])  &&  $gradebookusers != '') {
                 $courselist = $grader[$mod]['nongrouped'];
                 if (isset(${'query_'.$mod})) $ungraded_queries[] = ${'query_'.$mod}." AND c.id IN ({$courselist}) ";
             }
         }
          
         
-        if (count($count['grader']) && count($ungraded_queries) > 0) {
+        if (count($count['grader'])  &&  count($ungraded_queries) > 0) {
             
-            $query = '('.implode(') UNION (',$ungraded_queries).') ORDER BY course_name, course_id, mod_name, cm_id LIMIT '.($maxitems+1);
+            $query .= '('.implode(') UNION (',$ungraded_queries).') ORDER BY course_name, course_id, mod_name, cm_id LIMIT '.($maxitems+1);
             $rs = $DB->get_recordset_sql($query);
             
             $i = 1;
