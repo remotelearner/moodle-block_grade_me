@@ -30,7 +30,7 @@ $plugin->cron      = 0;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '3.3 (Build: 2012071800)';
- 
+/*
 $plugin->dependencies = array(
     'mod_assignment' => 'ANY_VERSION',
     'mod_data'  => 'ANY_VERSION',
@@ -38,3 +38,4 @@ $plugin->dependencies = array(
     'mod_glossary' => 'ANY_VERSION',
     'mod_quiz' => 'ANY_VERSION'
 );
+*/
