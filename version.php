@@ -24,17 +24,17 @@
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2012050323;
+$plugin->version   = 2012071800;
 $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versions
 $plugin->cron      = 0;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '3.1 (Build: 2012050323)';
+$plugin->release   = '3.3 (Build: 2012071800)';
  
 $plugin->dependencies = array(
-    'mod_assignment' => ANY_VERSION,
-    'mod_data'  => ANY_VERSION,
-    'mod_forum' => ANY_VERSION,
-    'mod_glossary' => ANY_VERSION,
-    'mod_quiz' => ANY_VERSION
+    'mod_assignment' => 'ANY_VERSION',
+    'mod_data'  => 'ANY_VERSION',
+    'mod_forum' => 'ANY_VERSION',
+    'mod_glossary' => 'ANY_VERSION',
+    'mod_quiz' => 'ANY_VERSION'
 );
