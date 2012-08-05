@@ -94,7 +94,7 @@ class block_grade_me extends block_base {
             }
         }
         foreach ($grader_roles AS $roleid => $value) {
-            if (user_has_role_assignment($USER->id, $roleid)) {
+            if (user_has_role_assignment($USER->id, $roleid) or is_siteadmin()) {
                 $showempty = true;
             } else {
                 $showempty = false;
@@ -160,7 +160,7 @@ class block_grade_me extends block_base {
                 , `coursename` = VALUES(`coursename`)
                 , `coursemoduleid` = VALUES(`coursemoduleid`)
         ';
-        
+        print_r($query);
         $DB->execute($query, $params);
         
         // Show times
