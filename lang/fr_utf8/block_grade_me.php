@@ -21,7 +21,7 @@
 $string['pluginname'] = 'Grade Me';
 $string['title'] = 'Notez moi';
 $string['datetime'] = '%B %d, %l:%M %p';
-$string['excess'] = 'Il y a trop de soumissions pour les afficher toutes dans ce bloc.';
+$string['excess'] = 'There are more than {$a->maxcourses} courses with ungraded work.';
 $string['nothing'] = 'Rien √† √©valuer !';
 
 $string['link_gradebook_icon'] = 'Go to {$a->course_name} gradebook…';
@@ -36,19 +36,9 @@ $string['alt_mod'] = 'Go to {$a->mod_name} in gradebook…';
 $string['alt_mark'] = 'check';
 $string['alt_smiley'] = 'smiley';
 
-$string['settings_maxitems'] = 'Maximum Ungraded Items';
-$string['settings_configmaxitems'] = 'This define the maximum number of ungraded items to query. Settings this too high will slow page loads.';
-$string['settings_enableassignment'] = 'Show Assignments';
-$string['settings_configenableassignment'] = 'Should Grade Me show ungraded activity from the "Assignment" module?';
-$string['settings_enabledata'] = 'Show Databases';
-$string['settings_configenabledata'] = 'Should Grade Me show unrate activity from the "Database" module?';
-$string['settings_enableforum'] = 'Show Forums';
-$string['settings_configenableforum'] = 'Should Grade Me show unrated activity from the "Forum" module?';
-$string['settings_enableglossary'] = 'Show Glossaries';
-$string['settings_configenableglossary'] = 'Should Grade Me show ungraded activity from the "Glossary" module?';
-$string['settings_enablelesson'] = 'Show Lessons';
-$string['settings_configenablelesson'] = 'Should Grade Me show ungraded essay activity from the "Lesson" module?';
-$string['settings_enablequiz'] = 'Show Quizzes';
-$string['settings_configenablequiz'] = 'Should Grade Me show ungraded question activity from the "Quiz" module?';
-$string['settings_enableworkshop'] = 'Show Workshops';
-$string['settings_configenableworkshop'] = 'Should Grade Me show ungraded activity from the "Workshop" module?';
+$string['settings_maxcourses'] = 'Maximum Courses Displayed';
+$string['settings_configmaxcourses'] = 'Set the maximum number of ungraded courses to show. Setting this too high may impact performance.';
+$string['settings_adminviewall'] = 'Admins View All';
+$string['settings_configadminviewall'] = 'Enable to give administrators the rights to see all ungraded work — not just for courses where they have a grader role.';
+$string['settings_enablepre'] = 'Show';
+$string['settings_configenablepre'] = 'Should Grade Me show unrated activity from the "{$a->plugin_name}" module?';

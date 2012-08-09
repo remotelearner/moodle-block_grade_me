@@ -24,18 +24,22 @@
  
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2012071800;
+$plugin->version   = 2012080500;
 $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versions
-$plugin->cron      = 0;
+$plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '3.3 (Build: 2012071800)';
-/*
-$plugin->dependencies = array(
-    'mod_assignment' => 'ANY_VERSION',
-    'mod_data'  => 'ANY_VERSION',
-    'mod_forum' => 'ANY_VERSION',
-    'mod_glossary' => 'ANY_VERSION',
-    'mod_quiz' => 'ANY_VERSION'
-);
-*/
+$plugin->release   = '4.0 (Build: 2012080500)';
+
+global $CFG;
+$block_grade_me_plugins = get_list_of_plugins('blocks/grade_me/plugins');
+foreach ($block_grade_me_plugins AS $block_grade_me_plugin) {
+    if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$block_grade_me_plugin.'/'.$block_grade_me_plugin.'_plugin.php')) {
+        include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$block_grade_me_plugin.'/'.$block_grade_me_plugin.'_plugin.php');
+        if (function_exists('block_grade_me_required_capability_'.$block_grade_me_plugin)) {
+            $required_capability = 'block_grade_me_required_capability_'.$block_grade_me_plugin;
+            $a = $required_capability();
+            $plugin->dependencies['mod_'.$block_grade_me_plugin] = $a[$block_grade_me_plugin]['versiondependencies'];
+        }
+    }
+}
