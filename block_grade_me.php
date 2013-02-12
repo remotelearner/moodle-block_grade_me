@@ -1,44 +1,40 @@
 <?php
 
 class block_grade_me extends block_base {
-    
+
     function init() {
         global $CFG;
         $this->title = get_string('pluginname','block_grade_me',array());
     }
 
-    function get_content() {        
+    function get_content() {
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
-        
+
         if ($this->content !== NULL) {
             return $this->content;
         }
-        
-        function applicable_formats() {
-            return array('all' => true);
-        }
-        
+
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
         $PAGE->requires->js('/blocks/grade_me/javascript/jquery-1.7.2.min.js');
-        
+
         // create the content class
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
-        
+
         // setup arrays
         $grader = array();
         $gradeables = array();
-        
+
         $excess = false;
         $groups = NULL;
-        
+
         $enabled_plugins = block_grade_me_enabled_plugins();
-        
+
         $maxcourses = (isset($CFG->block_grade_me_maxcourses)) ? $CFG->block_grade_me_maxcourses : 10;
         $coursecount = 0;
         $additional = null;
-        
+
         if ($COURSE->id == SITEID) {
             if (is_siteadmin() && $CFG->block_grade_me_enableadminviewall) {
                 $courses = get_courses();
@@ -49,7 +45,7 @@ class block_grade_me extends block_base {
         } else {
             $courses[$COURSE->id] = $COURSE;
         }
-        
+
         foreach ($courses AS $courseid => $course) {
             unset($params);
             $gradeables = array();
@@ -86,7 +82,7 @@ class block_grade_me extends block_base {
             }
             unset($gradeables);
         }
-        
+
         $grader_roles = array();
         foreach ($enabled_plugins AS $plugin => $a) {
             foreach (array_keys(get_roles_with_capability($a['capability'])) AS $role) {
@@ -100,16 +96,16 @@ class block_grade_me extends block_base {
                 $showempty = false;
             }
         }
-        
+
         if ($this->content->text) {
             $this->content->text = '<dl>'.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
         } elseif (!$this->content->text and $showempty) {
             $this->content->text .= '<div class="empty">'.$OUTPUT->pix_icon('s/smiley',get_string('alt_smiley','block_grade_me')).' '.get_string('nothing','block_grade_me').'</div>'."\n";
         }
-        
+
         return $this->content;
     }
-    
+
     /**
      * cron - caches gradable items
      */
@@ -119,15 +115,15 @@ class block_grade_me extends block_base {
 
         // We are going to measure execution times
         $starttime =  microtime();
-        
+
         $params = array();
         $params['itemtype'] = 'mod';
         $enabled_plugins = array_keys(block_grade_me_enabled_plugins());
-        
+
         $query = '
-            INSERT 
+            INSERT
             INTO {block_grade_me} (
-                SELECT 
+                SELECT
                     gi.id `itemid`
                     , gi.itemname `itemname`
                     , gi.itemtype `itemtype`
@@ -136,21 +132,21 @@ class block_grade_me extends block_base {
                     , gi.sortorder `itemsortorder`
                     , c.id `courseid`
                     , c.shortname `coursename`
-                    , cm.id `coursemoduleid` 
-                FROM {grade_items} gi 
-                LEFT JOIN {course} c 
-                    ON gi.courseid = c.id 
-                LEFT JOIN {modules} m 
-                    ON m.name = gi.itemmodule 
-                INNER JOIN {course_modules} cm 
-                    ON cm.`course` = c.`id` 
-                    AND cm.`module` = m.`id` 
-                    AND cm.`instance` = gi.`iteminstance` 
-                WHERE gi.`itemtype` = :itemtype 
-                    AND m.`name` IN (\''.implode("','",$enabled_plugins).'\') 
+                    , cm.id `coursemoduleid`
+                FROM {grade_items} gi
+                LEFT JOIN {course} c
+                    ON gi.courseid = c.id
+                LEFT JOIN {modules} m
+                    ON m.name = gi.itemmodule
+                INNER JOIN {course_modules} cm
+                    ON cm.`course` = c.`id`
+                    AND cm.`module` = m.`id`
+                    AND cm.`instance` = gi.`iteminstance`
+                WHERE gi.`itemtype` = :itemtype
+                    AND m.`name` IN (\''.implode("','",$enabled_plugins).'\')
                 ORDER BY gi.id
-            ) 
-            ON DUPLICATE KEY UPDATE 
+            )
+            ON DUPLICATE KEY UPDATE
                 `itemname` = VALUES(`itemname`)
                 , `itemtype` = VALUES(`itemtype`)
                 , `itemmodule` = VALUES(`itemmodule`)
@@ -162,9 +158,14 @@ class block_grade_me extends block_base {
         ';
         print_r($query);
         $DB->execute($query, $params);
-        
+
         // Show times
         mtrace('');
         mtrace('Updated block_grade_me cache in ' . microtime_diff($starttime, microtime()) . ' seconds');
+    }
+
+    // Moved outside of get_content per HOSSUP-1173 to fix displaying multiple block instances
+    function applicable_formats() {
+       return array('all' => true);
     }
 }
