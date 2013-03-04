@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  
 /**
- * TODO
+ * Grade Me block
  *
- * @package   TODO_FRANKENSTYLE
- * @copyright TODO
+ * @package   block_grade_me
+ * @copyright 2012 Dakota Duff
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
@@ -29,7 +29,7 @@ $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versio
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '4.0 (Build: 2012080500)';
+$plugin->release   = '2.3.4.1 (Build: 2012080500)';
 
 global $CFG;
 $block_grade_me_plugins = get_list_of_plugins('blocks/grade_me/plugins');
