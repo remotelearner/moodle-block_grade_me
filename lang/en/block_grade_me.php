@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $string['pluginname'] = 'Grade Me';
 $string['title'] = 'Grade Me';
@@ -24,3 +24,6 @@ $string['settings_adminviewall'] = 'Admins View All';
 $string['settings_configadminviewall'] = 'Enable to give administrators the rights to see all ungraded work — not just for courses where they have a grader role.';
 $string['settings_enablepre'] = 'Show';
 $string['settings_configenablepre'] = 'Should Grade Me show unrated activity from the "{$a->plugin_name}" module?';
+
+$string['grade_me:addinstance'] = 'Add a new Grade Me block';
+$string['grade_me:myaddinstance'] = 'Add a new Grade Me block to the My Moodle page';
