@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * Grade Me block
  *
@@ -21,9 +21,10 @@
  * @copyright 2012 Dakota Duff
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
  
-$plugin->version   = 2012080500;
+$plugin->version   = 2012080501;
 $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versions
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';

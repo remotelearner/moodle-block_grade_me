@@ -1,4 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Grade Me block.
+ *
+ * @package    block_grade_me
+ * @copyright  2013 Dakota Duff {@link http://www.remote-learner.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 class block_grade_me extends block_base {
 
@@ -7,6 +29,14 @@ class block_grade_me extends block_base {
         $this->title = get_string('pluginname','block_grade_me',array());
     }
 
+    /**
+     * This function does the work to query ungraded assignments according
+     * to plugins present in the /grade_me/plugins directory which are
+     * gradeable by the current user, and returns the block content to be
+     * displayed.
+     *
+     * @return stdClass The content being rendered for this block
+     */
     function get_content() {
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
 
@@ -21,6 +51,10 @@ class block_grade_me extends block_base {
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
+
+        if (!isloggedin()) {
+            return $this->content;
+        }
 
         // setup arrays
         $grader = array();
@@ -120,43 +154,26 @@ class block_grade_me extends block_base {
         $params['itemtype'] = 'mod';
         $enabled_plugins = array_keys(block_grade_me_enabled_plugins());
 
-        $query = '
-            INSERT
-            INTO {block_grade_me} (
-                SELECT
-                    gi.id `itemid`
-                    , gi.itemname `itemname`
-                    , gi.itemtype `itemtype`
-                    , gi.itemmodule `itemmodule`
-                    , gi.iteminstance `iteminstance`
-                    , gi.sortorder `itemsortorder`
-                    , c.id `courseid`
-                    , c.shortname `coursename`
-                    , cm.id `coursemoduleid`
-                FROM {grade_items} gi
-                LEFT JOIN {course} c
-                    ON gi.courseid = c.id
-                LEFT JOIN {modules} m
-                    ON m.name = gi.itemmodule
-                INNER JOIN {course_modules} cm
-                    ON cm.`course` = c.`id`
-                    AND cm.`module` = m.`id`
-                    AND cm.`instance` = gi.`iteminstance`
-                WHERE gi.`itemtype` = :itemtype
-                    AND m.`name` IN (\''.implode("','",$enabled_plugins).'\')
-                ORDER BY gi.id
-            )
-            ON DUPLICATE KEY UPDATE
-                `itemname` = VALUES(`itemname`)
-                , `itemtype` = VALUES(`itemtype`)
-                , `itemmodule` = VALUES(`itemmodule`)
-                , `iteminstance` = VALUES(`iteminstance`)
-                , `itemsortorder` = VALUES(`itemsortorder`)
-                , `courseid` = VALUES(`courseid`)
-                , `coursename` = VALUES(`coursename`)
-                , `coursemoduleid` = VALUES(`coursemoduleid`)
-        ';
-        print_r($query);
+        $query = 'INSERT INTO {block_grade_me} (
+                       SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
+                              gi.itemmodule itemmodule, gi.iteminstance iteminstance,
+                              gi.sortorder itemsortorder, c.id courseid, c.shortname coursename,
+                              cm.id coursemoduleid
+                         FROM {grade_items} gi
+                    LEFT JOIN {course} c ON gi.courseid = c.id
+                    LEFT JOIN {modules} m ON m.name = gi.itemmodule
+                   INNER JOIN {course_modules} cm
+                           ON cm.course = c.id
+                          AND cm.module = m.id
+                          AND cm.instance = gi.iteminstance
+                        WHERE gi.itemtype = :itemtype
+                          AND m.name IN (\''.implode("','", $enabled_plugins).'\')
+                            )
+      ON DUPLICATE KEY UPDATE itemname = VALUES(itemname), itemtype = VALUES(itemtype),
+                              itemmodule = VALUES(itemmodule), iteminstance = VALUES(iteminstance),
+                              itemsortorder = VALUES(itemsortorder), courseid = VALUES(courseid),
+                              coursename = VALUES(coursename), coursemoduleid = VALUES(coursemoduleid)';
+
         $DB->execute($query, $params);
 
         // Show times
@@ -164,8 +181,20 @@ class block_grade_me extends block_base {
         mtrace('Updated block_grade_me cache in ' . microtime_diff($starttime, microtime()) . ' seconds');
     }
 
-    // Moved outside of get_content per HOSSUP-1173 to fix displaying multiple block instances
+    /**
+     * Moved outside of get_content per HOSSUP-1173 to fix
+     * displaying multiple block instances within the same page
+     * @return array The formats which apply to this block
+     */
     function applicable_formats() {
-        return array('all' => true);
+       return array('all' => true);
+    }
+
+    /**
+     * Required in Moodle 2.4 to load /grade_me/settings.php file
+     * @return bool Whether or not to include settings.php
+     */
+    function has_config() {
+       return true;
     }
 }
