@@ -29,7 +29,7 @@ $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versio
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '2.3.4.1 (Build: 2012080500)';
+$plugin->release   = '2.3.4.2';
 
 global $CFG;
 $block_grade_me_plugins = get_list_of_plugins('blocks/grade_me/plugins');
