@@ -46,7 +46,11 @@ function block_grade_me_query_assign($gradebookusers) {
    LEFT JOIN {block_grade_me} bgm
           ON bgm.courseid = a.course
          AND bgm.iteminstance = a.id
+   LEFT JOIN {assign_grades} ag
+          ON ag.assignment = asgn_sub.assignment
+         AND ag.userid = asgn_sub.userid
        WHERE asgn_sub.userid IN (\''.implode("','",$gradebookusers).'\')
-         AND a.grade > 0';
+             AND a.grade > 0
+             AND ag.id IS NULL';
     return $query;
 }
