@@ -9,30 +9,38 @@ function block_grade_me_required_capability_glossary() {
     return $enabled_plugins;
 }
 
+/**
+ * Build SQL query for the glossy plugin
+ *
+ * @param array $gradebookusers ID's of gradebook users
+ * @return array|bool SQL query and parameters or false on failure
+ */
 function block_grade_me_query_glossary($gradebookusers) {
-    global $USER;
-    $query = '
-            , `ge`.`id` submissionid 
-            , `ge`.`userid` 
-            , `ge`.`timemodified` timesubmitted 
-        FROM {glossary_entries} `ge`
-        INNER JOIN {glossary} `g` 
-            ON `g`.`id` = `ge`.`glossaryid`
-        LEFT JOIN {block_grade_me} `bgm` 
-            ON `bgm`.`courseid` = `g`.`course` 
-            AND `bgm`.`iteminstance` = `ge`.`id` 
-        WHERE `ge`.`userid` IN (\''.implode("','",$gradebookusers).'\') 
-            AND `g`.`assessed` = 1
-            AND CONCAT(`ge`.`id`,\'-\','.$USER->id.') NOT IN (
-                SELECT CONCAT(`r`.`itemid`,\'-\',`r`.`userid`) 
-                FROM {rating} `r` 
-                WHERE `r`.`contextid` IN (
-                    SELECT `cx`.`id` 
-                    FROM {context} `cx` 
-                    WHERE `cx`.`contextlevel` = 70 
-                        AND `cx`.`instanceid` = `bgm`.`coursemoduleid`
-                )
-            )
-        ';
-    return $query;
+    global $USER, $DB;
+
+    if (empty($gradebookusers)) {
+        return false;
+    }
+    $concatid = $DB->sql_concat('ge.id', "'-'", $USER->id);
+    $concatitem = $DB->sql_concat('r.itemid', "'-'", 'r.userid');
+    list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
+
+    $query = ", ge.id submissionid, ge.userid, ge.timemodified timesubmitted
+        FROM {glossary_entries} ge
+        JOIN {glossary} g ON g.id = ge.glossaryid
+   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = g.course AND bgm.iteminstance = ge.id
+       WHERE ge.userid $insql
+             AND g.assessed = 1
+             AND $concatid NOT IN (
+             SELECT $concatitem
+               FROM {rating} r
+              WHERE r.contextid IN (
+                    SELECT cx.id
+                      FROM {context} cx
+                     WHERE cx.contextlevel = 70
+                           AND cx.instanceid = bgm.coursemoduleid
+                    )
+             )";
+
+    return array($query, $inparams);
 }
