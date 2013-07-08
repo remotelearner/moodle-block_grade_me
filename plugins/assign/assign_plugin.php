@@ -35,22 +35,25 @@ function block_grade_me_required_capability_assign() {
 }
 
 /**
- * @return string Query string to retrieve results from the new Moodle 2.4
- * assign tables.
+ * Build SQL query for the assignment (assign) plugin for Moodle 22 and earlier
+ *
+ * @param array $gradebookusers ID's of gradebook users
+ * @return mixed SQL query and parameters or false on failure
  */
 function block_grade_me_query_assign($gradebookusers) {
-    $query = ', asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted
+    global $DB;
+
+    if (empty($gradebookusers)) {
+        return false;
+    }
+    list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
+
+    $query = ", asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted
         FROM {assign_submission} asgn_sub
-  INNER JOIN {assign} a
-          ON a.id = asgn_sub.assignment
-   LEFT JOIN {block_grade_me} bgm
-          ON bgm.courseid = a.course
-         AND bgm.iteminstance = a.id
-   LEFT JOIN {assign_grades} ag
-          ON ag.assignment = asgn_sub.assignment
-         AND ag.userid = asgn_sub.userid
-       WHERE asgn_sub.userid IN (\''.implode("','",$gradebookusers).'\')
-             AND a.grade > 0
-             AND ag.id IS NULL';
-    return $query;
+        JOIN {assign} a ON a.id = asgn_sub.assignment
+   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = a.course AND bgm.iteminstance = a.id
+   LEFT JOIN {assign_grades} ag ON ag.assignment = asgn_sub.assignment AND ag.userid = asgn_sub.userid
+       WHERE asgn_sub.userid $insql AND a.grade > 0 AND ag.id IS NULL";
+
+    return array($query, $inparams);
 }
