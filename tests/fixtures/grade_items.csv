@@ -1,0 +1,3 @@
+id,courseid,categoryid,itemname,itemtype,itemmodule,iteminstance
+1,2,1,newitem,mod,assign,1
+2,2,1,itemupdate,mod,assign,1

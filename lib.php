@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package   block_grade_me
  * @copyright 2012 Dakota Duff
@@ -18,33 +17,23 @@ function block_grade_me_array2str($array) {
 
 /**
  * Returns first portion of the SQL query for the Grade Me block
+ *
  * @return string $query
  */
 function block_grade_me_query_prefix() {
-    $query = '
-        SELECT 
-            `bgm`.`courseid` 
-            , `bgm`.`coursename` 
-            , `bgm`.`itemmodule` 
-            , `bgm`.`iteminstance`  
-            , `bgm`.`itemname` 
-            , `bgm`.`coursemoduleid` 
-            , `bgm`.`itemsortorder`
-        ';
+    $query = 'SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, bgm.coursemoduleid, bgm.itemsortorder';
     return $query;
 }
 
 /**
  * Returns last portion of the SQL query for the Grade Me block
+ *
  * @param string $mod The array to implode
- * @param bool $separate_groups Whether or not to separate groups
  * @return string $string
  */
 function block_grade_me_query_suffix($mod) {
-    $query = '
-        AND `bgm`.`courseid` = :courseid 
-        AND `bgm`.`itemmodule` = \''.$mod.'\'
-    ';
+    $query = " AND bgm.courseid = ?
+ AND bgm.itemmodule = '$mod'";
     return $query;
 }
 
