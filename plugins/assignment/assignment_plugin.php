@@ -35,17 +35,26 @@ function block_grade_me_required_capability_assignment() {
 }
 
 /**
- * @return string Query string to retrieve results from the old Moodle 2.2-
- * assignment tables.
+ * Build SQL query for the assignment plugin for Moodle 2.3 and later
+ *
+ * @param array $gradebookusers ID's of gradebook users
+ * @return array|bool SQL query and parameters or false on failure
  */
 function block_grade_me_query_assignment($gradebookusers) {
-    $query = ', asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted
+    global $DB;
+
+    if (empty($gradebookusers)) {
+        return false;
+    }
+    list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
+
+    $query = ", asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted
         FROM {assignment_submissions} asgn_sub
-  INNER JOIN {assignment} a ON a.id = asgn_sub.assignment
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = a.course
-         AND bgm.iteminstance = a.id
-       WHERE asgn_sub.userid IN (\''.implode("','", $gradebookusers).'\')
-         AND a.grade > 0
-         AND asgn_sub.timemarked < asgn_sub.timemodified';
-    return $query;
+        JOIN {assignment} a ON a.id = asgn_sub.assignment
+   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = a.course AND bgm.iteminstance = a.id
+       WHERE asgn_sub.userid $insql
+             AND a.grade > 0
+             AND asgn_sub.timemarked < asgn_sub.timemodified";
+
+    return array($query, $inparams);
 }

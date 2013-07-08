@@ -89,19 +89,28 @@ class block_grade_me extends block_base {
                 if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $groups = groups_get_user_groups($courseid, $USER->id);
                     foreach ($groups[0] AS $groupid) {
-                        $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'NULL', null, $groupid)));
+                        $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC', null, $groupid)));
                     }
                 } else {
-                    $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'NULL')));
+                    $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')));
                 }
             }
+
             $params['courseid'] = $courseid;
+
             foreach ($enabled_plugins AS $plugin => $a) {
                 if (has_capability($a['capability'], $context)) {
-                    $query_plugin = 'block_grade_me_query_'.$plugin;
-                    $query = block_grade_me_query_prefix().$query_plugin($gradebookusers).block_grade_me_query_suffix($plugin);
-                    $rs = $DB->get_recordset_sql($query, $params);
-                    foreach ($rs AS $r) $gradeables = block_grade_me_array($gradeables, $r);
+                    $fn = 'block_grade_me_query_'.$plugin;
+                    $pluginfn = $fn($gradebookusers);
+                    if ($pluginfn !== false) {
+                        list($sql, $inparams) = $fn($gradebookusers);
+                        $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
+                        $values = array_merge($inparams, $params);
+                        $rs = $DB->get_recordset_sql($query, $values);
+                        foreach ($rs as $r) {
+                            $gradeables = block_grade_me_array($gradeables, $r);
+                        }
+                    }
                 }
             }
             if (count($gradeables) > 0) {
@@ -154,27 +163,48 @@ class block_grade_me extends block_base {
         $params['itemtype'] = 'mod';
         $enabled_plugins = array_keys(block_grade_me_enabled_plugins());
 
-        $query = 'INSERT INTO {block_grade_me} (
-                       SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
-                              gi.itemmodule itemmodule, gi.iteminstance iteminstance,
-                              gi.sortorder itemsortorder, c.id courseid, c.shortname coursename,
-                              cm.id coursemoduleid
-                         FROM {grade_items} gi
-                    LEFT JOIN {course} c ON gi.courseid = c.id
-                    LEFT JOIN {modules} m ON m.name = gi.itemmodule
-                   INNER JOIN {course_modules} cm
-                           ON cm.course = c.id
-                          AND cm.module = m.id
-                          AND cm.instance = gi.iteminstance
-                        WHERE gi.itemtype = :itemtype
-                          AND m.name IN (\''.implode("','", $enabled_plugins).'\')
-                            )
-      ON DUPLICATE KEY UPDATE itemname = VALUES(itemname), itemtype = VALUES(itemtype),
-                              itemmodule = VALUES(itemmodule), iteminstance = VALUES(iteminstance),
-                              itemsortorder = VALUES(itemsortorder), courseid = VALUES(courseid),
-                              coursename = VALUES(coursename), coursemoduleid = VALUES(coursemoduleid)';
+        list($insql, $inparams) = $DB->get_in_or_equal($enabled_plugins);
 
-        $DB->execute($query, $params);
+        $sql = "SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
+                       gi.itemmodule itemmodule, gi.iteminstance iteminstance,
+                       gi.sortorder itemsortorder, c.id courseid, c.shortname coursename,
+                       cm.id coursemoduleid
+                  FROM {grade_items} gi
+             LEFT JOIN {course} c ON gi.courseid = c.id
+             LEFT JOIN {modules} m ON m.name = gi.itemmodule
+                  JOIN {course_modules} cm ON cm.course = c.id AND cm.module = m.id AND cm.instance = gi.iteminstance
+                 WHERE gi.itemtype = ?
+                       AND m.name $insql";
+
+        $params = array_merge($params, $inparams);
+        $rs = $DB->get_recordset_sql($sql, $params);
+
+        foreach ($rs as $rec) {
+            $itemidexists = $DB->record_exists('block_grade_me', array('itemid' => $rec->itemid));
+            $params = array(
+                'itemid' => $rec->itemid,
+                'itemname' => $rec->itemname,
+                'itemtype' => $rec->itemtype,
+                'itemmodule' => $rec->itemmodule,
+                'iteminstance' => $rec->iteminstance,
+                'itemsortorder' => $rec->itemsortorder,
+                'courseid' => $rec->courseid,
+                'coursename' => $rec->coursename,
+                'coursemoduleid' => $rec->coursemoduleid,
+            );
+            if ($itemidexists) {
+                // Using update_record() complains due to non-existing id field.
+                $sql = 'UPDATE {block_grade_me}
+                           SET itemname = :itemname, itemtype = :itemtype, itemmodule = :itemmodule, iteminstance = :iteminstance, itemsortorder = :itemsortorder,
+                               courseid = :courseid, coursename = :coursename, coursemoduleid = :coursemoduleid
+                         WHERE itemid = :itemid';
+            } else {
+                // Using insert_record() complains due to non-existing id field.
+                $sql = 'INSERT INTO {block_grade_me} (itemid, itemname, itemtype, itemmodule, iteminstance, itemsortorder, courseid, coursename, coursemoduleid)
+                             VALUES (:itemid, :itemname, :itemtype, :itemmodule, :iteminstance, :itemsortorder, :courseid, :coursename, :coursemoduleid)';
+            }
+            $DB->execute($sql, $params);
+        }
 
         // Show times
         mtrace('');
