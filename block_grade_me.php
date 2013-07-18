@@ -163,6 +163,11 @@ class block_grade_me extends block_base {
         $params['itemtype'] = 'mod';
         $enabled_plugins = array_keys(block_grade_me_enabled_plugins());
 
+        // If no plugins are enabled there is nothing for us to do.
+        if (empty($enabled_plugins)) {
+            return true;
+        }
+
         list($insql, $inparams) = $DB->get_in_or_equal($enabled_plugins);
 
         $sql = "SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
