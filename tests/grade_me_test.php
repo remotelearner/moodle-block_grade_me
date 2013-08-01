@@ -48,47 +48,87 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
-     * Create the grade_me test data.
+     * Load the testing dataset. Meant to be used by any tests that require the testing dataset.
      */
-    public function create_grade_me_data() {
-        global $CFG, $DB;
+    protected function create_grade_me_data() {
+        global $DB;
+
+        $this->loadDataSet($this->createXMLDataSet(__DIR__.'/fixtures/block_grade_me.xml'));
 
         $data = array(
                 array(
                     'itemid' => 2,
-                    'itemname' => 'assignment',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assign',
-                    'iteminstance' => 1,
-                    'courseid' => 2
-                ),
-                array(
-                    'itemid' => 3,
-                    'itemname' => 'assignment2',
+                    'itemname' => 'testassignment2',
                     'itemtype' => 'mod',
                     'itemmodule' => 'assign',
                     'iteminstance' => 2,
-                    'courseid' => 2
+                    'itemsortorder' => 1,
+                    'courseid' => 2,
+                    'coursename' => 'testcourse',
+                    'coursemoduleid' => 1
+                ),
+                array(
+                    'itemid' => 3,
+                    'itemname' => 'testassignment3',
+                    'itemtype' => 'mod',
+                    'itemmodule' => 'assign',
+                    'iteminstance' => 3,
+                    'itemsortorder' => 2,
+                    'courseid' => 2,
+                    'coursename' => 'testcourse',
+                    'coursemoduleid' => 1
+                ),
+                array(
+                    'itemid' => 4,
+                    'itemname' => 'testassignment4',
+                    'itemtype' => 'mod',
+                    'itemmodule' => 'assign',
+                    'iteminstance' => 4,
+                    'itemsortorder' => 5,
+                    'courseid' => 2,
+                    'coursename' => 'testcourse',
+                    'coursemoduleid' => 2
+                ),
+                array(
+                    'itemid' => 5,
+                    'itemname' => 'testassignment5',
+                    'itemtype' => 'mod',
+                    'itemmodule' => 'assignment',
+                    'iteminstance' => 5,
+                    'itemsortorder' => 3,
+                    'courseid' => 2,
+                    'coursename' => 'testcourse',
+                    'coursemoduleid' => 2
+                ),
+                array(
+                    'itemid' => 6,
+                    'itemname' => 'testassignment6',
+                    'itemtype' => 'mod',
+                    'itemmodule' => 'assignment',
+                    'iteminstance' => 6,
+                    'itemsortorder' => 4,
+                    'courseid' => 2,
+                    'coursename' => 'testcourse',
+                    'coursemoduleid' => 2
                 )
         );
 
         foreach ($data as $rec) {
             // Inserting records into block_grade_me through CSV or insert_record results in "unknown error fetching inserted id".
-            $sql = 'INSERT INTO {block_grade_me}(itemid, itemname, itemtype, itemmodule, iteminstance, courseid) VALUES(?, ?, ?, ?, ?, ?)';
-            $params = array($rec['itemid'], $rec['itemname'], $rec['itemtype'], $rec['itemmodule'], $rec['iteminstance'], $rec['courseid']);
+            $sql = "INSERT INTO {block_grade_me}(itemid, itemname, itemtype, itemmodule, iteminstance, itemsortorder, courseid, coursename, coursemoduleid)
+                         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $params = array($rec['itemid'], $rec['itemname'], $rec['itemtype'], $rec['itemmodule'], $rec['iteminstance'], $rec['itemsortorder'], $rec['courseid'],
+                    $rec['coursename'], $rec['coursemoduleid']);
             $DB->execute($sql, $params);
         }
+    }
 
-        $basedir = "$CFG->dirroot/blocks/grade_me/tests/fixtures";
-        $files = array(
-            'assign' => "$basedir/assign.csv",
-            'assign_grades' => "$basedir/assign_grades.csv",
-            'assign_submission' => "$basedir/assign_submission.csv",
-            'grade_items' => "$basedir/grade_items.csv",
-            'course_modules' => "$basedir/course_modules.csv"
-        );
-
-        $this->loadDataSet($this->createCsvDataSet($files));
+    /**
+     * Ensure that we can load our test dataset into the current DB.
+     */
+    public function test_grade_me_load_db() {
+        $this->resetAfterTest(true);
+        $this->create_grade_me_data();
     }
 
     /**
@@ -100,7 +140,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->create_grade_me_data();
         $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
+        $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
 
         // Partial query return from block_grade_me_query_assign.
@@ -109,13 +149,20 @@ class block_grade_me_testcase extends advanced_testcase {
         $sql = "SELECT a.id, bgm.courseid $sql AND bgm.courseid = {$course->id} AND bgm.itemmodule = 'assign'";
 
         $rec = new stdClass();
-        $rec->id = 2;
+        $rec->id = '3';
         $rec->courseid = $course->id;
-        $rec->submissionid = 2;
+        $rec->submissionid = '2';
         $rec->userid = $user->id;
-        $rec->timesubmitted = '1';
+        $rec->timesubmitted = '2';
 
-        $expected = array('2' => $rec);
+        $rec2 = new stdClass();
+        $rec2->id = '4';
+        $rec2->courseid = $course->id;
+        $rec2->submissionid = '3';
+        $rec2->userid = $user->id;
+        $rec2->timesubmitted = '3';
+
+        $expected = array('3' => $rec, '4' => $rec2);
         $actual = $DB->get_records_sql($sql, $insqlparams);
         $this->assertEquals($expected, $actual);
         $this->assertFalse(block_grade_me_query_assign(array()));
@@ -145,29 +192,41 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function cron_provider() {
         // Old item.
-        $gradeitem1 = new stdClass();
-        $gradeitem1->itemid = 3;
-        $gradeitem1->itemname = 'assignment2';
-        $gradeitem1->itemtype = 'mod';
-        $gradeitem1->itemmodule =  'assign';
+        $items[2] = new stdClass();
+        $items[2]->itemid = 2;
+        $items[2]->itemname = 'testassignment2';
+        $items[2]->itemtype = 'mod';
+        $items[2]->itemmodule =  'assign';
 
         // Updated item.
-        $gradeitem2 = new stdClass();
-        $gradeitem2->itemid = 2;
-        $gradeitem2->itemname = 'itemupdate';
-        $gradeitem2->itemtype = 'mod';
-        $gradeitem2->itemmodule = 'assign';
+        $items[3] = new stdClass();
+        $items[3]->itemid = 3;
+        $items[3]->itemname = 'testassignment3';
+        $items[3]->itemtype = 'mod';
+        $items[3]->itemmodule = 'assign';
 
         // New item.
-        $gradeitem3 = new stdClass();
-        $gradeitem3->itemid = 1;
-        $gradeitem3->itemname = 'newitem';
-        $gradeitem3->itemtype = 'mod';
-        $gradeitem3->itemmodule = 'assign';
+        $items[4] = new stdClass();
+        $items[4]->itemid = 4;
+        $items[4]->itemname = 'testassignment4';
+        $items[4]->itemtype = 'mod';
+        $items[4]->itemmodule = 'assign';
+
+        $items[5] = new stdClass();
+        $items[5]->itemid = 5;
+        $items[5]->itemname = 'testassignment5';
+        $items[5]->itemtype = 'mod';
+        $items[5]->itemmodule = 'assignment';
+
+        $items[6] = new stdClass();
+        $items[6]->itemid = 6;
+        $items[6]->itemname = 'testassignment6';
+        $items[6]->itemtype = 'mod';
+        $items[6]->itemmodule = 'assignment';
 
         $data = array(
                 array(
-                    array(3 => $gradeitem1, 2 => $gradeitem2, 1 => $gradeitem3)
+                    array(3 => $items[3], 2 => $items[2], 4 => $items[4], 5 => $items[5], 6 => $items[6])
                 )
         );
 
@@ -330,5 +389,179 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->assertEquals($expected, $sql);
         $this->assertEquals(array(2, 3), $params);
         $this->assertFalse(block_grade_me_query_assignment(array()));
+    }
+
+    /**
+     * Test the function get_content for one user in the gradebook for a course.
+     * Check that urls returned are what they should be
+     * @dataProvider grade_me_plugin_single_user_provider
+     * @param string plugin The name of the plugin being tested
+     * @param array  expected values  An array of values that should be found in the grade_me block output
+     */
+    public function test_block_grade_me_get_content_single_user($plugin, $expectedvalues) {
+        global $CFG, $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->create_grade_me_data();
+
+        // Make sure that the plugin being tested has been enabled
+        if (!$CFG->{'block_grade_me_enable'.$plugin} == true) {
+            set_config('block_grade_me_enable'.$plugin, true);
+        }
+
+        if (!$CFG->block_grade_me_enableadminviewall) {
+            set_config('block_grade_me_enableadminviewall', true);
+        }
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $adminuser = $this->getDataGenerator()->create_user();
+        $this->setAdminUser($adminuser);
+        $course = $this->getDataGenerator()->create_course();
+
+        // Set up gradebook role
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $roleid = create_role('role', 'role', 'grade me block');
+        set_role_contextlevels($roleid, array(CONTEXT_COURSE));
+        role_assign($roleid, $user->id, $context->id);
+        set_config('gradebookroles', $roleid);
+
+        // Create a manual enrolment record.
+        $manual_enrol_data['enrol'] = 'manual';
+        $manual_enrol_data['status'] = 0;
+        $manual_enrol_data['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+
+        // Create the user enrolment record.
+        $DB->insert_record('user_enrolments', (object)array(
+            'status' => 0,
+            'enrolid' => $enrolid,
+            'userid' => $user->id
+        ));
+
+        $grademe = new block_grade_me();
+        $content = $grademe->get_content();
+
+        foreach ($expectedvalues as $expected) {
+            $this->assertRegExp($expected, $content->text);
+        }
+    }
+
+    /**
+     * Provide input data to the parameters of the test_block_grade_me_get_content_single_user() method.
+     */
+    public function grade_me_plugin_single_user_provider() {
+        return array(
+                   array("assign",
+                       array(1 => "/Go to assign/",
+                             2 => "/mod\/assign\/view.php/",
+                             3 => "/action=grade&amp;rownum=0/",
+                             5 => "/testassignment3/",
+                             6 => "/testassignment4/"
+                             )
+                       ),
+                   // Test multiple assignments
+                   array("assignment",
+                       array(1 => "/Go to assignment/",
+                             2 => "/mod\/assignment\/submissions.php/",
+                             3 => "/userid=3&amp;mode=single/",
+                             5 => "/testassignment5/",
+                             6 => "/testassignment6/",
+                             )
+                       )
+        );
+    }
+
+    /**
+     * Test the function get_content.
+     * Check that urls returned are what they should be
+     * @dataProvider grade_me_plugin_multiple_user_provider
+     * @param string plugin The name of the plugin being tested
+     * @param array  expected values  An array of values that should be found in the grade_me block output
+     */
+    public function test_block_grade_me_get_content_multiple_user($plugin, $expectedvalues) {
+        global $CFG, $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $this->create_grade_me_data();
+
+        // Make sure that the plugin being tested has been enabled
+        if (!$CFG->{'block_grade_me_enable'.$plugin} == true) {
+            set_config('block_grade_me_enable'.$plugin, true);
+        }
+
+        if (!$CFG->block_grade_me_enableadminviewall) {
+            set_config('block_grade_me_enableadminviewall', true);
+        }
+
+        // When testing with multiple users
+        // Need multiple gradebookroles and timemodified needs to be different on submission
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $user2 = $this->getDataGenerator()->create_user();
+        $adminuser = $this->getDataGenerator()->create_user();
+        $this->setAdminUser($adminuser);
+        $course = $this->getDataGenerator()->create_course();
+
+        // Set up gradebook roles
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $roleid = create_role('role', 'role', 'grade me block');
+        $roleid2 = create_role('role2', 'role2', 'grade me block');
+        set_role_contextlevels($roleid, array(CONTEXT_COURSE));
+        role_assign($roleid, $user->id, $context->id);
+        role_assign($roleid2, $user2->id, $context->id);
+        set_config('gradebookroles', "$roleid, $roleid2");
+
+        // Create a manual enrolment record.
+        $manual_enrol_data['enrol'] = 'manual';
+        $manual_enrol_data['status'] = 0;
+        $manual_enrol_data['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+
+        // Create the user enrolment record.
+        $DB->insert_record('user_enrolments', (object)array(
+            'status' => 0,
+            'enrolid' => $enrolid,
+            'userid' => $user->id
+        ));
+        $DB->insert_record('user_enrolments', (object)array(
+            'status' => 0,
+            'enrolid' => $enrolid,
+            'userid' => $user2->id
+        ));
+
+        $grademe = new block_grade_me();
+        $content = $grademe->get_content();
+
+        foreach ($expectedvalues as $expected) {
+            $this->assertRegExp($expected, $content->text);
+        }
+    }
+
+    /**
+     * Provide input data to the parameters of the test_censusreport_null_grade_check() method.
+     */
+    public function grade_me_plugin_multiple_user_provider() {
+        return array(
+                   array("assign",
+                           array(1 => "/Go to assign/",
+                                 2 => "/mod\/assign\/view.php/",
+                                 3 => "/action=grade&amp;rownum=0/",
+                                 4 => "/action=grade&amp;rownum=1/",
+                                 5 => "/testassignment3/",
+                                 6 => "/testassignment4/"
+                                 )
+                           ),
+                   // Test multiple assignments
+                   array("assignment",
+                           array(1 => "/Go to assignment/",
+                                 2 => "/mod\/assignment\/submissions.php/",
+                                 3 => "/userid=3&amp;mode=single/",
+                                 4 => "/userid=4&amp;mode=single/",
+                                 5 => "/testassignment5/",
+                                 6 => "/testassignment6/",
+                                 )
+                           )
+        );
     }
 }

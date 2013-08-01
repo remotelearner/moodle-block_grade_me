@@ -82,75 +82,91 @@ function block_grade_me_array($gradeables, $r) {
  */
 function block_grade_me_tree($course) {
     global $CFG, $OUTPUT, $DB;
-    
+
     // get time format string
-    $date_time_string = get_string('datetime','block_grade_me',array());    
+    $date_time_string = get_string('datetime', 'block_grade_me', array());
     // Grading image
     $gradeImg = $CFG->wwwroot.'/blocks/grade_me/pix/check_mark.png';
     // Define text variable
     $text = '';
-    
+
     $courseid = $course['meta']['courseid'];
     $coursename = $course['meta']['coursename'];
     unset($course['meta']);
-    
+
     $gradebooklink = $CFG->wwwroot.'/grade/report/index.php?id='.$courseid.'" title="'.get_string('link_gradebook_icon','block_grade_me',array('course_name' => $coursename));
     $altgradebook = get_string('alt_gradebook','block_grade_me',array('course_name' => $coursename));
     $gradebookicon = $OUTPUT->pix_icon('i/grades',$altgradebook,null,array('class' => 'gm_icon'));
     $courselink = $CFG->wwwroot.'/course/view.php?id='.$courseid;
     $coursetitle = get_string('link_gradebook','block_grade_me',array('course_name' => $coursename));
-    
+
     $text .= '<dt class="cmod"><a href="'.$gradebooklink.'">'.$gradebookicon.'</a> <a href="'.$courselink.'" title="'.$coursetitle.'">'.$coursename.'</a></dt>'."\n";
-    
+
     ksort($course);
-    
+
     foreach ($course AS $l2 => $item) {
         $iteminstance = $item['meta']['iteminstance'];
         $itemmodule = $item['meta']['itemmodule'];
         $itemname = $item['meta']['itemname'];
         $coursemoduleid = $item['meta']['coursemoduleid'];
         unset($item['meta']);
-        
+
         $modulelink = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$coursemoduleid;
         $gradelink = $CFG->wwwroot;
-        if ($itemmodule == 'assignment') $gradelink .= '/mod/assignment/submissions.php?id='.$coursemoduleid;
-        elseif ($itemmodule == 'quiz') $gradelink .= '/mod/quiz/report.php?id='.$coursemoduleid;
-        else $gradelink = $modulelink;
+        if ($itemmodule == 'assignment') {
+            $gradelink .= '/mod/assignment/submissions.php?id='.$coursemoduleid;
+        } else if ($itemmodule == 'quiz') {
+            $gradelink .= '/mod/quiz/report.php?id='.$coursemoduleid;
+        } else {
+            $gradelink = $modulelink;
+        }
         $moduleimgtitle = get_string('link_mod_img','block_grade_me',array('mod_name' => $itemmodule));
         $moduletitle = get_string('link_mod','block_grade_me',array('mod_name' => $itemmodule));
         $moduleicon = $OUTPUT->pix_icon('icon',$moduletitle,$itemmodule,array('class' => 'gm_icon'));
-        
+
         $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  //open module
-        $text .= '<a href="'.$gradelink.'" title="'.$moduletitle.'">'.$moduleicon.'</a>'; 
+        $text .= '<a href="'.$gradelink.'" title="'.$moduletitle.'">'.$moduleicon.'</a>';
         $text .= '<div class="toggle" onclick="$(\'dd#cmid'.$coursemoduleid.' > div.toggle\').toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.' > ul\').toggleClass(\'block_grade_me_hide\');"></div>'."\n";
         $text .= '<a href="'.$modulelink.'" title="'.$moduletitle.'">'.$itemname.'</a> ('.count($item).')'."\n";
-        
+
         $text .= '<ul class="block_grade_me_hide">'."\n";
-        
+
         ksort($item);
-        
+
+        // Assign module needs to have a rownum
+        $rownum = 0;
+
         foreach ($item AS $l3 => $submission) {
             $timesubmitted = $l3;
             $userid = $submission['meta']['userid'];
             $submissionid = $submission['meta']['submissionid'];
             unset($submission['meta']);
-            
+
             $submissionlink = $CFG->wwwroot;
-            if ($itemmodule == 'assignment') $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
-            elseif ($itemmodule == 'data') $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';
-            elseif ($itemmodule == 'forum') $submissionlink .= '/mod/forum/discuss.php?d='.$coursemoduleid.'#p'.$submissionid;
-            elseif ($itemmodule == 'glossary') $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
-            elseif ($itemmodule == 'quiz') $submissionlink .= '/mod/quiz/report.php?q='.$coursemoduleid.'&amp;mode=grading';
-            
+            if ($itemmodule == 'assignment') {
+                $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
+            } else if ($itemmodule == 'assign') {
+                $submissionlink .= '/mod/assign/view.php?id='.$coursemoduleid.'&amp;action=grade&amp;rownum='.$rownum;
+                $rownum++;
+            } else if ($itemmodule == 'data') {
+                $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';
+            } else if ($itemmodule == 'forum') {
+                $submissionlink .= '/mod/forum/discuss.php?d='.$coursemoduleid.'#p'.$submissionid;
+            } else if ($itemmodule == 'glossary') {
+                $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
+            } else if ($itemmodule == 'quiz') {
+                $submissionlink .= '/mod/quiz/report.php?q='.$coursemoduleid.'&amp;mode=grading';
+            }
+
             $submissiontitle = get_string('link_grade_img','block_grade_me',array());
             $altmark = get_string('alt_mark','block_grade_me',array());
-            
+
             $user = $DB->get_record('user', array('id' => $userid));
-            
+
             $userfirst = $user->firstname;
             $userfirstlast = $user->firstname.' '.$user->lastname;
             $userprofiletitle = get_string('link_user_profile','block_grade_me',array('first_name' => $userfirst));
-            
+
             $text .= '<li class="gradable">';  // open gradable
             $text .= '<a href="'.$submissionlink.'" title="'.$submissiontitle.'"><img src="'.$gradeImg.'" class="gm_icon" alt="'.$altmark.'" /></a>';  // grade icon
             $text .= $OUTPUT->user_picture($user, array('size' => 16, 'courseid' => $courseid, 'link' => true));
@@ -158,10 +174,10 @@ function block_grade_me_tree($course) {
             $text .= '<br />'.userdate($timesubmitted,$date_time_string);  // output submission date
             $text .= '</li>'."\n";  // end gradable
         }
-        
+
         $text .= '</ul>'."\n";
-        $text .= '</dd>'."\n";  // close module 
+        $text .= '</dd>'."\n";  // close module
     }
-    
+
     return $text;
 }
