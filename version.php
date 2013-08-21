@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013022601;
+$plugin->version   = 2013022602;
 $plugin->requires  = 2010112400; // See http://docs.moodle.org/dev/Moodle_Versions
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '2.4.4.3';
+$plugin->release   = '2.4.4.4';
 
 global $CFG;
 $block_grade_me_plugins = get_list_of_plugins('blocks/grade_me/plugins');
