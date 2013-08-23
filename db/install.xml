@@ -6,8 +6,8 @@
   <TABLES>
     <TABLE NAME="block_grade_me" COMMENT="Caches information about gradeable items.">
       <FIELDS>
-        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" NEXT="itemname"/>
-        <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="itemid" NEXT="itemtype"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="itemname"/>
+        <FIELD NAME="itemname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="itemtype"/>
         <FIELD NAME="itemtype" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="itemname" NEXT="itemmodule"/>
         <FIELD NAME="itemmodule" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" PREVIOUS="itemtype" NEXT="iteminstance"/>
         <FIELD NAME="iteminstance" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="itemmodule" NEXT="itemsortorder"/>
@@ -17,9 +17,9 @@
         <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="coursename"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="itemid" NEXT="itemid" />
-        <KEY NAME="itemid" TYPE="foreign" FIELDS="itemid" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
-        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="itemid" NEXT="coursemoduleid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="id" />
+        <KEY NAME="id" TYPE="foreign" FIELDS="id" REFTABLE="grade_items" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="id" NEXT="coursemoduleid"/>
         <KEY NAME="coursemoduleid" TYPE="foreign" FIELDS="coursemoduleid" REFTABLE="course_modules" REFFIELDS="id" PREVIOUS="courseid"/>
       </KEYS>
       <INDEXES>

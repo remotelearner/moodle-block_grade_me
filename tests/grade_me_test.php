@@ -51,76 +51,7 @@ class block_grade_me_testcase extends advanced_testcase {
      * Load the testing dataset. Meant to be used by any tests that require the testing dataset.
      */
     protected function create_grade_me_data() {
-        global $DB;
-
         $this->loadDataSet($this->createXMLDataSet(__DIR__.'/fixtures/block_grade_me.xml'));
-
-        $data = array(
-                array(
-                    'itemid' => 2,
-                    'itemname' => 'testassignment2',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assign',
-                    'iteminstance' => 2,
-                    'itemsortorder' => 1,
-                    'courseid' => 2,
-                    'coursename' => 'testcourse',
-                    'coursemoduleid' => 1
-                ),
-                array(
-                    'itemid' => 3,
-                    'itemname' => 'testassignment3',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assign',
-                    'iteminstance' => 3,
-                    'itemsortorder' => 2,
-                    'courseid' => 2,
-                    'coursename' => 'testcourse',
-                    'coursemoduleid' => 1
-                ),
-                array(
-                    'itemid' => 4,
-                    'itemname' => 'testassignment4',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assign',
-                    'iteminstance' => 4,
-                    'itemsortorder' => 5,
-                    'courseid' => 2,
-                    'coursename' => 'testcourse',
-                    'coursemoduleid' => 2
-                ),
-                array(
-                    'itemid' => 5,
-                    'itemname' => 'testassignment5',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assignment',
-                    'iteminstance' => 5,
-                    'itemsortorder' => 3,
-                    'courseid' => 2,
-                    'coursename' => 'testcourse',
-                    'coursemoduleid' => 2
-                ),
-                array(
-                    'itemid' => 6,
-                    'itemname' => 'testassignment6',
-                    'itemtype' => 'mod',
-                    'itemmodule' => 'assignment',
-                    'iteminstance' => 6,
-                    'itemsortorder' => 4,
-                    'courseid' => 2,
-                    'coursename' => 'testcourse',
-                    'coursemoduleid' => 2
-                )
-        );
-
-        foreach ($data as $rec) {
-            // Inserting records into block_grade_me through CSV or insert_record results in "unknown error fetching inserted id".
-            $sql = "INSERT INTO {block_grade_me}(itemid, itemname, itemtype, itemmodule, iteminstance, itemsortorder, courseid, coursename, coursemoduleid)
-                         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $params = array($rec['itemid'], $rec['itemname'], $rec['itemtype'], $rec['itemmodule'], $rec['iteminstance'], $rec['itemsortorder'], $rec['courseid'],
-                    $rec['coursename'], $rec['coursemoduleid']);
-            $DB->execute($sql, $params);
-        }
     }
 
     /**
@@ -193,40 +124,41 @@ class block_grade_me_testcase extends advanced_testcase {
     public function cron_provider() {
         // Old item.
         $items[2] = new stdClass();
-        $items[2]->itemid = 2;
         $items[2]->itemname = 'testassignment2';
         $items[2]->itemtype = 'mod';
         $items[2]->itemmodule =  'assign';
 
         // Updated item.
         $items[3] = new stdClass();
-        $items[3]->itemid = 3;
         $items[3]->itemname = 'testassignment3';
         $items[3]->itemtype = 'mod';
         $items[3]->itemmodule = 'assign';
 
         // New item.
         $items[4] = new stdClass();
-        $items[4]->itemid = 4;
         $items[4]->itemname = 'testassignment4';
         $items[4]->itemtype = 'mod';
         $items[4]->itemmodule = 'assign';
 
         $items[5] = new stdClass();
-        $items[5]->itemid = 5;
         $items[5]->itemname = 'testassignment5';
         $items[5]->itemtype = 'mod';
         $items[5]->itemmodule = 'assignment';
 
         $items[6] = new stdClass();
-        $items[6]->itemid = 6;
         $items[6]->itemname = 'testassignment6';
         $items[6]->itemtype = 'mod';
         $items[6]->itemmodule = 'assignment';
 
         $data = array(
                 array(
-                    array(3 => $items[3], 2 => $items[2], 4 => $items[4], 5 => $items[5], 6 => $items[6])
+                    array(
+                        'testassignment3' => $items[3],
+                        'testassignment2' => $items[2],
+                        'testassignment4' => $items[4],
+                        'testassignment5' => $items[5],
+                        'testassignment6' => $items[6]
+                    )
                 )
         );
 
@@ -241,7 +173,6 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_cron($expected) {
         global $DB, $CFG;
-
         $this->resetAfterTest(true);
         $this->create_grade_me_data();
         $user = $this->getDataGenerator()->create_user();
@@ -251,7 +182,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $grademe = new block_grade_me();
         $grademe->cron();
         $this->expectOutputRegex('/Updated block_grade_me cache in/');
-        $actual = $DB->get_records('block_grade_me', array(), '', 'itemid, itemname, itemtype, itemmodule');
+        $actual = $DB->get_records('block_grade_me', array(), '', 'itemname, itemtype, itemmodule');
         $this->assertEquals($expected, $actual);
     }
 
