@@ -180,9 +180,9 @@ class block_grade_me extends block_base {
         $rs = $DB->get_recordset_sql($sql, $params);
 
         foreach ($rs as $rec) {
-            $itemidexists = $DB->record_exists('block_grade_me', array('itemid' => $rec->itemid));
+            $idexists = $DB->record_exists('block_grade_me', array('id' => $rec->itemid));
             $params = array(
-                'itemid' => $rec->itemid,
+                'id' => $rec->itemid,
                 'itemname' => $rec->itemname,
                 'itemtype' => $rec->itemtype,
                 'itemmodule' => $rec->itemmodule,
@@ -192,18 +192,11 @@ class block_grade_me extends block_base {
                 'coursename' => $rec->coursename,
                 'coursemoduleid' => $rec->coursemoduleid,
             );
-            if ($itemidexists) {
-                // Using update_record() complains due to non-existing id field.
-                $sql = 'UPDATE {block_grade_me}
-                           SET itemname = :itemname, itemtype = :itemtype, itemmodule = :itemmodule, iteminstance = :iteminstance, itemsortorder = :itemsortorder,
-                               courseid = :courseid, coursename = :coursename, coursemoduleid = :coursemoduleid
-                         WHERE itemid = :itemid';
+            if ($idexists) {
+                $DB->update_record('block_grade_me', $params);
             } else {
-                // Using insert_record() complains due to non-existing id field.
-                $sql = 'INSERT INTO {block_grade_me} (itemid, itemname, itemtype, itemmodule, iteminstance, itemsortorder, courseid, coursename, coursemoduleid)
-                             VALUES (:itemid, :itemname, :itemtype, :itemmodule, :iteminstance, :itemsortorder, :courseid, :coursename, :coursemoduleid)';
+                $DB->insert_record('block_grade_me', $params);
             }
-            $DB->execute($sql, $params);
         }
 
         // Show times
