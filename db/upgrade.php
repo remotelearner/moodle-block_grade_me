@@ -47,6 +47,8 @@
 function xmldb_block_grade_me_upgrade($oldversion, $block) {
     global $DB;
 
+    $dbman = $DB->get_manager();
+
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this.
 
@@ -62,6 +64,18 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
 
         // grade_me savepoint reached
         upgrade_block_savepoint(true, 2012080501, 'grade_me');
+    }
+
+    if ($oldversion < 2012080506) {
+        // Rename and redefine old field name 'itemid' from table table block_grade_me to 'id'.
+        $table = new xmldb_table('block_grade_me');
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'id');
+        }
+
+        upgrade_block_savepoint(true, 2012080506, 'grade_me');
     }
 
     return true;
