@@ -3,11 +3,11 @@
     padding: 0 4px 4px 4px;
 }
 
-.block_grade_me dl
-, .block_grade_me dt
-, .block_grade_me dd
-, .block_grade_me ul
-, .block_grade_me li {
+.block_grade_me dl,
+.block_grade_me dt,
+.block_grade_me dd,
+.block_grade_me ul,
+.block_grade_me li {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -39,15 +39,15 @@
     height: 16px;
     float: left;
     cursor: pointer;
-    background: transparent url('/blocks/grade_me/pix/open.png') no-repeat 50% 50%;
+    background: transparent url('[[pix:block_grade_me|open]]') no-repeat 50% 50%;
 }
 
 .jsenabled .toggle {
-    background: transparent url('/blocks/grade_me/pix/closed.png') no-repeat 50% 50% !important;
+    background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50% !important;
 }
 
 .block_grade_me .toggle.open {
-    background: transparent url('/blocks/grade_me/pix/open.png') no-repeat 50% 50% !important;
+    background: transparent url('[[pix:block_grade_me|open]]') no-repeat 50% 50% !important;
 }
 
 .jsenabled .block_grade_me_hide {
