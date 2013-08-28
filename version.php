@@ -30,16 +30,3 @@ $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '2.3.4.4';
-
-global $CFG;
-$block_grade_me_plugins = get_list_of_plugins('blocks/grade_me/plugins');
-foreach ($block_grade_me_plugins AS $block_grade_me_plugin) {
-    if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$block_grade_me_plugin.'/'.$block_grade_me_plugin.'_plugin.php')) {
-        include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$block_grade_me_plugin.'/'.$block_grade_me_plugin.'_plugin.php');
-        if (function_exists('block_grade_me_required_capability_'.$block_grade_me_plugin)) {
-            $required_capability = 'block_grade_me_required_capability_'.$block_grade_me_plugin;
-            $a = $required_capability();
-            $plugin->dependencies['mod_'.$block_grade_me_plugin] = $a[$block_grade_me_plugin]['versiondependencies'];
-        }
-    }
-}
