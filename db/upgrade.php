@@ -47,10 +47,47 @@
 function xmldb_block_grade_me_upgrade($oldversion, $block) {
     global $DB;
 
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this.
+    $dbman = $DB->get_manager();
 
-    if ($oldversion < 2012080501) {
+    $result = true;
+
+    // Install block_grade_me database.
+    if ($result && $oldversion < 2012080500) {
+
+        // Define table block_grade_me to be created.
+        $table = new xmldb_table('block_grade_me');
+
+        // Adding fields to table block_grade_me.
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('itemname', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('itemtype', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemmodule', XMLDB_TYPE_CHAR, '30', null, null, null, null);
+        $table->add_field('iteminstance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('itemsortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('coursename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table block_grade_me.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('itemid'));
+        $table->add_key('itemid', XMLDB_KEY_FOREIGN, array('itemid'), 'grade_items', array('id'));
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+        $table->add_key('coursemoduleid', XMLDB_KEY_FOREIGN, array('coursemoduleid'), 'course_modules', array('id'));
+
+        // Adding indexes to table block_grade_me.
+        $table->add_index('courseid-itemmodule', XMLDB_INDEX_NOTUNIQUE, array('courseid', 'itemmodule'));
+        $table->add_index('itemsortorder', XMLDB_INDEX_NOTUNIQUE, array('itemsortorder'));
+
+        // Conditionally launch create table for block_grade_me.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Savepoint reached.
+        upgrade_block_savepoint(true, 2012080500, 'grade_me');
+    }
+
+    if ($result && ($oldversion < 2012080501)) {
         // Get the instances of this block.
         if ($blocks = $DB->get_records('block_instances', array('blockname' => 'grade_me', 'pagetypepattern' => 'my-index'))) {
             // Loop through and remove them from the My Moodle page.
@@ -60,7 +97,7 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
 
         }
 
-        // grade_me savepoint reached
+        // Savepoint reached.
         upgrade_block_savepoint(true, 2012080501, 'grade_me');
     }
 
