@@ -180,7 +180,7 @@ class block_grade_me extends block_base {
         $rs = $DB->get_recordset_sql($sql, $params);
 
         foreach ($rs as $rec) {
-            $idexists = $DB->record_exists('block_grade_me', array('id' => $rec->itemid));
+            $idexists = $DB->record_exists('block_grade_me', array('itemtype' => $rec->itemtype, 'itemmodule' => $rec->itemmodule, 'iteminstance' => $rec->iteminstance, 'courseid' => $rec->courseid));
             $params = array(
                 'id' => $rec->itemid,
                 'itemname' => $rec->itemname,
