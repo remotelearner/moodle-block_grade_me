@@ -224,8 +224,6 @@
         <column>iteminstance</column>
         <column>itemsortorder</column>
         <column>courseid</column>
-        <column>coursename</column>
-        <column>coursemoduleid</column>
         <row>
             <value>2</value>
             <value>testassignment2</value>
@@ -234,8 +232,6 @@
             <value>2</value>
             <value>1</value>
             <value>2</value>
-            <value>testcourse</value>
-            <value>1</value>
         </row>
         <row>
             <value>3</value>
@@ -245,8 +241,6 @@
             <value>3</value>
             <value>2</value>
             <value>2</value>
-            <value>testcourse</value>
-            <value>1</value>
         </row>
         <row>
             <value>4</value>
@@ -255,8 +249,6 @@
             <value>assign</value>
             <value>4</value>
             <value>5</value>
-            <value>2</value>
-            <value>testcourse</value>
             <value>2</value>
         </row>
         <row>
@@ -267,19 +259,47 @@
             <value>5</value>
             <value>3</value>
             <value>2</value>
-            <value>testcourse</value>
-            <value>2</value>
         </row>
         <row>
             <value>6</value>
-            <value>testassignment6</value>
+            <value>testassignment6_UPDATED</value>
             <value>mod</value>
             <value>assignment</value>
             <value>6</value>
             <value>4</value>
             <value>2</value>
-            <value>testcourse</value>
+        </row>
+    </table>
+    <table name="grade_items">
+        <column>courseid</column>
+        <column>itemname</column>
+        <column>itemtype</column>
+        <column>itemmodule</column>
+        <column>iteminstance</column>
+        <row>
             <value>2</value>
+            <value>testassignment6_UPDATED</value>
+            <value>mod</value>
+            <value>assignment</value>
+            <value>6</value>
+        </row>
+    </table>
+    <table name="modules">
+        <column>id</column>
+        <column>name</column>
+        <row>
+            <value>100</value>
+            <value>assignment</value>
+        </row>
+    </table>
+    <table name="course_modules">
+        <column>course</column>
+        <column>module</column>
+        <column>instance</column>
+        <row>
+            <value>2</value>
+            <value>100</value>
+            <value>6</value>
         </row>
     </table>
 </dataset>
