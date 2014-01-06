@@ -122,47 +122,51 @@ class block_grade_me_testcase extends advanced_testcase {
      * @return array Grade item data
      */
     public function cron_provider() {
-        // Old item.
-        $items[2] = new stdClass();
-        $items[2]->itemname = 'testassignment2';
-        $items[2]->itemtype = 'mod';
-        $items[2]->itemmodule =  'assign';
+        $item2 = new StdClass();
+        $item2->id = 2;
+        $item2->itemname = 'testassignment2';
+        $item2->itemtype = 'mod';
+        $item2->itemmodule = 'assign';
 
-        // Updated item.
-        $items[3] = new stdClass();
-        $items[3]->itemname = 'testassignment3';
-        $items[3]->itemtype = 'mod';
-        $items[3]->itemmodule = 'assign';
+        $item3 = new StdClass();
+        $item3->id = 3;
+        $item3->itemname = 'testassignment3';
+        $item3->itemtype = 'mod';
+        $item3->itemmodule = 'assign';
 
-        // New item.
-        $items[4] = new stdClass();
-        $items[4]->itemname = 'testassignment4';
-        $items[4]->itemtype = 'mod';
-        $items[4]->itemmodule = 'assign';
+        $item4 = new StdClass();
+        $item4->id = 4;
+        $item4->itemname = 'testassignment4';
+        $item4->itemtype = 'mod';
+        $item4->itemmodule = 'assign';
 
-        $items[5] = new stdClass();
-        $items[5]->itemname = 'testassignment5';
-        $items[5]->itemtype = 'mod';
-        $items[5]->itemmodule = 'assignment';
+        $item5 = new StdClass();
+        $item5->id = 5;
+        $item5->itemname = 'testassignment5';
+        $item5->itemtype = 'mod';
+        $item5->itemmodule = 'assignment';
 
-        $items[6] = new stdClass();
-        $items[6]->itemname = 'testassignment6';
-        $items[6]->itemtype = 'mod';
-        $items[6]->itemmodule = 'assignment';
+        // Represents updated record.
+        $item6 = new StdClass();
+        $item6->id = 6;
+        $item6->itemname = 'testassignment6_UPDATED';
+        $item6->itemtype = 'mod';
+        $item6->itemmodule = 'assignment';
 
         $data = array(
                 array(
                     array(
-                        'testassignment3' => $items[3],
-                        'testassignment2' => $items[2],
-                        'testassignment4' => $items[4],
-                        'testassignment5' => $items[5],
-                        'testassignment6' => $items[6]
+                        '2' => $item2,
+                        '3' => $item3,
+                        '4' => $item4,
+                        '5' => $item5,
+                        '6' => $item6
                     )
                 )
         );
 
         return $data;
+
     }
 
     /**
@@ -182,7 +186,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $grademe = new block_grade_me();
         $grademe->cron();
         $this->expectOutputRegex('/Updated block_grade_me cache in/');
-        $actual = $DB->get_records('block_grade_me', array(), '', 'itemname, itemtype, itemmodule');
+        $actual = $DB->get_records('block_grade_me', array(), '', 'id, itemname, itemtype, itemmodule');
         $this->assertEquals($expected, $actual);
     }
 
