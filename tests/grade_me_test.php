@@ -355,7 +355,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Set up gradebook role
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $roleid = create_role('role', 'role', 'grade me block');
         set_role_contextlevels($roleid, array(CONTEXT_COURSE));
         role_assign($roleid, $user->id, $context->id);
@@ -439,7 +439,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Set up gradebook roles
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $roleid = create_role('role', 'role', 'grade me block');
         $roleid2 = create_role('role2', 'role2', 'grade me block');
         set_role_contextlevels($roleid, array(CONTEXT_COURSE));
