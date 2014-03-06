@@ -42,7 +42,7 @@
     background: transparent url('[[pix:block_grade_me|open]]') no-repeat 50% 50%;
 }
 
-.jsenabled .toggle {
+.block_grade_me .jsenabled .toggle {
     background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50% !important;
 }
 
