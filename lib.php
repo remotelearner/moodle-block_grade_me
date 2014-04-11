@@ -135,18 +135,21 @@ function block_grade_me_tree($course) {
 
         // Assign module needs to have a rownum
         $rownum = 0;
+        // Moodle will match the rownum index against this CSV user ID list to get the correct single user grade record.
+        $useridlist = '';
 
         foreach ($item AS $l3 => $submission) {
             $timesubmitted = $l3;
             $userid = $submission['meta']['userid'];
             $submissionid = $submission['meta']['submissionid'];
             unset($submission['meta']);
+            $useridlist .= $userid;
 
             $submissionlink = $CFG->wwwroot;
             if ($itemmodule == 'assignment') {
                 $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
-                $submissionlink .= '/mod/assign/view.php?id='.$coursemoduleid.'&amp;action=grade&amp;rownum='.$rownum;
+                $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&useridlist=$useridlist";
                 $rownum++;
             } else if ($itemmodule == 'data') {
                 $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';
@@ -173,6 +176,8 @@ function block_grade_me_tree($course) {
             $text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'" title="'.$userprofiletitle.'">'.$userfirstlast.'</a>';  // user name and profile link
             $text .= '<br />'.userdate($timesubmitted,$date_time_string);  // output submission date
             $text .= '</li>'."\n";  // end gradable
+
+            $useridlist .= ',';
         }
 
         $text .= '</ul>'."\n";
