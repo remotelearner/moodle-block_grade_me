@@ -146,7 +146,7 @@ function block_grade_me_tree($course) {
             if ($itemmodule == 'assignment') {
                 $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
-                $submissionlink .= '/mod/assign/view.php?id='.$coursemoduleid.'&amp;action=grade&amp;rownum='.$rownum;
+                $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&userid=$userid";
                 $rownum++;
             } else if ($itemmodule == 'data') {
                 $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';

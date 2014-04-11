@@ -390,7 +390,7 @@ class block_grade_me_testcase extends advanced_testcase {
                    array("assign",
                        array(1 => "/Go to assign/",
                              2 => "/mod\/assign\/view.php/",
-                             3 => "/action=grade&amp;rownum=0/",
+                             3 => "/action=grade&rownum=0&userid=3/",
                              5 => "/testassignment3/",
                              6 => "/testassignment4/"
                              )
@@ -481,8 +481,8 @@ class block_grade_me_testcase extends advanced_testcase {
                    array("assign",
                            array(1 => "/Go to assign/",
                                  2 => "/mod\/assign\/view.php/",
-                                 3 => "/action=grade&amp;rownum=0/",
-                                 4 => "/action=grade&amp;rownum=1/",
+                                 3 => "/action=grade&rownum=0&userid=3/",
+                                 4 => "/action=grade&rownum=1&userid=4/",
                                  5 => "/testassignment3/",
                                  6 => "/testassignment4/"
                                  )
