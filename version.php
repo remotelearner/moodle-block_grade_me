@@ -18,15 +18,15 @@
  * Grade Me block
  *
  * @package   block_grade_me
- * @copyright 2012 Dakota Duff
+ * @copyright 2012-2014 Dakota Duff
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013022606;
+$plugin->version   = 2013022607;
 $plugin->requires  = 2012120300;
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '2.4.4.7';
+$plugin->release   = '2.4.4.8';
