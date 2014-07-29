@@ -168,6 +168,12 @@ class block_grade_me_testcase extends advanced_testcase {
         $item7->itemtype = 'mod';
         $item7->itemmodule = 'assign';
 
+        $item8 = new StdClass();
+        $item8->id = 8;
+        $item8->itemname = 'test_forum';
+        $item8->itemtype = 'mod';
+        $item8->itemmodule = 'forum';
+
         $data = array(
                 array(
                     array(
@@ -176,7 +182,8 @@ class block_grade_me_testcase extends advanced_testcase {
                         '4' => $item4,
                         '5' => $item5,
                         '6' => $item6,
-                        '7' => $item7
+                        '7' => $item7,
+                        '8' => $item8
                     )
                 )
         );
@@ -268,7 +275,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $concatid = $DB->sql_concat('fp.id', "'-'", $USER->id);
         $concatitem = $DB->sql_concat('r.itemid', "'-'", 'r.userid');
 
-        $expected = ", fp.id submissionid, fp.userid, fp.modified timesubmitted
+        $expected = ", fp.id submissionid, fp.userid, fp.modified timesubmitted, fd.id as forum_discussion_id
         FROM {forum_posts} fp
         JOIN {forum_discussions} fd ON fd.id = fp.discussion
         JOIN {forum} f ON f.id = fd.forum
@@ -515,4 +522,26 @@ class block_grade_me_testcase extends advanced_testcase {
                            )
         );
     }
+
+    /**
+     * Test that the forum plugin uses the correct ID link to a forum discussion.
+     */
+    public function test_block_grade_me_uses_correct_forum_discussion_id() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->create_grade_me_data();
+        $user = $this->getDataGenerator()->create_user();
+
+        list($sql, $params) = block_grade_me_query_forum(array($user->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('forum');
+        $result = $DB->get_recordset_sql($sql, array($params[0], 'courseid' => 2));
+        $gradeables = array();
+        foreach ($result as $rec) {
+            $gradeables = block_grade_me_array($gradeables, $rec);
+        }
+
+        $actual = block_grade_me_tree($gradeables);
+        $this->assertRegExp('/mod\/forum\/discuss.php\?d=100\#p1/', $actual);
+   }
 }
