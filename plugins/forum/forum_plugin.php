@@ -25,7 +25,7 @@ function block_grade_me_query_forum($gradebookusers) {
     $concatitem = $DB->sql_concat('r.itemid', "'-'", 'r.userid');
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
 
-    $query = ", fp.id submissionid, fp.userid, fp.modified timesubmitted
+    $query = ", fp.id submissionid, fp.userid, fp.modified timesubmitted, fd.id as forum_discussion_id
         FROM {forum_posts} fp
         JOIN {forum_discussions} fd ON fd.id = fp.discussion
         JOIN {forum} f ON f.id = fd.forum
@@ -42,6 +42,7 @@ function block_grade_me_query_forum($gradebookusers) {
                            AND cx.instanceid = bgm.coursemoduleid
                     )
              )";
+
 
     return array($query, $inparams);
 }

@@ -72,6 +72,9 @@ function block_grade_me_array($gradeables, $r) {
     $gradeables[$r->itemsortorder]['meta']['coursemoduleid'] = $r->coursemoduleid;
     $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['userid'] = $r->userid;
     $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['submissionid'] = $r->submissionid;
+    if (isset($r->forum_discussion_id)) {
+        $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['forum_discussion_id'] = $r->forum_discussion_id;
+    }
     return($gradeables);
 }
 
@@ -140,7 +143,6 @@ function block_grade_me_tree($course) {
             $timesubmitted = $l3;
             $userid = $submission['meta']['userid'];
             $submissionid = $submission['meta']['submissionid'];
-            unset($submission['meta']);
 
             $submissionlink = $CFG->wwwroot;
             if ($itemmodule == 'assignment') {
@@ -151,12 +153,15 @@ function block_grade_me_tree($course) {
             } else if ($itemmodule == 'data') {
                 $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';
             } else if ($itemmodule == 'forum') {
-                $submissionlink .= '/mod/forum/discuss.php?d='.$coursemoduleid.'#p'.$submissionid;
+                $forumdiscussionid = $submission['meta']['forum_discussion_id'];
+                $submissionlink .= '/mod/forum/discuss.php?d='.$forumdiscussionid.'#p'.$submissionid;
             } else if ($itemmodule == 'glossary') {
                 $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
             } else if ($itemmodule == 'quiz') {
                 $submissionlink .= '/mod/quiz/report.php?q='.$coursemoduleid.'&amp;mode=grading';
             }
+
+            unset($submission['meta']);
 
             $submissiontitle = get_string('link_grade_img','block_grade_me',array());
             $altmark = get_string('alt_mark','block_grade_me',array());

@@ -317,6 +317,15 @@
             <value>6</value>
             <value>2</value>
         </row>
+        <row>
+            <value>8</value>
+            <value>test_forum</value>
+            <value>mod</value>
+            <value>forum</value>
+            <value>1</value>
+            <value>1</value>
+            <value>2</value>
+        </row>
     </table>
     <table name="grade_items">
         <column>courseid</column>
@@ -348,6 +357,42 @@
             <value>2</value>
             <value>100</value>
             <value>6</value>
+        </row>
+    </table>
+    <table name="forum">
+        <column>id</column>
+        <column>course</column>
+        <column>assessed</column>
+        <column>intro</column>
+        <row>
+            <value>1</value>
+            <value>2</value>
+            <value>1</value>
+            <value></value>
+        </row>
+    </table>
+    <table name="forum_posts">
+        <column>id</column>
+        <column>userid</column>
+        <column>discussion</column>
+        <column>message</column>
+        <row>
+            <value>1</value>
+            <value>3</value>
+            <value>100</value>
+            <value></value>
+        </row>
+    </table>
+    <table name="forum_discussions">
+        <column>id</column>
+        <column>userid</column>
+        <column>course</column>
+        <column>forum</column>
+        <row>
+            <value>100</value>
+            <value>3</value>
+            <value>2</value>
+            <value>1</value>
         </row>
     </table>
 </dataset>
