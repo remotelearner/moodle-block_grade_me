@@ -27,6 +27,13 @@
             <value>test3</value>
             <value>80</value>
         </row>
+        <row>
+            <value>7</value>
+            <value>2</value>
+            <value>testassignment5</value>
+            <value>test4</value>
+            <value>75</value>
+        </row>
     </table>
     <table name="assign_grades">
         <column>id</column>
@@ -39,6 +46,7 @@
         <column>locked</column>
         <column>mailed</column>
         <column>extensionduedate</column>
+        <column>attemptnumber</column>
         <row>
             <value>2</value>
             <value>2</value>
@@ -50,6 +58,20 @@
             <value>1</value>
             <value>1</value>
             <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>7</value>
+            <value>3</value>
+            <value>1</value>
+            <value>1</value>
+            <value>2</value>
+            <value>34</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
         </row>
     </table>
     <table name="assign_submission">
@@ -60,6 +82,7 @@
         <column>timemodified</column>
         <column>status</column>
         <column>groupid</column>
+        <column>attemptnumber</column>
         <row>
             <value>1</value>
             <value>2</value>
@@ -68,6 +91,7 @@
             <value>1</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>2</value>
@@ -77,6 +101,7 @@
             <value>2</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>3</value>
@@ -86,6 +111,7 @@
             <value>3</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>4</value>
@@ -95,6 +121,7 @@
             <value>4</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>5</value>
@@ -104,6 +131,7 @@
             <value>5</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>6</value>
@@ -113,6 +141,17 @@
             <value>6</value>
             <value>submitted</value>
             <value>0</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>7</value>
+            <value>3</value>
+            <value>6</value>
+            <value>6</value>
+            <value>submitted</value>
+            <value>0</value>
+            <value>1</value>
         </row>
     </table>
     <table name="assignment">
@@ -267,6 +306,15 @@
             <value>assignment</value>
             <value>6</value>
             <value>4</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>7</value>
+            <value>testassignment7</value>
+            <value>mod</value>
+            <value>assign</value>
+            <value>7</value>
+            <value>6</value>
             <value>2</value>
         </row>
     </table>
