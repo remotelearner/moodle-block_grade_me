@@ -93,7 +93,16 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec2->userid = $user->id;
         $rec2->timesubmitted = '3';
 
-        $expected = array('3' => $rec, '4' => $rec2);
+        // Tests resubmission
+        $rec3 = new stdClass();
+        $rec3->id = '7';
+        $rec3->courseid = $course->id;
+        $rec3->submissionid = '7';
+        $rec3->userid = $user->id;
+        $rec3->timesubmitted = '6';
+
+
+        $expected = array('3' => $rec, '4' => $rec2, '7' => $rec3);
         $actual = $DB->get_records_sql($sql, $insqlparams);
         $this->assertEquals($expected, $actual);
         $this->assertFalse(block_grade_me_query_assign(array()));
@@ -153,6 +162,12 @@ class block_grade_me_testcase extends advanced_testcase {
         $item6->itemtype = 'mod';
         $item6->itemmodule = 'assignment';
 
+        $item7 = new StdClass();
+        $item7->id = 7;
+        $item7->itemname = 'testassignment7';
+        $item7->itemtype = 'mod';
+        $item7->itemmodule = 'assign';
+
         $data = array(
                 array(
                     array(
@@ -160,7 +175,8 @@ class block_grade_me_testcase extends advanced_testcase {
                         '3' => $item3,
                         '4' => $item4,
                         '5' => $item5,
-                        '6' => $item6
+                        '6' => $item6,
+                        '7' => $item7
                     )
                 )
         );
