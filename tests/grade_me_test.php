@@ -213,25 +213,82 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * Test the block_grade_me_query_quiz function
-     */
-    public function test_block_grade_me_query_quiz() {
-        $expected = ", qa.id state_id, qa.userid, qa.timemodified timesubmitted
-        FROM {quiz_attempts} qa
-        JOIN {question_sessions} qs ON qs.attemptid = qa.id
-        JOIN {quiz} q ON q.id = qa.quiz
-        JOIN {quiz_question_instances} qqi ON qqi.quiz = q.id AND qqi.question = qs.questionid
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = q.course AND bgm.iteminstance = q.id
-       WHERE qa.userid IN (?,?)
-             AND qa.timefinish != 0
-             AND qqi.grade > 0
-             AND qs.newgraded != qs.newest";
 
-        list($sql, $params) = block_grade_me_query_quiz(array(2, 3));
-        $this->assertEquals($expected, $sql);
-        $this->assertEquals(array(2, 3), $params);
-        $this->assertFalse(block_grade_me_query_quiz(array()));
+    /**
+     * Data provider for the testing the quiz plugin.
+     *
+     * @return array Quiz questions
+     */
+    public function provider_block_grade_me_query_quiz() {
+        // Represents questions that are finished and ready to be graded.
+        // In progress questions or questions that are already graded are not included.
+        $question1 = array(
+            'courseid'          => 2,
+            'coursename'        => '',
+            'itemmodule'        => 'quiz',
+            'iteminstance'      => 2,
+            'itemname'          => 'quizitem2',
+            'coursemoduleid'    => 0,
+            'itemsortorder'     => 0,
+            'state_id'          => 2,
+            'userid'            => 3,
+            'timesubmitted'     => 0,
+            'submissionid'      => 2,
+            'sequencenumber'    => 2
+        );
+
+        $question2 = array(
+            'courseid'          => 2,
+            'coursename'        => '',
+            'itemmodule'        => 'quiz',
+            'iteminstance'      => 4,
+            'itemname'          => 'quizitem4',
+            'coursemoduleid'    => 0,
+            'itemsortorder'     => 0,
+            'state_id'          => 4,
+            'userid'            => 3,
+            'timesubmitted'     => 0,
+            'submissionid'      => 4,
+            'sequencenumber'    => 2
+        );
+
+        $data = array(
+                array(
+                    array(
+                        $question1,
+                        $question2
+                    )
+                )
+        );
+
+        return $data;
+    }
+
+    /**
+     * Test the quiz plugin where a list of questions not yet graded is returned.
+     *
+     * @dataProvider provider_block_grade_me_query_quiz
+     * @param array $expected The expected results
+     */
+    public function test_block_grade_me_query_quiz($expected) {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->loadDataSet($this->createXMLDataSet(__DIR__.'/fixtures/quiz.xml'));
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+
+        list($sql, $params) = block_grade_me_query_quiz(array($user->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('quiz');
+
+        $actual = array();
+        $result = $DB->get_recordset_sql($sql, array($params[0], $course->id));
+        foreach ($result as $rec) {
+            $actual[] = (array)$rec;
+        }
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
