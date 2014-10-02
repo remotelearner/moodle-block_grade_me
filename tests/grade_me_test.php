@@ -267,39 +267,6 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the block_grade_me_query_query_forum function
-     */
-    public function test_block_grade_me_query_forum() {
-        global $USER, $DB;
-
-        $concatid = $DB->sql_concat('fp.id', "'-'", $USER->id);
-        $concatitem = $DB->sql_concat('r.itemid', "'-'", 'r.userid');
-
-        $expected = ", fp.id submissionid, fp.userid, fp.modified timesubmitted, fd.id as forum_discussion_id
-        FROM {forum_posts} fp
-        JOIN {forum_discussions} fd ON fd.id = fp.discussion
-        JOIN {forum} f ON f.id = fd.forum
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = f.course AND bgm.iteminstance = f.id
-       WHERE fp.userid IN (?,?)
-             AND f.assessed = 1
-             AND $concatid NOT IN (
-             SELECT $concatitem
-               FROM {rating} r
-              WHERE r.contextid IN (
-                    SELECT cx.id
-                      FROM {context} cx
-                     WHERE cx.contextlevel = 70
-                           AND cx.instanceid = bgm.coursemoduleid
-                    )
-             )";
-
-        list($sql, $params) = block_grade_me_query_forum(array(2, 3));
-        $this->assertEquals($expected, $sql);
-        $this->assertEquals(array(2, 3), $params);
-        $this->assertFalse(block_grade_me_query_forum(array()));
-    }
-
-    /**
      * Test the block_grade_me_query_data function
      */
     public function test_block_grade_me_query_data() {
@@ -543,5 +510,72 @@ class block_grade_me_testcase extends advanced_testcase {
 
         $actual = block_grade_me_tree($gradeables);
         $this->assertRegExp('/mod\/forum\/discuss.php\?d=100\#p1/', $actual);
-   }
+    }
+
+    /**
+     * Data provider for the forum plugin.
+     *
+     * @return array Forum items
+     */
+    public function provider_block_grade_me_forum() {
+        // Represents forum items that are ready for grading. Forum items that have already been graded are not included.
+        $forumitem1 = array(
+            'courseid'            => 2,
+            'coursename'          => '',
+            'itemmodule'          => 'forum',
+            'iteminstance'        => 1,
+            'itemname'            => 'forumitem1',
+            'coursemoduleid'      => 0,
+            'itemsortorder'       => 0,
+            'submissionid'        => 1,
+            'userid'              => 3,
+            'timesubmitted'       => 0,
+            'forum_discussion_id' => 1
+        );
+
+        $forumitem2 = array(
+            'courseid'            => 2,
+            'coursename'          => '',
+            'itemmodule'          => 'forum',
+            'iteminstance'        => 2,
+            'itemname'            => 'forumitem2',
+            'coursemoduleid'      => 0,
+            'itemsortorder'       => 0,
+            'submissionid'        => 2,
+            'userid'              => 3,
+            'timesubmitted'       => 0,
+            'forum_discussion_id' => 2
+        );
+
+        $data = array(array(array($forumitem1, $forumitem2)));
+
+        return $data;
+    }
+
+    /**
+     * Test the forum plugin where a list of forum activites not yet graded is returned.
+     *
+     * @dataProvider provider_block_grade_me_forum
+     * @param array $expected The expected results
+     */
+    public function test_block_grade_me_forum($expected) {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->loadDataSet($this->createXMLDataSet(__DIR__.'/fixtures/forum.xml'));
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+
+        list($sql, $params) = block_grade_me_query_forum(array($user->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('forum');
+
+        $actual = array();
+        $result = $DB->get_recordset_sql($sql, array($params[0], $course->id));
+        foreach ($result as $rec) {
+            $actual[] = (array)$rec;
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
 }

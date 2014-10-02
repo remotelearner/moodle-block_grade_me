@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <table name="block_grade_me">
+        <column>id</column>
+        <column>itemname</column>
+        <column>itemtype</column>
+        <column>itemmodule</column>
+        <column>iteminstance</column>
+        <column>courseid</column>
+        <!-- Item awaiting grading. -->
+        <row>
+            <value>1</value>
+            <value>forumitem1</value>
+            <value>mod</value>
+            <value>forum</value>
+            <value>1</value>
+            <value>2</value>
+        </row>
+        <!-- Item awaiting grading. -->
+        <row>
+            <value>2</value>
+            <value>forumitem2</value>
+            <value>mod</value>
+            <value>forum</value>
+            <value>2</value>
+            <value>2</value>
+        </row>
+        <!-- Graded item. -->
+        <row>
+            <value>3</value>
+            <value>forumitem2</value>
+            <value>mod</value>
+            <value>forum</value>
+            <value>3</value>
+            <value>2</value>
+        </row>
+    </table>
+    <table name="forum">
+        <column>id</column>
+        <column>course</column>
+        <column>assessed</column>
+        <column>intro</column>
+        <row>
+            <value>1</value>
+            <value>2</value>
+            <value>1</value>
+            <value>intro</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>1</value>
+            <value>intro</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>2</value>
+            <value>1</value>
+            <value>intro</value>
+        </row>
+    </table>
+    <table name="forum_discussions">
+        <column>id</column>
+        <column>forum</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+        </row>
+    </table>
+    <table name="forum_posts">
+        <column>id</column>
+        <column>userid</column>
+        <column>discussion</column>
+        <column>message</column>
+        <row>
+            <value>1</value>
+            <value>3</value>
+            <value>1</value>
+            <value>message</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>3</value>
+            <value>2</value>
+            <value>message</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+            <value>3</value>
+            <value>message</value>
+        </row>
+    </table>
+    <table name="grade_items">
+        <column>id</column>
+        <column>iteminstance</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+        </row>
+    </table>
+    <table name="grade_grades">
+        <column>id</column>
+        <column>itemid</column>
+        <column>userid</column>
+        <column>finalgrade</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>3</value>
+            <null />
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>3</value>
+            <null />
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+            <value>3</value>
+            <value>100</value>
+        </row>
+    </table>
+</dataset>
