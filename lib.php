@@ -158,7 +158,7 @@ function block_grade_me_tree($course) {
             } else if ($itemmodule == 'glossary') {
                 $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
             } else if ($itemmodule == 'quiz') {
-                $submissionlink .= '/mod/quiz/report.php?q='.$coursemoduleid.'&amp;mode=grading';
+                $submissionlink .= '/mod/quiz/report.php?id='.$coursemoduleid.'&amp;mode=grading';
             }
 
             unset($submission['meta']);
