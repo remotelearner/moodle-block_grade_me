@@ -32,7 +32,7 @@
 }
 
 .block_grade_me .toggle {
-    position: absolute;
+    position: relative;
     left: 0;
     display: block;
     width: 16px;
