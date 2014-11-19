@@ -13,7 +13,7 @@
             <value>mod</value>
             <value>quiz</value>
             <value>1</value>
-            <value>2</value>
+            <value>0</value>
         </row>
         <row>
             <value>2</value>
@@ -21,7 +21,7 @@
             <value>mod</value>
             <value>quiz</value>
             <value>2</value>
-            <value>2</value>
+            <value>0</value>
         </row>
         <row>
             <value>3</value>
@@ -29,7 +29,7 @@
             <value>mod</value>
             <value>quiz</value>
             <value>3</value>
-            <value>2</value>
+            <value>0</value>
         </row>
         <row>
             <value>4</value>
@@ -37,7 +37,7 @@
             <value>mod</value>
             <value>quiz</value>
             <value>4</value>
-            <value>2</value>
+            <value>0</value>
         </row>
     </table>
     <table name="quiz">
@@ -46,22 +46,22 @@
         <column>intro</column>
         <row>
             <value>1</value>
-            <value>2</value>
+            <value>0</value>
             <value>intro</value>
         </row>
         <row>
             <value>2</value>
-            <value>2</value>
+            <value>0</value>
             <value>intro</value>
         </row>
         <row>
             <value>3</value>
-            <value>2</value>
+            <value>0</value>
             <value>intro</value>
         </row>
         <row>
             <value>4</value>
-            <value>2</value>
+            <value>0</value>
             <value>intro</value>
         </row>
     </table>
@@ -76,7 +76,7 @@
         <row>
             <value>1</value>
             <value>1</value>
-            <value>3</value>
+            <value>0</value>
             <value>inprogress</value>
             <value>0</value>
             <value>1,0</value>
@@ -85,7 +85,7 @@
         <row>
             <value>2</value>
             <value>2</value>
-            <value>3</value>
+            <value>0</value>
             <value>finished</value>
             <value>1407519469</value>
             <value>1,0</value>
@@ -94,7 +94,7 @@
         <row>
             <value>3</value>
             <value>3</value>
-            <value>3</value>
+            <value>0</value>
             <value>finished</value>
             <value>1407619469</value>
             <value>1,0</value>
@@ -103,7 +103,7 @@
         <row>
             <value>4</value>
             <value>4</value>
-            <value>3</value>
+            <value>0</value>
             <value>finished</value>
             <value>1407619469</value>
             <value>1,0</value>
@@ -124,7 +124,7 @@
             <value>0</value>
             <value>todo</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <!-- Needs grading and should be listed. -->
         <row>
@@ -133,7 +133,7 @@
             <value>0</value>
             <value>todo</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>3</value>
@@ -141,7 +141,7 @@
             <value>1</value>
             <value>complete</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>4</value>
@@ -149,7 +149,7 @@
             <value>2</value>
             <value>needsgrading</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <!-- Manually graded and should not be listed. -->
         <row>
@@ -158,7 +158,7 @@
             <value>0</value>
             <value>todo</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>6</value>
@@ -166,7 +166,7 @@
             <value>1</value>
             <value>complete</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>7</value>
@@ -174,7 +174,7 @@
             <value>2</value>
             <value>needsgrading</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>8</value>
@@ -182,7 +182,7 @@
             <value>3</value>
             <value>mangrright</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <!-- Needs grading and should be listed. -->
         <row>
@@ -191,7 +191,7 @@
             <value>0</value>
             <value>todo</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>10</value>
@@ -199,7 +199,7 @@
             <value>1</value>
             <value>complete</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
         <row>
             <value>11</value>
@@ -207,7 +207,7 @@
             <value>2</value>
             <value>needsgrading</value>
             <value>1407219469</value>
-            <value>3</value>
+            <value>0</value>
         </row>
     </table>
 </dataset>
