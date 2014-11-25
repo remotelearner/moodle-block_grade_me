@@ -46,6 +46,7 @@ class block_grade_me extends block_base {
 
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
         $PAGE->requires->js('/blocks/grade_me/javascript/jquery-1.7.2.min.js');
+        $PAGE->requires->js('/blocks/grade_me/javascript/grademe.js');
 
         // create the content class
         $this->content = new stdClass;
@@ -76,9 +77,14 @@ class block_grade_me extends block_base {
             else {
                 $courses = enrol_get_my_courses();
             }
+            $iscoursecontext = false;
         } else {
             $courses[$COURSE->id] = $COURSE;
+            $iscoursecontext = true;
         }
+
+        // Expand/Collapse button.
+        $this->content->text .= '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall('.$iscoursecontext.');">Collapse/Expand All</button>';
 
         foreach ($courses AS $courseid => $course) {
             unset($params);
