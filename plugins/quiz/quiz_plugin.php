@@ -1,5 +1,7 @@
 <?php
 
+require_once($CFG->dirroot . '/question/engine/lib.php');
+
 function block_grade_me_required_capability_quiz() {
     $enabled_plugins['quiz'] = array( 
         'capability' => 'mod/quiz:grade', 
@@ -33,7 +35,7 @@ function block_grade_me_query_quiz($gradebookusers) {
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
-          GROUP BY questionattemptid
+          GROUP BY questionattemptid, userid
             ) maxsubq ON maxsubq.questionattemptid = qa.id
        WHERE qa.userid $insql
          AND qa.state = '".question_state::$finished."'"."

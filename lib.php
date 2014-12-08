@@ -102,8 +102,12 @@ function block_grade_me_tree($course) {
     $gradebookicon = $OUTPUT->pix_icon('i/grades',$altgradebook,null,array('class' => 'gm_icon'));
     $courselink = $CFG->wwwroot.'/course/view.php?id='.$courseid;
     $coursetitle = get_string('link_gradebook','block_grade_me',array('course_name' => $coursename));
-
-    $text .= '<dt class="cmod"><a href="'.$gradebooklink.'">'.$gradebookicon.'</a> <a href="'.$courselink.'" title="'.$coursetitle.'">'.$coursename.'</a></dt>'."\n";
+    $text .= '<div>';
+    $text .= '<dt id="courseid'.$courseid.'" class="cmod">
+    <div class="toggle" onclick="$(\'dt#courseid'.$courseid.' > div.toggle\').toggleClass(\'open\');$(\'dt#courseid'.$courseid.' ~ dd\').toggleClass(\'block_grade_me_hide\');"></div>
+    <a href="'.$gradebooklink.'">'.$gradebookicon.'</a> 
+    <a href="'.$courselink.'" title="'.$coursetitle.'">'.$coursename.'</a></dt>'."\n";
+    $text .= "\n";
 
     ksort($course);
 
@@ -128,8 +132,8 @@ function block_grade_me_tree($course) {
         $moduleicon = $OUTPUT->pix_icon('icon',$moduletitle,$itemmodule,array('class' => 'gm_icon'));
 
         $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  //open module
-        $text .= '<a href="'.$gradelink.'" title="'.$moduletitle.'">'.$moduleicon.'</a>';
         $text .= '<div class="toggle" onclick="$(\'dd#cmid'.$coursemoduleid.' > div.toggle\').toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.' > ul\').toggleClass(\'block_grade_me_hide\');"></div>'."\n";
+        $text .= '<a href="'.$gradelink.'" title="'.$moduletitle.'">'.$moduleicon.'</a>';
         $text .= '<a href="'.$modulelink.'" title="'.$moduletitle.'">'.$itemname.'</a> ('.count($item).')'."\n";
 
         $text .= '<ul class="block_grade_me_hide">'."\n";
@@ -183,6 +187,8 @@ function block_grade_me_tree($course) {
         $text .= '</ul>'."\n";
         $text .= '</dd>'."\n";  // close module
     }
+    $text .= '</div>';
+
 
     return $text;
 }
