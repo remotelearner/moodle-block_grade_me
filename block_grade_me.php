@@ -109,19 +109,12 @@ class block_grade_me extends block_base {
                     $fn = 'block_grade_me_query_'.$plugin;
                     $pluginfn = $fn($gradebookusers);
                     if ($pluginfn !== false) {
-                        list($sql, $inparams) = $fn($gradebookusers);
-                        $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
-                        $values = array_merge($inparams, $params);
-                        $rs = $DB->get_recordset_sql($query, $values);
-
                         // HACK: fix current quiz SQL that is broken.
-                        // There are few additional functions created for this hack (they come from Tim Hunt's student grading quiz report)i
+                        // There are few additional functions created for this hack (they come from Tim Hunt's student grading quiz report)
                         // get_formated_student_attempts is calling oall of them.
                         // once the 2.7 branch is fixed on the github remotelearners (they will most likely fix the sql request in plugins/quiz/quiz_plugin.php), the you can overwritte these files.
                         // TODO on this current HACK: cache for the results, especially needed when the block is displayed on the front page
-                        // TODO on this current HACK: no need to run the quiz SQL above this comment.
                         if ($plugin == 'quiz') {
-
                             // Get all quiz of the courses.
                             $course = $DB->get_record('course', array('id' => $courseid));
                             $quizs = get_all_instances_in_course("quiz", $course);
@@ -154,7 +147,11 @@ class block_grade_me extends block_base {
 				    }			
                                 }
                             }
-
+                        } else {
+                            list($sql, $inparams) = $fn($gradebookusers);
+                            $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
+                            $values = array_merge($inparams, $params);
+                            $rs = $DB->get_recordset_sql($query, $values);
                         }
 
                         foreach ($rs as $r) {
