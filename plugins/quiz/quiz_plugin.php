@@ -1,4 +1,6 @@
 <?php
+global $CFG;
+require_once($CFG->dirroot.'/question/engine/states.php');
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
