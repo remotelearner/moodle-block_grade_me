@@ -211,12 +211,12 @@ class block_grade_me extends block_base {
     }
 
     /**
-     * Moved outside of get_content per HOSSUP-1173 to fix
-     * displaying multiple block instances within the same page
+     * The Grade Me block should only be available under a course context.
+     *
      * @return array The formats which apply to this block
      */
     function applicable_formats() {
-       return array('all' => true);
+       return array('course' => true);
     }
 
     /**

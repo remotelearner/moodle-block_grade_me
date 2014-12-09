@@ -1,4 +1,6 @@
 <?php
+global $CFG;
+require_once($CFG->dirroot.'/question/engine/states.php');
 
 function block_grade_me_required_capability_quiz() {
     $enabled_plugins['quiz'] = array( 
