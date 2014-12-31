@@ -1,9 +1,9 @@
 <?php
 
 function block_grade_me_required_capability_glossary() {
-    $enabled_plugins['glossary'] = array( 
-        'capability' => 'mod/glossary:rate', 
-        'default_on' => false, 
+    $enabled_plugins['glossary'] = array(
+        'capability' => 'mod/glossary:rate',
+        'default_on' => false,
         'versiondependencies' => 'ANY_VERSION'
         );
     return $enabled_plugins;
@@ -28,17 +28,18 @@ function block_grade_me_query_glossary($gradebookusers) {
     $query = ", ge.id submissionid, ge.userid, ge.timemodified timesubmitted
         FROM {glossary_entries} ge
         JOIN {glossary} g ON g.id = ge.glossaryid
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = g.course AND bgm.iteminstance = ge.id
+   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = g.course AND bgm.iteminstance = ge.glossaryid
        WHERE ge.userid $insql
-             AND g.assessed = 1
-             AND $concatid NOT IN (
+         AND g.assessed = 1
+         AND g.scale <> 0
+         AND $concatid NOT IN (
              SELECT $concatitem
                FROM {rating} r
               WHERE r.contextid IN (
                     SELECT cx.id
                       FROM {context} cx
                      WHERE cx.contextlevel = 70
-                           AND cx.instanceid = bgm.coursemoduleid
+                       AND cx.instanceid = bgm.coursemoduleid
                     )
              )";
 

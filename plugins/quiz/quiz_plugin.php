@@ -5,9 +5,9 @@ require_once($CFG->dirroot.'/question/engine/states.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
 function block_grade_me_required_capability_quiz() {
-    $enabled_plugins['quiz'] = array( 
-        'capability' => 'mod/quiz:grade', 
-        'default_on' => true, 
+    $enabled_plugins['quiz'] = array(
+        'capability' => 'mod/quiz:grade',
+        'default_on' => true,
         'versiondependencies' => 'ANY_VERSION'
         );
     return $enabled_plugins;
@@ -29,23 +29,30 @@ function block_grade_me_query_quiz($gradebookusers) {
 
     // For a finished quiz question, get the last state it was in indicated by the maximum sequence number.
     // If the question was not manually or automatically graded then its yet to be graded.
-    $query = ", qa.id state_id, qa.userid, qa.timemodified timesubmitted, q.id submissionid, qas.sequencenumber
+    $query = ", qas.id step_id, qa.userid, qa.timemodified timesubmitted, qa.id submissionid, qas.sequencenumber
         FROM {quiz_attempts} qa
-        JOIN {quiz} q ON q.id = qa.quiz
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = q.course AND bgm.iteminstance = q.id
-        JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        JOIN {block_grade_me} bgm ON bgm.iteminstance = qa.quiz
+        JOIN {question_attempts} qat ON qat.questionusageid = qa.uniqueid
+        JOIN {question_attempt_steps} qas ON qas.userid = qa.userid AND qas.questionattemptid = qa.id
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
           GROUP BY questionattemptid, userid
-            ) maxsubq ON maxsubq.questionattemptid = qa.id
+            ) maxsubq ON maxsubq.questionattemptid = qat.id
+                     AND maxsubq.maxseqnum = qas.sequencenumber
+                     AND maxsubq.userid = qas.userid
+   LEFT JOIN {question_attempt_steps} qam ON qam.questionattemptid = qa.id
+                                         AND qam.state IN('".question_state::$mangrright."',
+                                                          '".question_state::$gradedright."',
+                                                          '".question_state::$gradedpartial."',
+                                                          '".question_state::$mangrpartial."',
+                                                          '".question_state::$gradedwrong."',
+                                                          '".question_state::$mangrwrong."')
        WHERE qa.userid $insql
          AND qa.state = '".question_state::$finished."'"."
-         AND maxsubq.maxseqnum = qas.sequencenumber AND qa.timefinish != 0 AND maxsubq.userid = qas.userid
-         AND qas.state NOT IN('".question_state::$mangrright."',
-                              '".question_state::$gradedright."',
-                              '".question_state::$gradedwrong."',
-                              '".question_state::$mangrwrong."')";
+         AND qat.behaviour = 'manualgraded'
+         AND qa.timefinish != 0
+         AND qam.sequencenumber IS NULL";
 
     return array($query, $inparams);
 }
