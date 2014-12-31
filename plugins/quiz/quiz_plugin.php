@@ -33,14 +33,16 @@ function block_grade_me_query_quiz($gradebookusers) {
         FROM {quiz_attempts} qa
         JOIN {quiz} q ON q.id = qa.quiz
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = q.course AND bgm.iteminstance = q.id
-        JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        JOIN {question_attempts} qat ON qat.questionusageid = qa.uniqueid
+        JOIN {question_attempt_steps} qas ON qas.userid = qa.userid
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
-          GROUP BY questionattemptid, userid
-            ) maxsubq ON maxsubq.questionattemptid = qa.id
+          GROUP BY questionattemptid
+            ) maxsubq ON maxsubq.questionattemptid = qat.id
        WHERE qa.userid $insql
          AND qa.state = '".question_state::$finished."'"."
+		 AND qat.behaviour = 'manualgraded'
          AND maxsubq.maxseqnum = qas.sequencenumber AND qa.timefinish != 0 AND maxsubq.userid = qas.userid
          AND qas.state NOT IN('".question_state::$mangrright."',
                               '".question_state::$gradedright."',
