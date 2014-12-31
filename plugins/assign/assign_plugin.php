@@ -52,8 +52,8 @@ function block_grade_me_query_assign($gradebookusers) {
         FROM {assign_submission} asgn_sub
         JOIN {assign} a ON a.id = asgn_sub.assignment
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = a.course AND bgm.iteminstance = a.id
-   LEFT JOIN {assign_grades} ag ON ag.assignment = asgn_sub.assignment AND ag.userid = asgn_sub.userid
-       WHERE asgn_sub.userid $insql AND a.grade > 0
+   LEFT JOIN {assign_grades} ag ON ag.assignment = asgn_sub.assignment AND ag.userid = asgn_sub.userid AND asgn_sub.attemptnumber = ag.attemptnumber
+       WHERE asgn_sub.userid $insql AND asgn_sub.status = 'submitted' AND a.grade <> 0 
          AND (ag.id IS NULL OR asgn_sub.timemodified > ag.timemodified)";
 
     return array($query, $inparams);
