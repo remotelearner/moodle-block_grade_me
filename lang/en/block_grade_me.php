@@ -1,5 +1,6 @@
 <?php
 
+$string['cachedef_blockhtml'] = 'This is the description of the cache block grade me.';
 $string['pluginname'] = 'Grade Me';
 $string['title'] = 'Grade Me';
 $string['datetime'] = '%B %d, %l:%M %p';

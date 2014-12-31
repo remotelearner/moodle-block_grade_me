@@ -40,6 +40,10 @@ class block_grade_me extends block_base {
     function get_content() {
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
 
+        $cache = cache::make('block_grade_me', 'blockhtml');
+        //$cache->delete('content_' . $USER->id . '_' . $COURSE->id);
+        $cachedata = $cache->get('content_' . $USER->id . '_' . $COURSE->id);
+
         if ($this->content !== NULL) {
             return $this->content;
         }
@@ -86,6 +90,8 @@ class block_grade_me extends block_base {
         // Expand/Collapse button.
         $this->content->text .= '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall('.$iscoursecontext.');">Collapse/Expand All</button>';
 
+    if (empty($cachedata)) {
+
         foreach ($courses AS $courseid => $course) {
             unset($params);
             $gradeables = array();
@@ -124,6 +130,7 @@ class block_grade_me extends block_base {
                             foreach ($quizs as $quiz) {
                                 $cm = $DB->get_record('course_modules', array('id' => $quiz->coursemodule));
 
+                                // This following line is highly performance hungry.
                                 $quizattempts = $this->get_formatted_student_attempts($quiz, $cm);
 
                                 // Get item sortorder (order in the block)
@@ -160,18 +167,31 @@ class block_grade_me extends block_base {
                     }
                 }
             }
-            if (count($gradeables) > 0) {
+
+            $coursesgradeables[$courseid] = $gradeables;
+
+         }
+
+         $cache->set('content_' . $USER->id . '_' . $COURSE->id, $coursesgradeables);
+
+    } else {
+        $coursesgradeables = $cachedata;    
+    }
+
+       // Build the HTML code.
+       foreach ($courses AS $courseid => $course) {
+        
+            if (count($coursesgradeables[$courseid]) > 0) {
                 $coursecount++;
                 if ($coursecount > $maxcourses) {
                     $additional = get_string('excess','block_grade_me', array('maxcourses' => $maxcourses));
                     break 1;
                 } else {
-                    ksort($gradeables);
-                    $this->content->text .= block_grade_me_tree($gradeables);
+                    ksort($coursesgradeables[$courseid]);
+                    $this->content->text .= block_grade_me_tree($coursesgradeables[$courseid]);
                 }
             }
-            unset($gradeables);
-        }
+        }  
 
         $grader_roles = array();
         foreach ($enabled_plugins AS $plugin => $a) {
