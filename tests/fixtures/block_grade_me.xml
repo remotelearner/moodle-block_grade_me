@@ -263,6 +263,7 @@
         <column>iteminstance</column>
         <column>itemsortorder</column>
         <column>courseid</column>
+        <column>coursename</column>
         <row>
             <value>2</value>
             <value>testassignment2</value>
@@ -270,6 +271,7 @@
             <value>assign</value>
             <value>2</value>
             <value>1</value>
+            <value>0</value>
             <value>0</value>
         </row>
         <row>
@@ -280,6 +282,7 @@
             <value>3</value>
             <value>2</value>
             <value>0</value>
+            <value>0</value>
         </row>
         <row>
             <value>4</value>
@@ -288,6 +291,7 @@
             <value>assign</value>
             <value>4</value>
             <value>5</value>
+            <value>0</value>
             <value>0</value>
         </row>
         <row>
@@ -298,6 +302,7 @@
             <value>5</value>
             <value>3</value>
             <value>0</value>
+            <value>0</value>
         </row>
         <row>
             <value>6</value>
@@ -306,6 +311,7 @@
             <value>assignment</value>
             <value>6</value>
             <value>4</value>
+            <value>0</value>
             <value>0</value>
         </row>
         <row>
@@ -316,6 +322,7 @@
             <value>7</value>
             <value>6</value>
             <value>0</value>
+            <value>0</value>
         </row>
         <row>
             <value>8</value>
@@ -324,6 +331,7 @@
             <value>forum</value>
             <value>1</value>
             <value>1</value>
+            <value>0</value>
             <value>0</value>
         </row>
     </table>
@@ -392,7 +400,7 @@
             <value>100</value>
             <value>0</value>
             <value>0</value>
-            <value>1</value>
+            <value>0</value>
         </row>
     </table>
 </dataset>

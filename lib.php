@@ -155,14 +155,14 @@ function block_grade_me_tree($course) {
                 $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&userid=$userid";
                 $rownum++;
             } else if ($itemmodule == 'data') {
-                $submissionlink .= '/mod/data/view.php?d='.$submissionid.'&amp;mode=single';
+                $submissionlink .= '/mod/data/view.php?rid='.$submissionid.'&amp;mode=single';
             } else if ($itemmodule == 'forum') {
                 $forumdiscussionid = $submission['meta']['forum_discussion_id'];
                 $submissionlink .= '/mod/forum/discuss.php?d='.$forumdiscussionid.'#p'.$submissionid;
             } else if ($itemmodule == 'glossary') {
                 $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
             } else if ($itemmodule == 'quiz') {
-                $submissionlink .= '/mod/quiz/report.php?id='.$coursemoduleid.'&amp;mode=grading';
+                $submissionlink .= '/mod/quiz/review.php?attempt='.$submissionid;
             }
 
             unset($submission['meta']);
