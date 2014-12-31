@@ -115,6 +115,61 @@
             <value>4</value>
         </row>
     </table>
+    <table name="question_attempts">
+        <column>id</column>
+        <column>questionusageid</column>
+        <column>slot</column>
+        <column>behaviour</column>
+        <column>questionid</column>
+        <column>maxmark</column>
+        <column>minfraction</column>
+        <column>maxfraction</column>
+        <column>timemodified</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <value>manualgraded</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0.0000000</value>
+            <value>1.0000000</value>
+            <value>1424290462</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>1</value>
+            <value>manualgraded</value>
+            <value>2</value>
+            <value>1</value>
+            <value>0.0000000</value>
+            <value>1.0000000</value>
+            <value>1424290463</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+            <value>1</value>
+            <value>manualgraded</value>
+            <value>3</value>
+            <value>1</value>
+            <value>0.0000000</value>
+            <value>1.0000000</value>
+            <value>1424290464</value>
+        </row>
+        <row>
+            <value>4</value>
+            <value>4</value>
+            <value>1</value>
+            <value>manualgraded</value>
+            <value>4</value>
+            <value>1</value>
+            <value>0.0000000</value>
+            <value>1.0000000</value>
+            <value>1424290465</value>
+        </row>
+    </table>
     <table name="question_attempt_steps">
         <column>id</column>
         <column>questionattemptid</column>

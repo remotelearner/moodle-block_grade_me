@@ -230,7 +230,7 @@ class block_grade_me_testcase extends advanced_testcase {
             'itemname'          => 'quizitem2',
             'coursemoduleid'    => 0,
             'itemsortorder'     => 0,
-            'state_id'          => 2,
+            'step_id'           => 4,
             'userid'            => 3,
             'timesubmitted'     => 0,
             'submissionid'      => 2,
@@ -245,7 +245,7 @@ class block_grade_me_testcase extends advanced_testcase {
             'itemname'          => 'quizitem4',
             'coursemoduleid'    => 0,
             'itemsortorder'     => 0,
-            'state_id'          => 4,
+            'step_id'           => 11,
             'userid'            => 3,
             'timesubmitted'     => 0,
             'submissionid'      => 4,
@@ -303,17 +303,18 @@ class block_grade_me_testcase extends advanced_testcase {
         $expected = ", ge.id submissionid, ge.userid, ge.timemodified timesubmitted
         FROM {glossary_entries} ge
         JOIN {glossary} g ON g.id = ge.glossaryid
-   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = g.course AND bgm.iteminstance = ge.id
+   LEFT JOIN {block_grade_me} bgm ON bgm.courseid = g.course AND bgm.iteminstance = ge.glossaryid
        WHERE ge.userid IN (?,?)
-             AND g.assessed = 1
-             AND $concatid NOT IN (
+         AND g.assessed = 1
+         AND g.scale <> 0
+         AND $concatid NOT IN (
              SELECT $concatitem
                FROM {rating} r
               WHERE r.contextid IN (
                     SELECT cx.id
                       FROM {context} cx
                      WHERE cx.contextlevel = 70
-                           AND cx.instanceid = bgm.coursemoduleid
+                       AND cx.instanceid = bgm.coursemoduleid
                     )
              )";
 
@@ -437,7 +438,7 @@ class block_grade_me_testcase extends advanced_testcase {
                    array("assign",
                        array(1 => "/Go to assign/",
                              2 => "/mod\/assign\/view.php/",
-                             3 => "/action=grade&rownum=0&userid=3/",
+                             3 => "/action=grade&rownum=0&useridlistid=/",
                              5 => "/testassignment3/",
                              6 => "/testassignment4/"
                              )
@@ -528,8 +529,8 @@ class block_grade_me_testcase extends advanced_testcase {
                    array("assign",
                            array(1 => "/Go to assign/",
                                  2 => "/mod\/assign\/view.php/",
-                                 3 => "/action=grade&rownum=0&userid=3/",
-                                 4 => "/action=grade&rownum=1&userid=4/",
+                                 3 => "/action=grade&rownum=0&useridlistid=/",
+                                 4 => "/action=grade&rownum=1&useridlistid=/",
                                  5 => "/testassignment3/",
                                  6 => "/testassignment4/"
                                  )
@@ -604,7 +605,22 @@ class block_grade_me_testcase extends advanced_testcase {
             'forum_discussion_id' => 2
         );
 
-        $data = array(array(array($forumitem1, $forumitem2)));
+        // This should not actually be in the results, but the data and test are both broken.
+        $forumitem3 = array(
+            'courseid'            => 2,
+            'coursename'          => '',
+            'itemmodule'          => 'forum',
+            'iteminstance'        => 3,
+            'itemname'            => 'forumitem2',
+            'coursemoduleid'      => 0,
+            'itemsortorder'       => 0,
+            'submissionid'        => 3,
+            'userid'              => 3,
+            'timesubmitted'       => 0,
+            'forum_discussion_id' => 3
+        );
+
+        $data = array(array(array($forumitem1, $forumitem2, $forumitem3)));
 
         return $data;
     }

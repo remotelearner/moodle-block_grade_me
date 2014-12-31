@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <table name="block_grade_me">
+        <column>id</column>
+        <column>itemname</column>
+        <column>itemtype</column>
+        <column>itemmodule</column>
+        <column>iteminstance</column>
+        <column>courseid</column>
+        <column>coursename</column>
+        <!-- Item awaiting grading. -->
+        <row>
+            <value>1</value>
+            <value>glossaryitem1</value>
+            <value>mod</value>
+            <value>glossary</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+        <!-- Item awaiting grading. -->
+        <row>
+            <value>2</value>
+            <value>glossaryitem2</value>
+            <value>mod</value>
+            <value>glossary</value>
+            <value>2</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+        <!-- Graded item. -->
+        <row>
+            <value>3</value>
+            <value>glossaryitem3</value>
+            <value>mod</value>
+            <value>glossary</value>
+            <value>3</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="glossary">
+        <column>id</column>
+        <column>course</column>
+        <column>name</column>
+        <column>assessed</column>
+        <column>intro</column>
+        <column>scale</column>
+        <row>
+            <value>1</value>
+            <value>0</value>
+            <value>Glossary #1</value>
+            <value>1</value>
+            <value>intro</value>
+            <value>100</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>0</value>
+            <value>Glossary #2</value>
+            <value>1</value>
+            <value>intro</value>
+            <value>100</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>0</value>
+            <value>Glossary #3</value>
+            <value>1</value>
+            <value>intro</value>
+            <value>100</value>
+        </row>
+    </table>
+    <table name="glossary_entries">
+        <column>id</column>
+        <column>glossaryrid</column>
+        <column>userid</column>
+        <column>concept</column>
+        <column>definition</column>
+        <column>timemodified</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>Entry 1</value>
+            <value>The first entry</value>
+            <value>1424354368</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>0</value>
+            <value>Entry 2</value>
+            <value>The second entry</value>
+            <value>1424354369</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+            <value>0</value>
+            <value>Entry 3</value>
+            <value>The third entry</value>
+            <value>1424354370</value>
+        </row>
+    </table>
+    <table name="grade_items">
+        <column>courseid</column>
+        <column>id</column>
+        <column>iteminstance</column>
+        <row>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>0</value>
+            <value>2</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>0</value>
+            <value>3</value>
+            <value>3</value>
+        </row>
+    </table>
+    <table name="grade_grades">
+        <column>id</column>
+        <column>itemid</column>
+        <column>userid</column>
+        <column>finalgrade</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>2</value>
+            <value>2</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>3</value>
+            <value>3</value>
+            <value>0</value>
+            <value>100</value>
+        </row>
+    </table>
+    <table name="rating">
+        <column>id</column>
+    </table>
+</dataset>
