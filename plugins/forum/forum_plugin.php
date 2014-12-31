@@ -30,8 +30,6 @@ function block_grade_me_query_forum($gradebookusers) {
         JOIN {forum_discussions} fd ON fd.id = fp.discussion
         JOIN {forum} f ON f.id = fd.forum
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = f.course AND bgm.iteminstance = f.id
-   LEFT JOIN {grade_items} gi ON gi.iteminstance = bgm.iteminstance
-   LEFT JOIN {grade_grades} gg ON gg.itemid = gi.id AND fp.userid = gg.userid
        WHERE fp.userid $insql
              AND f.assessed = 1
              AND $concatid NOT IN (
@@ -43,7 +41,8 @@ function block_grade_me_query_forum($gradebookusers) {
                      WHERE cx.contextlevel = 70
                            AND cx.instanceid = bgm.coursemoduleid
                     )
-             ) AND gg.finalgrade is NULL";
+             )";
+
 
     return array($query, $inparams);
 }
