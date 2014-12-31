@@ -72,6 +72,7 @@ function block_grade_me_array($gradeables, $r) {
     $gradeables[$r->itemsortorder]['meta']['coursemoduleid'] = $r->coursemoduleid;
     $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['userid'] = $r->userid;
     $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['submissionid'] = $r->submissionid;
+	
     if (isset($r->forum_discussion_id)) {
         $gradeables[$r->itemsortorder][$r->timesubmitted]['meta']['forum_discussion_id'] = $r->forum_discussion_id;
     }
@@ -140,6 +141,7 @@ function block_grade_me_tree($course) {
 
         ksort($item);
 
+
         // Assign module needs to have a rownum
         $rownum = 0;
 
@@ -152,8 +154,9 @@ function block_grade_me_tree($course) {
             if ($itemmodule == 'assignment') {
                 $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
-                $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&userid=$userid";
-                $rownum++;
+                //$submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&rownum=$rownum&action=grade&userid=$userid&item=$iteminstance";
+				$submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grading";
+                //$rownum++;
             } else if ($itemmodule == 'data') {
                 $submissionlink .= '/mod/data/view.php?rid='.$submissionid.'&amp;mode=single';
             } else if ($itemmodule == 'forum') {
@@ -161,8 +164,14 @@ function block_grade_me_tree($course) {
                 $submissionlink .= '/mod/forum/discuss.php?d='.$forumdiscussionid.'#p'.$submissionid;
             } else if ($itemmodule == 'glossary') {
                 $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
+            } else if ($itemmodule == 'journal') {
+                $submissionlink .= '/mod/journal/report.php?id='.$coursemoduleid;
+			} else if ($itemmodule == 'lesson') {
+                $submissionlink .= '/mod/lesson/essay.php?id='.$coursemoduleid;
+			} else if ($itemmodule == 'pcast') {
+                $submissionlink .= '/mod/pcast/showepisode.php?eid='.$submissionid;
             } else if ($itemmodule == 'quiz') {
-                $submissionlink .= '/mod/quiz/report.php?q='.$submissionid.'&amp;mode=grading';
+                $submissionlink .= "/mod/quiz/report.php?id=".$coursemoduleid."&amp;mode=overview";
             }
 
             unset($submission['meta']);
@@ -188,7 +197,5 @@ function block_grade_me_tree($course) {
         $text .= '</dd>'."\n";  // close module
     }
     $text .= '</div>';
-
-
     return $text;
 }
