@@ -30,20 +30,23 @@ function block_grade_me_query_lesson($gradebookusers) {
  * so that we can check for score >0 for essay questions.
  *
  */
-	//$essay =  '';
-	//$essayinfo = unserialize($essay->useranswer);
-	
+
+	//$attempt = '';
+	//$useranswerobj = unserialize($attempt->useranswer);
+	//if (isset($useranswerobj->score)) {
     $query = ", latt.id submissionid, latt.userid, latt.timeseen timesubmitted
-        FROM {lesson_pages} lp
-        JOIN {lesson} l ON l.id = lp.lessonid
-		JOIN {lesson_attempts} latt ON latt.lessonid = l.id
-		JOIN {lesson_answers} lans ON lans.lessonid = l.id
+		FROM {lesson_attempts} latt
+        JOIN {lesson_pages} lp ON lp.id = latt.pageid
+		JOIN {lesson} l ON l.id = lp.lessonid
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = l.course AND bgm.iteminstance = l.id
-       WHERE latt.userid $insql
-			 AND l.grade <> 0
-			 AND latt.correct = 0
-			 AND lp.qtype = 10
-             ";
+		WHERE latt.userid $insql
+			AND lp.qtype = 10
+			AND l.grade <> 0
+			AND latt.correct = 0
+			AND lp.id = latt.pageid
+			AND latt.useranswer LIKE '%graded__i:0%'
+            ";
 
     return array($query, $inparams);
+	//}
 }
