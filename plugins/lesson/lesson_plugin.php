@@ -25,15 +25,6 @@ function block_grade_me_query_lesson($gradebookusers) {
     $concatitem = $DB->sql_concat('r.itemid', "'-'", 'r.userid');
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
 
-/**
- * Need to add some code to unserialize useranswer field in mdl_lesson_attempts table
- * so that we can check for score >0 for essay questions.
- *
- */
-
-	//$attempt = '';
-	//$useranswerobj = unserialize($attempt->useranswer);
-	//if (isset($useranswerobj->score)) {
     $query = ", latt.id submissionid, latt.userid, latt.timeseen timesubmitted
 		FROM {lesson_attempts} latt
         JOIN {lesson_pages} lp ON lp.id = latt.pageid
@@ -48,5 +39,4 @@ function block_grade_me_query_lesson($gradebookusers) {
             ";
 
     return array($query, $inparams);
-	//}
 }
