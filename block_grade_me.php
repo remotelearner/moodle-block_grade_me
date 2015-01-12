@@ -45,7 +45,7 @@ class block_grade_me extends block_base {
         }
 
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
-        $PAGE->requires->js('/blocks/grade_me/javascript/jquery-1.7.2.min.js');
+        $PAGE->requires->jquery();
         $PAGE->requires->js('/blocks/grade_me/javascript/grademe.js');
 
         // create the content class
