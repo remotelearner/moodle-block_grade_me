@@ -38,7 +38,7 @@ function block_grade_me_query_quiz($gradebookusers) {
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
-          GROUP BY questionattemptid
+          GROUP BY questionattemptid, userid
             ) maxsubq ON maxsubq.questionattemptid = qat.id
        WHERE qa.userid $insql
          AND qa.state = '".question_state::$finished."'"."

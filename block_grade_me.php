@@ -120,7 +120,7 @@ class block_grade_me extends block_base {
                         // get_formated_student_attempts is calling oall of them.
                         // once the 2.7 branch is fixed on the github remotelearners (they will most likely fix the sql request in plugins/quiz/quiz_plugin.php), the you can overwritte these files.
                         // TODO on this current HACK: cache for the results, especially needed when the block is displayed on the front page
-                        if ($plugin == 'quiz') {
+                        if (false && $plugin == 'quiz') {
                             // Get all quiz of the courses.
                             $course = $DB->get_record('course', array('id' => $courseid));
                             $quizs = get_all_instances_in_course("quiz", $course);
