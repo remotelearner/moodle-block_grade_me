@@ -39,11 +39,7 @@
     height: 16px;
     float: left;
     cursor: pointer;
-    background: transparent url('[[pix:block_grade_me|open]]') no-repeat 50% 50%;
-}
-
-.block_grade_me .jsenabled .toggle {
-    background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50% !important;
+    background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50%;
 }
 
 .block_grade_me .toggle.open {
