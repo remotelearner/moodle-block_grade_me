@@ -5,6 +5,209 @@
  */
 
 /**
+ * Generate grade_me cache for a course/teacher.
+ */
+function block_grade_me_get_course_gradeables($course, $teacher) {
+    global $DB, $CFG;
+
+            $courseid = $course->id;
+            $enabled_plugins = block_grade_me_enabled_plugins();
+            unset($params);
+            $gradeables = array();
+            $gradebookusers = array();
+            $context = context_course::instance($courseid);
+            foreach (explode(',', $CFG->gradebookroles) AS $roleid) {
+                if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                    $groups = groups_get_user_groups($courseid, $teacher->id);
+                    foreach ($groups[0] AS $groupid) {
+                        $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC', null, $groupid)));
+                    }
+                } else {
+                    $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')));
+                }
+            }
+
+            $params['courseid'] = $courseid;
+
+            foreach ($enabled_plugins AS $plugin => $a) {
+                if (has_capability($a['capability'], $context)) {
+                    $fn = 'block_grade_me_query_'.$plugin;
+                    $pluginfn = $fn($gradebookusers);
+                    if ($pluginfn !== false) {
+                        // HACK: fix current quiz SQL that is broken.
+                        // There are few additional functions created for this hack (they come from Tim Hunt's student grading quiz report)
+                        // get_formated_student_attempts is calling oall of them.
+                        // once the 2.7 branch is fixed on the github remotelearners (they will most likely fix the sql request in plugins/quiz/quiz_plugin.php), the you can overwritte these files.
+                        // TODO on this current HACK: cache for the results, especially needed when the block is displayed on the front page
+                        if ($plugin == 'quiz') {
+                            // Get all quiz of the courses.
+                            $course = $DB->get_record('course', array('id' => $courseid));
+                            $quizs = get_all_instances_in_course("quiz", $course);
+
+                            require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
+                            $rs = array();
+                            foreach ($quizs as $quiz) {
+                                $cm = $DB->get_record('course_modules', array('id' => $quiz->coursemodule));
+
+                                // This following line is highly performance hungry.
+                                $quizattempts = get_formatted_student_attempts($quiz, $cm);
+
+                                // Get item sortorder (order in the block)
+                                $itemsortorder = $DB->get_field('block_grade_me', 'itemsortorder', array('coursemoduleid' => $cm->id));
+
+                                foreach($quizattempts as $quizattempt) {
+				    if ($quizattempt->needsgrading == 1) {
+                                    $r = new stdClass();
+                                    $r->courseid = $courseid;
+                                    $r->coursename = $course->shortname;
+                                    $r->itemmodule = 'quiz';
+                                    $r->iteminstance = $quiz->id;
+                                    $r->itemname = $quiz->name;
+                                    $r->coursemoduleid = $cm->id;
+                                    $r->userid = $quizattempt->userid;
+                                    $r->submissionid = $quiz->id;
+                                    $r->timesubmitted = $quizattempt->timefinish;
+                                    $r->itemsortorder = $itemsortorder;
+
+                                    $rs[] = $r;
+				    }			
+                                }
+                            }
+                        } else {
+                            list($sql, $inparams) = $fn($gradebookusers);
+                            $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
+                            $values = array_merge($inparams, $params);
+                            $rs = $DB->get_recordset_sql($query, $values);
+                        }
+
+                        foreach ($rs as $r) {
+                            $gradeables = block_grade_me_array($gradeables, $r);
+                        }
+                    }
+                } 
+           }
+
+           return $gradeables;
+}
+
+    /**
+     * Return an array of quiz attempts
+     * @param object $quiz
+     * @return an array of userid
+     */
+    function get_quiz_attempts($quiz) {
+        global $DB;
+        $quizid = $quiz->id;
+        $sql = "SELECT qa.id AS attemptid, qa.uniqueid, qa.attempt AS attemptnumber, qa.quiz AS quizid, qa.layout,
+                qa.userid, qa.timefinish, qa.preview, qa.state, u.idnumber
+                From {user} u
+                JOIN {quiz_attempts} qa ON u.id = qa.userid
+                WHERE qa.quiz = $quizid AND qa.state = 'finished'
+                ORDER BY u.idnumber ASC, attemptid ASC";
+        $users = $DB->get_records_sql($sql);
+        return $users;
+    }
+
+    /**
+     * Return and array of question attempts
+     * @return object, an array :
+     */
+    function get_question_attempts($quizcontext) {
+        global $DB;
+        $sql = "SELECT qa.id AS questionattemptid, qa.slot, qa.questionid, qu.id AS usageid
+                FROM {question_usages} qu
+                JOIN {question_attempts} qa ON qa.questionusageid = qu.id
+                WHERE qu.contextid = :contextid
+                ORDER BY qa.slot ASC";
+        return $DB->get_records_sql($sql, array('contextid' => $quizcontext->id));
+    }
+
+    /**
+     * Reurn the latest state for a given question
+     * @param int $attemptid
+     */
+    function get_current_state_for_this_attempt($attemptid) {
+        global $DB;
+        $sql = "SELECT qas.*
+                FROM {question_attempt_steps} qas
+                WHERE questionattemptid = $attemptid
+                ORDER BY qas.sequencenumber ASC";
+        $states = $DB->get_records_sql($sql);
+        return end($states)->state;
+    }
+
+    /**
+     * Return an array of quiz attempts withh all relevant information for each attempt
+     *
+     */
+    function get_formatted_student_attempts($quiz, $cm) {
+        $quizattempts = get_quiz_attempts($quiz);
+        $quizcontext = context_module::instance($cm->id);
+        $attempts = get_question_attempts($quizcontext);
+        if (!$quizattempts) {
+            return array();
+        }
+        if (!$attempts) {
+            return array();
+        }
+        $output = array();
+        foreach ($quizattempts as $key => $quizattempt) {
+            $questions = array();
+            $needsgrading = 0;
+            $autograded = 0;
+            $manuallygraded = 0;
+            $all = 0;
+            foreach ($attempts as $attempt) {
+                if ($quizattempt->uniqueid === $attempt->usageid) {
+                    $questions[$attempt->slot] = $attempt;
+                    $state = get_current_state_for_this_attempt($attempt->questionattemptid);
+                    $questions[$attempt->slot]->state = $state;
+
+                    if (normalise_state($state) === 'needsgrading') {
+                        $needsgrading++;
+                    }
+                    if (normalise_state($state) === 'autograded') {
+                        $autograded++;
+                    }
+                    if (normalise_state($state) === 'manuallygraded') {
+                        $manuallygraded++;
+                    }
+                    $all++;
+                }
+            }
+            $quizattempt->needsgrading = $needsgrading;
+            $quizattempt->autograded = $autograded;
+            $quizattempt->manuallygraded = $manuallygraded;
+            $quizattempt->all = $all;
+            $quizattempt->questions = $questions;
+            $output[$quizattempt->uniqueid] = $quizattempt;
+        }
+        return $output;
+    }
+
+    /**
+     * Normalise the string from the database table for easy comparison
+     * @param string $state
+     */
+    function normalise_state($state) {
+        if (!$state) {
+            return null;
+        }
+        if ($state === 'needsgrading') {
+            return 'needsgrading';
+        }
+        if (substr($state, 0, strlen('graded')) === 'graded') {
+            return 'autograded';
+        }
+        if (substr($state, 0, strlen('mangr')) === 'mangr') {
+            return 'manuallygraded';
+        }
+        return null;
+    }
+
+
+
+/**
  * Returns CSV values from provided array
  * @param array $array The array to implode
  * @return string $string
