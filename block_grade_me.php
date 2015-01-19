@@ -89,6 +89,7 @@ class block_grade_me extends block_base {
         // Expand/Collapse button.
         $this->content->text .= '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall('.$iscoursecontext.');">Collapse/Expand All</button>';
 
+    // except the first time a user access the grade_me block, the cache should never be empty.
     if (empty($cachedata)) {
 
         foreach ($courses AS $courseid => $course) {
@@ -205,42 +206,42 @@ class block_grade_me extends block_base {
         $starttime =  microtime();
 
 
-    $courseids = get_config('block_grade_me', 'generatecachecourseids');
-    $courseidsarray = unserialize($courseids);
+        $courseids = get_config('block_grade_me', 'generatecachecourseids');
+        $courseidsarray = unserialize($courseids);
 
-    $cache = cache::make('block_grade_me', 'blockhtml');
-    $frontpagecaches = array();
-    foreach($courseidsarray as $courseid) {
-        // Retrieve all users who can grade.
-        $assignusers = get_users_by_capability(context_course::instance($courseid), 'mod/assign:grade');
-        $quizusers = get_users_by_capability(context_course::instance($courseid), 'mod/quiz:grade');
-        $teachers = $assignusers + $quizusers;
-        foreach ($teachers as $teacher) {
-            // invalid the cache.
-            $cache->delete('content_' . $teacher->id . '_' . $courseid);
+        $cache = cache::make('block_grade_me', 'blockhtml');
+        $frontpagecaches = array();
+        foreach($courseidsarray as $courseid) {
+            // Retrieve all users who can grade.
+            $assignusers = get_users_by_capability(context_course::instance($courseid), 'mod/assign:grade');
+            $quizusers = get_users_by_capability(context_course::instance($courseid), 'mod/quiz:grade');
+            $teachers = $assignusers + $quizusers;
+            foreach ($teachers as $teacher) {
+                // invalid the cache.
+                $cache->delete('content_' . $teacher->id . '_' . $courseid);
 
-            // regenerate the cache.
-            $course = $DB->get_record('course', array('id' => $courseid));
-            $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
-            $coursesgradeables = array($courseid => $gradeables);
-            $cache->set('content_' . $teacher->id . '_' . $courseid, $coursesgradeables);
+                // regenerate the cache.
+                $course = $DB->get_record('course', array('id' => $courseid));
+                $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
+                $coursesgradeables = array($courseid => $gradeables);
+                $cache->set('content_' . $teacher->id . '_' . $courseid, $coursesgradeables);
 
-            // regenerate cache for front page.
-            $frontpagecaches[$teacher->id] = $teacher->id;  
+                // regenerate cache for front page.
+                $frontpagecaches[$teacher->id] = $teacher->id;
+            }
         }
-    }
 
-    // Regenerate all front page caches of the impact teachers.
-    foreach($frontpagecaches as $frontpagecache) {
-         // invalid the cache.
-            $cache->delete('content_' . $frontpagecache . '_' . $SITE->id);
+        // Regenerate all front page caches of the impact teachers.
+        foreach($frontpagecaches as $frontpagecache) {
+             // invalid the cache.
+                $cache->delete('content_' . $frontpagecache . '_' . $SITE->id);
 
-            // regenerate the cache.
-            $course = $DB->get_record('course', array('id' => $SITE->id));
-            $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
-            $coursesgradeables = array($SITE->id => $gradeables);
-            $cache->set('content_' . $frontpagecache . '_' . $SITE->id, $coursesgradeables);
-    }
+                // regenerate the cache.
+                $course = $DB->get_record('course', array('id' => $SITE->id));
+                $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
+                $coursesgradeables = array($SITE->id => $gradeables);
+                $cache->set('content_' . $frontpagecache . '_' . $SITE->id, $coursesgradeables);
+        }
 
         // Delete the course id.
         set_config('generatecachecourseids', serialize(array()), 'block_grade_me');

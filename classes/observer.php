@@ -40,31 +40,44 @@ class block_grade_me_observer {
         global $DB, $CFG;
 
         // Check that the quiz require grading.
-        require_once($CFG->dirroot . '/blocks/grade_me/lib.php');        
-        $quizattempts = get_quiz_attempts($quiz);
-        $quizcontext = context_module::instance($cm->id);
-        $attempts = get_question_attempts($quizcontext);
+        require_once($CFG->dirroot . '/blocks/grade_me/lib.php');
 
-        foreach ($attemtps as $attempt) {
-            $state = get_current_state_for_this_attempt($attempt->questionattemptid);
-            if ($state == 'needsgrading') { 
+        //error_log(print_r($event, true));
+        $eventdata = $event->get_data();
+
+        // There is only on return quiz attempt.
+        $quizattempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+
+        // Get all question attempts for this quiz.
+        $sql = "SELECT id , slot, questionid
+                FROM {question_attempts}
+                WHERE  questionusageid = :uniqueid
+                ORDER BY slot ASC";
+        $questionattemps = $DB->get_records_sql($sql, array('uniqueid' => $quizattempt->uniqueid));
+
+        foreach ($questionattemps as $attempt) {
+            $state = get_current_state_for_this_attempt($attempt->id);
+            if ($state == 'needsgrading') {
                 $quizstate = 'needsgrading';
             }
         }
-
-        
 
         if ($quizstate == 'needsgrading') { 
             $courseid = $event->courseid;
             block_grade_me_observer::add_course_to_generate_cache_cron($event->courseid);
         }
 
-        // The all logic of grade_me is actually not optimized for 2.7. We could something much simple and much performant.
-        // We need to create the cache here. When a quiz is submitted and require grading then add the info to the cache 
-        // for each teachers (i.e. person with the grade permission).
-        // Then we need to add a new event observer when the quiz is graded. Then we should look for all the cache using this quiz/student,
-        // and we should remove these entries from the cache. Then no need for any cron and no need for any massive search anywhere. 
 
+
+        // TODO!!!
+        // The all logic of grade_me is actually not optimized at all for 2.7. We could do something much simple and performant.
+        // We actually need to edit the "cache" here, in the observer. When a quiz is submitted and requires grading then we add the info to the cache
+        // for each teachers (i.e. users with the grade permission).
+        // Then we need to add a new event observer when a essay question is manually graded. When this event is triggered,
+        //  we should look for all the cache using this quiz/student,
+        // and we should remove these entries from the cache. Then no need for any cron and no need for any massive search.
+        // However this solution still needs to have a massive search to prefill the cache the first time the user access the block in a course
+        // (Otherwise the teachers would only be aware of the quiz that has been submitted after the grade_me block is installed).
     }
 
     /**
@@ -75,10 +88,18 @@ class block_grade_me_observer {
     public static function update_assign_cron_tasks(\mod_assign\event\assessable_submitted $event) {
         global $DB, $CFG;
 
-        // Check that the assignment reuire grading.
+        // Check that the assignment require grading.
+        $eventdata = $event->get_data();
 
-        $courseid = $event->courseid;
-        block_grade_me_observer::add_course_to_generate_cache_cron($event->courseid);
+        // There is only on return quiz attempt.
+        $assignsubmission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+
+        // Check if grade exist
+        if (!$DB->record_exists('assign_grades',
+            array('assignment' => $assignsubmission->assignment, 'attemptnumber' => $assignsubmission->attemptnumber))) {
+            $courseid = $event->courseid;
+            block_grade_me_observer::add_course_to_generate_cache_cron($event->courseid);
+        }
    }
 
 }
