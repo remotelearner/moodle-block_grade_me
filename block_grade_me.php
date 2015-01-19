@@ -39,7 +39,6 @@ class block_grade_me extends block_base {
      */
     function get_content() {
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
-
         $cache = cache::make('block_grade_me', 'blockhtml');
         //$cache->delete('content_' . $USER->id . '_' . $COURSE->id);
         $cachedata = $cache->get('content_' . $USER->id . '_' . $COURSE->id);
@@ -145,7 +144,7 @@ class block_grade_me extends block_base {
      * cron - caches gradable items
      */
     function cron() {
-        global $CFG, $DB;
+        global $CFG, $DB, $SITE;
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
 
         // We are going to measure execution times
@@ -210,6 +209,7 @@ class block_grade_me extends block_base {
     $courseidsarray = unserialize($courseids);
 
     $cache = cache::make('block_grade_me', 'blockhtml');
+    $frontpagecaches = array();
     foreach($courseidsarray as $courseid) {
         // Retrieve all users who can grade.
         $assignusers = get_users_by_capability(context_course::instance($courseid), 'mod/assign:grade');
@@ -224,7 +224,22 @@ class block_grade_me extends block_base {
             $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
             $coursesgradeables = array($courseid => $gradeables);
             $cache->set('content_' . $teacher->id . '_' . $courseid, $coursesgradeables);
+
+            // regenerate cache for front page.
+            $frontpagecaches[$teacher->id] = $teacher->id;  
         }
+    }
+
+    // Regenerate all front page caches of the impact teachers.
+    foreach($frontpagecaches as $frontpagecache) {
+         // invalid the cache.
+            $cache->delete('content_' . $frontpagecache . '_' . $SITE->id);
+
+            // regenerate the cache.
+            $course = $DB->get_record('course', array('id' => $SITE->id));
+            $gradeables = block_grade_me_get_course_gradeables($course, $teacher);
+            $coursesgradeables = array($SITE->id => $gradeables);
+            $cache->set('content_' . $frontpagecache . '_' . $SITE->id, $coursesgradeables);
     }
 
         // Delete the course id.
