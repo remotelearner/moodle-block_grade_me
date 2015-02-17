@@ -38,6 +38,9 @@ class block_grade_me extends block_base {
      * @return stdClass The content being rendered for this block
      */
     function get_content() {
+
+        //return '';
+
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
         $cache = cache::make('block_grade_me', 'blockhtml');
         //$cache->delete('content_' . $USER->id . '_' . $COURSE->id);
@@ -106,7 +109,7 @@ class block_grade_me extends block_base {
        // Build the HTML code.
        foreach ($courses AS $courseid => $course) {
         
-            if (count($coursesgradeables[$courseid]) > 0) {
+            if (isset($coursesgradeables[$courseid]) && count($coursesgradeables[$courseid]) > 0) {
                 $coursecount++;
                 if ($coursecount > $maxcourses) {
                     $additional = get_string('excess','block_grade_me', array('maxcourses' => $maxcourses));
@@ -256,7 +259,7 @@ class block_grade_me extends block_base {
      * @return array The formats which apply to this block
      */
     function applicable_formats() {
-       return array('course' => true);
+       return array('*' => true);
     }
 
     /**
