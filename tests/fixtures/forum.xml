@@ -15,10 +15,10 @@
             <value>forumitem1</value>
             <value>mod</value>
             <value>forum</value>
-            <value>1</value>
             <value>0</value>
             <value>0</value>
-            <value>1</value>
+            <value>0</value>
+            <value>0</value>
         </row>
     </table>
     <table name="forum">
