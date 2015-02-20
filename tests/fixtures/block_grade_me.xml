@@ -7,10 +7,17 @@
         <column>intro</column>
         <column>grade</column>
         <row>
+            <value>1</value>
+            <value>0</value>
+            <value>testassignment1</value>
+            <value>test0</value>
+            <value>0</value>
+        </row>
+        <row>
             <value>2</value>
             <value>0</value>
             <value>testassignment2</value>
-            <value>test</value>
+            <value>test1</value>
             <value>25</value>
         </row>
         <row>
@@ -28,7 +35,7 @@
             <value>80</value>
         </row>
         <row>
-            <value>7</value>
+            <value>5</value>
             <value>0</value>
             <value>testassignment5</value>
             <value>test4</value>
@@ -49,7 +56,7 @@
         <column>attemptnumber</column>
         <row>
             <value>2</value>
-            <value>2</value>
+            <value>1</value>
             <value>0</value>
             <value>1</value>
             <value>1</value>
@@ -62,7 +69,7 @@
         </row>
         <row>
             <value>3</value>
-            <value>7</value>
+            <value>4</value>
             <value>0</value>
             <value>1</value>
             <value>1</value>
@@ -85,7 +92,7 @@
         <column>attemptnumber</column>
         <row>
             <value>1</value>
-            <value>2</value>
+            <value>1</value>
             <value>0</value>
             <value>1</value>
             <value>1</value>
@@ -95,7 +102,7 @@
         </row>
         <row>
             <value>2</value>
-            <value>3</value>
+            <value>2</value>
             <value>0</value>
             <value>1</value>
             <value>2</value>
@@ -105,17 +112,17 @@
         </row>
         <row>
             <value>3</value>
+            <value>3</value>
+            <value>0</value>
+            <value>1</value>
+            <value>3</value>
+            <value>submitted</value>
+            <value>0</value>
+            <value>1</value>
+        </row>
+        <row>
             <value>4</value>
-            <value>0</value>
             <value>1</value>
-            <value>3</value>
-            <value>submitted</value>
-            <value>0</value>
-            <value>1</value>
-        </row>
-        <row>
-            <value>4</value>
-            <value>2</value>
             <value>1</value>
             <value>1</value>
             <value>4</value>
@@ -125,7 +132,7 @@
         </row>
         <row>
             <value>5</value>
-            <value>3</value>
+            <value>4</value>
             <value>1</value>
             <value>1</value>
             <value>5</value>
@@ -135,7 +142,7 @@
         </row>
         <row>
             <value>6</value>
-            <value>4</value>
+            <value>3</value>
             <value>1</value>
             <value>1</value>
             <value>6</value>
@@ -145,7 +152,7 @@
         </row>
         <row>
             <value>7</value>
-            <value>7</value>
+            <value>4</value>
             <value>0</value>
             <value>6</value>
             <value>6</value>
@@ -161,16 +168,16 @@
         <column>intro</column>
         <column>grade</column>
         <row>
-            <value>5</value>
+            <value>6</value>
             <value>0</value>
-            <value>testassignment5</value>
+            <value>testassignment6</value>
             <value>test</value>
             <value>25</value>
         </row>
         <row>
-            <value>6</value>
+            <value>7</value>
             <value>0</value>
-            <value>testassignment6</value>
+            <value>testassignment7</value>
             <value>test</value>
             <value>85</value>
         </row>
@@ -264,13 +271,15 @@
         <column>itemsortorder</column>
         <column>courseid</column>
         <column>coursename</column>
+        <column>coursemoduleid</column>
         <row>
             <value>2</value>
             <value>testassignment2</value>
             <value>mod</value>
             <value>assign</value>
-            <value>2</value>
             <value>1</value>
+            <value>1</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
         </row>
@@ -279,60 +288,66 @@
             <value>testassignment3</value>
             <value>mod</value>
             <value>assign</value>
-            <value>3</value>
+            <value>2</value>
             <value>2</value>
             <value>0</value>
             <value>0</value>
+            <value>1</value>
         </row>
         <row>
             <value>4</value>
             <value>testassignment4</value>
             <value>mod</value>
             <value>assign</value>
-            <value>4</value>
+            <value>3</value>
             <value>5</value>
             <value>0</value>
             <value>0</value>
+            <value>2</value>
         </row>
         <row>
             <value>5</value>
-            <value>testassignment5</value>
+            <value>testassignment6</value>
             <value>mod</value>
             <value>assignment</value>
             <value>5</value>
             <value>3</value>
             <value>0</value>
             <value>0</value>
+            <value>3</value>
         </row>
         <row>
             <value>6</value>
-            <value>testassignment6_UPDATED</value>
+            <value>testassignment7_UPDATED</value>
             <value>mod</value>
             <value>assignment</value>
             <value>6</value>
             <value>4</value>
             <value>0</value>
             <value>0</value>
+            <value>4</value>
         </row>
         <row>
             <value>7</value>
-            <value>testassignment7</value>
+            <value>testassignment5</value>
             <value>mod</value>
             <value>assign</value>
-            <value>7</value>
+            <value>4</value>
             <value>6</value>
             <value>0</value>
             <value>0</value>
+            <value>5</value>
         </row>
         <row>
             <value>8</value>
             <value>test_forum</value>
             <value>mod</value>
             <value>forum</value>
-            <value>1</value>
+            <value>7</value>
             <value>1</value>
             <value>0</value>
             <value>0</value>
+            <value>6</value>
         </row>
     </table>
     <table name="grade_items">
@@ -343,7 +358,7 @@
         <column>iteminstance</column>
         <row>
             <value>0</value>
-            <value>testassignment6_UPDATED</value>
+            <value>testassignment7_UPDATED</value>
             <value>mod</value>
             <value>assignment</value>
             <value>6</value>
@@ -379,6 +394,18 @@
             <value></value>
         </row>
     </table>
+    <table name="forum_discussions">
+        <column>id</column>
+        <column>userid</column>
+        <column>course</column>
+        <column>forum</column>
+        <row>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>7</value>
+        </row>
+    </table>
     <table name="forum_posts">
         <column>id</column>
         <column>userid</column>
@@ -389,18 +416,6 @@
             <value>0</value>
             <value>100</value>
             <value></value>
-        </row>
-    </table>
-    <table name="forum_discussions">
-        <column>id</column>
-        <column>userid</column>
-        <column>course</column>
-        <column>forum</column>
-        <row>
-            <value>100</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
         </row>
     </table>
 </dataset>
