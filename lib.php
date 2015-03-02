@@ -104,7 +104,7 @@ function block_grade_me_tree($course) {
     $coursetitle = get_string('link_gradebook','block_grade_me',array('course_name' => $coursename));
     $text .= '<div>';
     $text .= '<dt id="courseid'.$courseid.'" class="cmod">
-    <div class="toggle" onclick="$(\'dt#courseid'.$courseid.' > div.toggle\').toggleClass(\'open\');$(\'dt#courseid'.$courseid.' ~ dd\').toggleClass(\'block_grade_me_hide\');"></div>
+    <div class="toggle open" onclick="$(\'dt#courseid'.$courseid.' > div.toggle\').toggleClass(\'open\');$(\'dt#courseid'.$courseid.' ~ dd\').toggleClass(\'block_grade_me_hide\');"></div>
     <a href="'.$gradebooklink.'">'.$gradebookicon.'</a>
     <a href="'.$courselink.'" title="'.$coursetitle.'">'.$coursename.'</a></dt>'."\n";
     $text .= "\n";
