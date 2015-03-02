@@ -77,14 +77,9 @@ class block_grade_me extends block_base {
             else {
                 $courses = enrol_get_my_courses();
             }
-            $iscoursecontext = false;
         } else {
             $courses[$COURSE->id] = $COURSE;
-            $iscoursecontext = true;
         }
-
-        // Expand/Collapse button.
-        $this->content->text .= '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall('.$iscoursecontext.');">Collapse/Expand All</button>';
 
         foreach ($courses AS $courseid => $course) {
             unset($params);
@@ -147,9 +142,12 @@ class block_grade_me extends block_base {
             }
         }
 
-        if ($this->content->text) {
-            $this->content->text = '<dl>'.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
-        } elseif (!$this->content->text and $showempty) {
+        if (!empty($this->content->text)) {
+             // Expand/Collapse button.
+             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">Collapse/Expand All</button>';
+
+            $this->content->text = '<dl>'.$expand.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
+        } elseif (empty($this->content->text) && $showempty) {
             $this->content->text .= '<div class="empty">'.$OUTPUT->pix_icon('s/smiley',get_string('alt_smiley','block_grade_me')).' '.get_string('nothing','block_grade_me').'</div>'."\n";
         }
 
