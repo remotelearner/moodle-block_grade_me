@@ -366,11 +366,10 @@ class block_grade_me_testcase extends advanced_testcase {
      * @return array Quiz questions
      */
     public function provider_query_quiz() {
-        $datafile = 'quiz.xml';
         // Represents questions that are finished and ready to be graded.
         // In progress questions or questions that are already graded are not included.
-        $questions = array();
-        $questions[0] = array(
+        $items = array();
+        $items[0] = array(
             'courseid'       => 0,
             'coursename'     => '',
             'itemmodule'     => 'quiz',
@@ -385,7 +384,7 @@ class block_grade_me_testcase extends advanced_testcase {
             'sequencenumber' => 2
         );
 
-        $questions[1] = array(
+        $items[1] = array(
             'courseid'       => 0,
             'coursename'     => '',
             'itemmodule'     => 'quiz',
@@ -400,8 +399,24 @@ class block_grade_me_testcase extends advanced_testcase {
             'sequencenumber' => 2
         );
 
+        $items[2] = array(
+            'courseid'       => 0,
+            'coursename'     => '',
+            'itemmodule'     => 'quiz',
+            'iteminstance'   => 0,
+            'itemname'       => 'Quiz #1',
+            'coursemoduleid' => 0,
+            'itemsortorder'  => 0,
+            'step_id'        => 3,
+            'userid'         => 0,
+            'timesubmitted'  => 0,
+            'submissionid'   => 1,
+            'sequencenumber' => 2
+        );
+
         $data = array(
-            'test1' => array($datafile, $questions)
+            'simple'      => array('quiz1.xml', array($items[0], $items[1])),
+            'complexquiz' => array('quiz2.xml', array($items[2])),
         );
 
         return $data;
