@@ -29,29 +29,29 @@ function block_grade_me_query_quiz($gradebookusers) {
 
     // For a finished quiz question, get the last state it was in indicated by the maximum sequence number.
     // If the question was not manually or automatically graded then its yet to be graded.
-    $query = ", qas.id step_id, qa.userid, qa.timemodified timesubmitted, qa.id submissionid, qas.sequencenumber
-        FROM {quiz_attempts} qa
-        JOIN {block_grade_me} bgm ON bgm.iteminstance = qa.quiz
-        JOIN {question_attempts} qat ON qat.questionusageid = qa.uniqueid
-        JOIN {question_attempt_steps} qas ON qas.userid = qa.userid AND qas.questionattemptid = qa.id
+    $query = ", qas.id step_id, qza.userid, qza.timemodified timesubmitted, qza.id submissionid, qas.sequencenumber
+        FROM {quiz_attempts} qza
+        JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
+        JOIN {question_attempts} qna ON qna.questionusageid = qza.uniqueid
+        JOIN {question_attempt_steps} qas ON qas.userid = qza.userid AND qas.questionattemptid = qza.id
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
           GROUP BY questionattemptid, userid
-            ) maxsubq ON maxsubq.questionattemptid = qat.id
+            ) maxsubq ON maxsubq.questionattemptid = qna.id
                      AND maxsubq.maxseqnum = qas.sequencenumber
                      AND maxsubq.userid = qas.userid
-   LEFT JOIN {question_attempt_steps} qam ON qam.questionattemptid = qa.id
+   LEFT JOIN {question_attempt_steps} qam ON qam.questionattemptid = qna.id
                                          AND qam.state IN('".question_state::$mangrright."',
                                                           '".question_state::$gradedright."',
                                                           '".question_state::$gradedpartial."',
                                                           '".question_state::$mangrpartial."',
                                                           '".question_state::$gradedwrong."',
                                                           '".question_state::$mangrwrong."')
-       WHERE qa.userid $insql
-         AND qa.state = '".question_state::$finished."'"."
-         AND qat.behaviour = 'manualgraded'
-         AND qa.timefinish != 0
+       WHERE qza.userid $insql
+         AND qza.state = '".question_state::$finished."'"."
+         AND qna.behaviour = 'manualgraded'
+         AND qza.timefinish != 0
          AND qam.sequencenumber IS NULL";
 
     return array($query, $inparams);
