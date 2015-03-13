@@ -37,6 +37,7 @@ function block_grade_me_query_quiz($gradebookusers) {
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
+             WHERE userid $insql
           GROUP BY questionattemptid, userid
             ) maxsubq ON maxsubq.questionattemptid = qna.id
                      AND maxsubq.maxseqnum = qas.sequencenumber
@@ -48,8 +49,7 @@ function block_grade_me_query_quiz($gradebookusers) {
                                                           '".question_state::$mangrpartial."',
                                                           '".question_state::$gradedwrong."',
                                                           '".question_state::$mangrwrong."')
-       WHERE qza.userid $insql
-         AND qza.state = '".question_state::$finished."'"."
+       WHERE qza.state = '".question_state::$finished."'"."
          AND qna.behaviour = 'manualgraded'
          AND qza.timefinish != 0
          AND qam.sequencenumber IS NULL";
