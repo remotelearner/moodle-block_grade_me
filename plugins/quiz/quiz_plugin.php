@@ -33,7 +33,7 @@ function block_grade_me_query_quiz($gradebookusers) {
         FROM {quiz_attempts} qza
         JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
         JOIN {question_attempts} qna ON qna.questionusageid = qza.uniqueid
-        JOIN {question_attempt_steps} qas ON qas.userid = qza.userid AND qas.questionattemptid = qza.id
+        JOIN {question_attempt_steps} qas ON qas.userid = qza.userid AND qas.questionattemptid = qna.id
         JOIN (
             SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
               FROM {question_attempt_steps}
