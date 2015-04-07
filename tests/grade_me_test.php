@@ -407,7 +407,7 @@ class block_grade_me_testcase extends advanced_testcase {
             'itemname'       => 'Quiz #1',
             'coursemoduleid' => 0,
             'itemsortorder'  => 0,
-            'step_id'        => 3,
+            'step_id'        => 9,
             'userid'         => 0,
             'timesubmitted'  => 0,
             'submissionid'   => 1,
@@ -873,7 +873,7 @@ class block_grade_me_testcase extends advanced_testcase {
 
     /**
      * Test that the forum plugin uses the correct ID link to a forum discussion.
-     * 
+     *
      * @depends test_load_db
      */
     public function test_tree_uses_correct_forum_discussion_id() {
