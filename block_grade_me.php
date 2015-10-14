@@ -224,7 +224,7 @@ class block_grade_me extends block_base {
      * @return array The formats which apply to this block
      */
     function applicable_formats() {
-        return array('*' => true);
+        return array('all' => true);
     }
 
     /**
