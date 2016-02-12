@@ -24,9 +24,9 @@
 
 class block_grade_me extends block_base {
 
-    function init() {
+    public function init() {
         global $CFG;
-        $this->title = get_string('pluginname','block_grade_me',array());
+        $this->title = get_string('pluginname', 'block_grade_me', array());
     }
 
     /**
@@ -37,10 +37,10 @@ class block_grade_me extends block_base {
      *
      * @return stdClass The content being rendered for this block
      */
-    function get_content() {
+    public function get_content() {
         global $CFG, $USER, $COURSE, $DB, $OUTPUT, $PAGE;
 
-        if ($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
@@ -62,9 +62,9 @@ class block_grade_me extends block_base {
         $gradeables = array();
 
         $excess = false;
-        $groups = NULL;
+        $groups = null;
 
-        $enabled_plugins = block_grade_me_enabled_plugins();
+        $enabledplugins = block_grade_me_enabled_plugins();
 
         $maxcourses = (isset($CFG->block_grade_me_maxcourses)) ? $CFG->block_grade_me_maxcourses : 10;
         $coursecount = 0;
@@ -73,23 +73,22 @@ class block_grade_me extends block_base {
         if ($COURSE->id == SITEID) {
             if (is_siteadmin() && $CFG->block_grade_me_enableadminviewall) {
                 $courses = get_courses();
-            }
-            else {
+            } else {
                 $courses = enrol_get_my_courses();
             }
         } else {
             $courses[$COURSE->id] = $COURSE;
         }
 
-        foreach ($courses AS $courseid => $course) {
+        foreach ($courses as $courseid => $course) {
             unset($params);
             $gradeables = array();
             $gradebookusers = array();
             $context = context_course::instance($courseid);
-            foreach (explode(',', $CFG->gradebookroles) AS $roleid) {
+            foreach (explode(',', $CFG->gradebookroles) as $roleid) {
                 if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
                     $groups = groups_get_user_groups($courseid, $USER->id);
-                    foreach ($groups[0] AS $groupid) {
+                    foreach ($groups[0] as $groupid) {
                         $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC', null, $groupid)));
                     }
                 } else {
@@ -99,7 +98,7 @@ class block_grade_me extends block_base {
 
             $params['courseid'] = $courseid;
 
-            foreach ($enabled_plugins AS $plugin => $a) {
+            foreach ($enabledplugins as $plugin => $a) {
                 if (has_capability($a['capability'], $context)) {
                     $fn = 'block_grade_me_query_'.$plugin;
                     $pluginfn = $fn($gradebookusers);
@@ -118,7 +117,7 @@ class block_grade_me extends block_base {
             if (count($gradeables) > 0) {
                 $coursecount++;
                 if ($coursecount > $maxcourses) {
-                    $additional = get_string('excess','block_grade_me', array('maxcourses' => $maxcourses));
+                    $additional = get_string('excess', 'block_grade_me', array('maxcourses' => $maxcourses));
                     break 1;
                 } else {
                     ksort($gradeables);
@@ -128,13 +127,13 @@ class block_grade_me extends block_base {
             unset($gradeables);
         }
 
-        $grader_roles = array();
-        foreach ($enabled_plugins AS $plugin => $a) {
-            foreach (array_keys(get_roles_with_capability($a['capability'])) AS $role) {
-                $grader_roles[$role] = true;
+        $graderroles = array();
+        foreach ($enabledplugins as $plugin => $a) {
+            foreach (array_keys(get_roles_with_capability($a['capability'])) as $role) {
+                $graderroles[$role] = true;
             }
         }
-        foreach ($grader_roles AS $roleid => $value) {
+        foreach ($graderroles as $roleid => $value) {
             if (user_has_role_assignment($USER->id, $roleid) or is_siteadmin()) {
                 $showempty = true;
             } else {
@@ -147,8 +146,10 @@ class block_grade_me extends block_base {
              $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">Collapse/Expand All</button>';
 
             $this->content->text = '<dl>'.$expand.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
-        } elseif (empty($this->content->text) && $showempty) {
-            $this->content->text .= '<div class="empty">'.$OUTPUT->pix_icon('s/smiley',get_string('alt_smiley','block_grade_me')).' '.get_string('nothing','block_grade_me').'</div>'."\n";
+        } else if (empty($this->content->text) && $showempty) {
+            $this->content->text .= '<div class="empty">'.
+                $OUTPUT->pix_icon('s/smiley', get_string('alt_smiley', 'block_grade_me')).' '.
+                get_string('nothing', 'block_grade_me').'</div>'."\n";
         }
 
         return $this->content;
@@ -157,18 +158,18 @@ class block_grade_me extends block_base {
     /**
      * cron - caches gradable items
      */
-    function cron() {
+    public function cron() {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
 
         // We are going to measure execution times
-        $starttime =  microtime();
+        $starttime = microtime();
 
         $params = array();
         $params['itemtype'] = 'mod';
-        $enabled_plugins = array_keys(block_grade_me_enabled_plugins());
+        $enabledplugins = array_keys(block_grade_me_enabled_plugins());
 
-        list($insql, $inparams) = $DB->get_in_or_equal($enabled_plugins);
+        list($insql, $inparams) = $DB->get_in_or_equal($enabledplugins);
 
         $sql = "SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
                        gi.itemmodule itemmodule, gi.iteminstance iteminstance,
@@ -223,7 +224,7 @@ class block_grade_me extends block_base {
      *
      * @return array The formats which apply to this block
      */
-    function applicable_formats() {
+    public function applicable_formats() {
         return array('all' => true);
     }
 
@@ -231,7 +232,7 @@ class block_grade_me extends block_base {
      * Required in Moodle 2.4 to load /grade_me/settings.php file
      * @return bool Whether or not to include settings.php
      */
-    function has_config() {
+    public function has_config() {
         return true;
     }
 }
