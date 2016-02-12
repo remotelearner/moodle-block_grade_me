@@ -599,31 +599,7 @@ class block_grade_me_testcase extends advanced_testcase {
      * @dataProvider provider_query_quiz
      */
     public function test_query_quiz($datafile, $expected) {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
-
-        list($sql, $params) = block_grade_me_query_quiz(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('quiz');
-
-        $actual = array();
-        $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
-        foreach ($result as $rec) {
-            $actual[] = (array)$rec;
-        }
-
-        // Set proper values for the results
-        foreach ($expected as $key => $row) {
-            $row['coursemoduleid'] = $plugins[$row['coursemoduleid']]->cmid;
-            $row['coursename'] = $courses[$row['courseid']]->fullname;
-            $row['courseid'] = $courses[$row['courseid']]->id;
-            $row['iteminstance'] = $plugins[$row['iteminstance']]->id;
-            $row['userid'] = $users[$row['userid']]->id;
-            $expected[$key] = $row;
-        }
-
-        $this->assertEquals($expected, $actual);
+        $this->standard_query_tests($datafile, $expected, 'quiz');
     }
 
     /**
@@ -633,31 +609,7 @@ class block_grade_me_testcase extends advanced_testcase {
      * @param array $expected The expected results
      */
     public function test_query_forum($expected) {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        list($users, $courses, $plugins) = $this->create_grade_me_data('forum.xml');
-
-        list($sql, $params) = block_grade_me_query_forum(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('forum');
-
-        $actual = array();
-        $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
-        foreach ($result as $rec) {
-            $actual[] = (array)$rec;
-        }
-
-        // Set proper values for the results
-        foreach ($expected as $key => $row) {
-            $row['coursemoduleid'] = $plugins[$row['coursemoduleid']]->cmid;
-            $row['coursename'] = $courses[$row['courseid']]->fullname;
-            $row['courseid'] = $courses[$row['courseid']]->id;
-            $row['iteminstance'] = $plugins[$row['iteminstance']]->id;
-            $row['userid'] = $users[$row['userid']]->id;
-            $expected[$key] = $row;
-        }
-
-        $this->assertEquals($expected, $actual);
+        $this->standard_query_tests('forum.xml', $expected, 'forum');
     }
 
     /**
@@ -668,13 +620,21 @@ class block_grade_me_testcase extends advanced_testcase {
      * @dataProvider provider_query_glossary
      */
     public function test_query_glossary($datafile, $expected) {
+        $this->standard_query_tests($datafile, $expected, 'glossary');
+    }
+
+    /**
+     * Generic test that can be run by standard modules.
+     */
+    public function standard_query_tests($datafile, $expected, $suffix) {
         global $USER, $DB;
 
         $this->resetAfterTest(true);
         list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
 
-        list($sql, $params) = block_grade_me_query_glossary(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('glossary');
+        $dbfunction = 'block_grade_me_query_'.$suffix;
+        list($sql, $params) = $dbfunction(array($users[0]->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($suffix);
 
         $actual = array();
         $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
@@ -694,7 +654,6 @@ class block_grade_me_testcase extends advanced_testcase {
 
         $this->assertEquals($expected, $actual);
     }
-
     /**
      * Test the block_grade_me_query_data function
      */
