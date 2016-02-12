@@ -428,8 +428,8 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_global_configuration_load() {
         $this->resetAfterTest(true);
-        $block_inst = block_instance('grade_me');
-        $this->assertEquals(true, $block_inst->has_config());
+        $blockinst = block_instance('grade_me');
+        $this->assertEquals(true, $blockinst->has_config());
     }
 
     /**
@@ -477,7 +477,6 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
         $rec3->timesubmitted = '6';
-
 
         $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3);
         $actual = $DB->get_records_sql($sql, $insqlparams);
@@ -740,10 +739,10 @@ class block_grade_me_testcase extends advanced_testcase {
         set_config('gradebookroles', $roleid);
 
         // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = 2;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create the user enrolment record.
         $DB->insert_record('user_enrolments', (object)array(
@@ -803,10 +802,10 @@ class block_grade_me_testcase extends advanced_testcase {
         set_config('gradebookroles', "$roleid, $roleid2");
 
         // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = 2;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create the user enrolment record.
         $DB->insert_record('user_enrolments', (object)array(
