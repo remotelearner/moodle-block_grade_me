@@ -29,8 +29,8 @@ if ($ADMIN->fulltree) {
         if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php')) {
             include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php');
             if (function_exists('block_grade_me_required_capability_'.$plugin)) {
-                $required_capability = 'block_grade_me_required_capability_'.$plugin;
-                $a = $required_capability();
+                $requiredcapability = 'block_grade_me_required_capability_'.$plugin;
+                $a = $requiredcapability();
                 $settings->add(new admin_setting_configcheckbox('block_grade_me_enable'.$plugin,
                     get_string('settings_enablepre', 'block_grade_me').' '.get_string('modulenameplural', 'mod_'.$plugin),
                     get_string('settings_configenablepre', 'block_grade_me',
