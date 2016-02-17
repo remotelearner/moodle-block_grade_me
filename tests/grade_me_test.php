@@ -633,7 +633,8 @@ class block_grade_me_testcase extends advanced_testcase {
 
         $dbfunction = 'block_grade_me_query_'.$suffix;
         list($sql, $params) = $dbfunction(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($suffix);
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($suffix).
+            ' ORDER BY submissionid ASC';
 
         $actual = array();
         $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
