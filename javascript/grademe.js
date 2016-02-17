@@ -1,4 +1,5 @@
-/*global $:false, togglecollapseall:false */
+/*jshint unused:false */
+/* The above disables warnings for unused '$' and 'togglecollapseall'. */
 /*
  * Collapse/Expand all courses/assessments. If we are in the course,
  * then only collapse/expand all assessments.
