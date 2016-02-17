@@ -1,4 +1,4 @@
-/*global $:false */
+/*global $:false, togglecollapseall:false */
 /*
  * Collapse/Expand all courses/assessments. If we are in the course,
  * then only collapse/expand all assessments.
