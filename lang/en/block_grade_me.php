@@ -41,3 +41,4 @@ $string['settings_configenablepre'] = 'Should Grade Me show unrated activity fro
 
 $string['grade_me:addinstance'] = 'Add a new Grade Me block';
 $string['grade_me:myaddinstance'] = 'Add a new Grade Me block to the My Moodle page';
+$string['expand'] = 'Collapse / Expand All';
