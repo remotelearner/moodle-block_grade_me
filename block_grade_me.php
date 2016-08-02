@@ -143,7 +143,7 @@ class block_grade_me extends block_base {
 
         if (!empty($this->content->text)) {
              // Expand/Collapse button.
-             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">Collapse/Expand All</button>';
+             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">'.get_string('expand','block_grade_me').'</button>';
 
             $this->content->text = '<dl>'.$expand.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
         } else if (empty($this->content->text) && $showempty) {
