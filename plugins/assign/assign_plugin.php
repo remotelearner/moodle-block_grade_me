@@ -26,12 +26,12 @@
  * @return array Specifics on the capabilities of the assign plugin type
  */
 function block_grade_me_required_capability_assign() {
-    $enabled_plugins['assign'] = array(
+    $enabledplugins['assign'] = array(
         'capability' => 'mod/assign:grade',
         'default_on' => true,
         'versiondependencies' => 'ANY_VERSION'
         );
-    return $enabled_plugins;
+    return $enabledplugins;
 }
 
 /**

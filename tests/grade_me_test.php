@@ -428,8 +428,8 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_global_configuration_load() {
         $this->resetAfterTest(true);
-        $block_inst = block_instance('grade_me');
-        $this->assertEquals(true, $block_inst->has_config());
+        $blockinst = block_instance('grade_me');
+        $this->assertEquals(true, $blockinst->has_config());
     }
 
     /**
@@ -477,7 +477,6 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
         $rec3->timesubmitted = '6';
-
 
         $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3);
         $actual = $DB->get_records_sql($sql, $insqlparams);
@@ -599,31 +598,7 @@ class block_grade_me_testcase extends advanced_testcase {
      * @dataProvider provider_query_quiz
      */
     public function test_query_quiz($datafile, $expected) {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
-
-        list($sql, $params) = block_grade_me_query_quiz(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('quiz');
-
-        $actual = array();
-        $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
-        foreach ($result as $rec) {
-            $actual[] = (array)$rec;
-        }
-
-        // Set proper values for the results
-        foreach ($expected as $key => $row) {
-            $row['coursemoduleid'] = $plugins[$row['coursemoduleid']]->cmid;
-            $row['coursename'] = $courses[$row['courseid']]->fullname;
-            $row['courseid'] = $courses[$row['courseid']]->id;
-            $row['iteminstance'] = $plugins[$row['iteminstance']]->id;
-            $row['userid'] = $users[$row['userid']]->id;
-            $expected[$key] = $row;
-        }
-
-        $this->assertEquals($expected, $actual);
+        $this->standard_query_tests($datafile, $expected, 'quiz');
     }
 
     /**
@@ -633,31 +608,7 @@ class block_grade_me_testcase extends advanced_testcase {
      * @param array $expected The expected results
      */
     public function test_query_forum($expected) {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        list($users, $courses, $plugins) = $this->create_grade_me_data('forum.xml');
-
-        list($sql, $params) = block_grade_me_query_forum(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('forum');
-
-        $actual = array();
-        $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
-        foreach ($result as $rec) {
-            $actual[] = (array)$rec;
-        }
-
-        // Set proper values for the results
-        foreach ($expected as $key => $row) {
-            $row['coursemoduleid'] = $plugins[$row['coursemoduleid']]->cmid;
-            $row['coursename'] = $courses[$row['courseid']]->fullname;
-            $row['courseid'] = $courses[$row['courseid']]->id;
-            $row['iteminstance'] = $plugins[$row['iteminstance']]->id;
-            $row['userid'] = $users[$row['userid']]->id;
-            $expected[$key] = $row;
-        }
-
-        $this->assertEquals($expected, $actual);
+        $this->standard_query_tests('forum.xml', $expected, 'forum');
     }
 
     /**
@@ -668,13 +619,22 @@ class block_grade_me_testcase extends advanced_testcase {
      * @dataProvider provider_query_glossary
      */
     public function test_query_glossary($datafile, $expected) {
+        $this->standard_query_tests($datafile, $expected, 'glossary');
+    }
+
+    /**
+     * Generic test that can be run by standard modules.
+     */
+    public function standard_query_tests($datafile, $expected, $suffix) {
         global $USER, $DB;
 
         $this->resetAfterTest(true);
         list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
 
-        list($sql, $params) = block_grade_me_query_glossary(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('glossary');
+        $dbfunction = 'block_grade_me_query_'.$suffix;
+        list($sql, $params) = $dbfunction(array($users[0]->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($suffix).
+            ' ORDER BY submissionid ASC';
 
         $actual = array();
         $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
@@ -694,7 +654,6 @@ class block_grade_me_testcase extends advanced_testcase {
 
         $this->assertEquals($expected, $actual);
     }
-
     /**
      * Test the block_grade_me_query_data function
      */
@@ -781,10 +740,10 @@ class block_grade_me_testcase extends advanced_testcase {
         set_config('gradebookroles', $roleid);
 
         // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = 2;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create the user enrolment record.
         $DB->insert_record('user_enrolments', (object)array(
@@ -844,10 +803,10 @@ class block_grade_me_testcase extends advanced_testcase {
         set_config('gradebookroles', "$roleid, $roleid2");
 
         // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = 2;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = 2;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create the user enrolment record.
         $DB->insert_record('user_enrolments', (object)array(
