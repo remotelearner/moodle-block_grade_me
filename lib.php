@@ -102,7 +102,7 @@ function block_grade_me_array($gradeables, $r) {
  * @return string $text
  */
 function block_grade_me_tree($course) {
-    global $CFG, $OUTPUT, $DB;
+    global $CFG, $DB, $OUTPUT, $SESSION;
 
     // get time format string
     $datetimestring = get_string('datetime', 'block_grade_me', array());
@@ -165,7 +165,7 @@ function block_grade_me_tree($course) {
 
         // Assign module needs to have a rownum and useridlist
         $rownum = 0;
-        $useridlistid = time() - 1;
+        $useridlistid = $coursemoduleid.time();
         $useridlist = array();
 
         foreach ($item as $l3 => $submission) {
@@ -213,8 +213,8 @@ function block_grade_me_tree($course) {
         }
 
         if ($itemmodule == 'assign') {
-            $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
-            $cache->set($coursemoduleid.'_'.$useridlistid, $useridlist);
+            $useridlistkey = $coursemoduleid.'_'.$useridlistid;
+            $SESSION->mod_assign_useridlist[$useridlistkey] = $useridlist;
         }
 
         $text .= '</ul>'."\n";
