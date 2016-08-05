@@ -165,7 +165,7 @@ function block_grade_me_tree($course) {
 
         // Assign module needs to have a rownum and useridlist
         $rownum = 0;
-        $useridlistid = time() - 1;
+        $useridlistid = $coursemoduleid.time();
         $useridlist = array();
 
         foreach ($item as $l3 => $submission) {
