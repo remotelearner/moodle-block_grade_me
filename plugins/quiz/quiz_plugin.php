@@ -41,33 +41,15 @@ function block_grade_me_query_quiz($gradebookusers) {
         return false;
     }
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
-
-    // For a finished quiz question, get the last state it was in indicated by the maximum sequence number.
-    // If the question was not manually or automatically graded then its yet to be graded.
     $query = ", qas.id step_id, qza.userid, qza.timemodified timesubmitted, qza.id submissionid, qas.sequencenumber
-        FROM {quiz_attempts} qza
-        JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
+        FROM {question_attempt_steps} qas
+        JOIN {block_grade_me_quiz_ngrade} bneeds ON bneeds.questionattemptstepid = qas.id
+                                                    AND bneeds.userid $insql
+        JOIN {quiz_attempts} qza ON qas.id = bneeds.questionattemptstepid
         JOIN {question_attempts} qna ON qna.questionusageid = qza.uniqueid
-        JOIN {question_attempt_steps} qas ON qas.userid = qza.userid AND qas.questionattemptid = qna.id
-        JOIN (
-            SELECT userid, questionattemptid, MAX(sequencenumber) as maxseqnum
-              FROM {question_attempt_steps}
-             WHERE userid $insql
-          GROUP BY questionattemptid, userid
-            ) maxsubq ON maxsubq.questionattemptid = qna.id
-                     AND maxsubq.maxseqnum = qas.sequencenumber
-                     AND maxsubq.userid = qas.userid
-   LEFT JOIN {question_attempt_steps} qam ON qam.questionattemptid = qna.id
-                                         AND qam.state IN('".question_state::$mangrright."',
-                                                          '".question_state::$gradedright."',
-                                                          '".question_state::$gradedpartial."',
-                                                          '".question_state::$mangrpartial."',
-                                                          '".question_state::$gradedwrong."',
-                                                          '".question_state::$mangrwrong."')
-       WHERE qza.state = '".question_state::$finished."'"."
-         AND qna.behaviour = 'manualgraded'
-         AND qza.timefinish != 0
-         AND qam.sequencenumber IS NULL";
-
+                                        AND qas.questionattemptid = qna.id
+        JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
+                                     AND bgm.itemmodule = 'quiz'
+       WHERE qas.state = '".question_state::$needsgrading."'";
     return array($query, $inparams);
 }
