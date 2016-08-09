@@ -27,6 +27,20 @@
         <INDEX NAME="itemsortorder" UNIQUE="false" FIELDS="itemsortorder" PREVIOUS="courseid-itemmodule"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="block_grade_me_quiz_ngrade" COMMENT="Caches information about quizes needing grades.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="quizid"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="questionattemptstepid"/>
+        <FIELD NAME="questionattemptstepid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="itemmodule" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="questionattemptstepid" NEXT="attemptid"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="courseid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid-questionattemptstepid" />
+        <INDEX NAME="userid-questionattemptstepid" UNIQUE="false" FIELDS="userid, questionattemptstepid"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
 
