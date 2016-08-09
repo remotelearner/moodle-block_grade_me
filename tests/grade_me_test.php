@@ -221,6 +221,15 @@ class block_grade_me_testcase extends advanced_testcase {
         );
         $data['assignment'] = array($plugin, $matches);
 
+        // Quiz test
+        $plugin = 'quiz';
+        $matches = array(
+            1 => '/Go to quiz/',
+            2 => '|mod/quiz/view.php|',
+            3 => '/\/mod\/quiz\/review.php\?attempt=4/',
+            5 => '/quizitem4/',
+        );
+        $data['quiz'] = array($plugin, $matches);
         return $data;
     }
 
@@ -598,7 +607,33 @@ class block_grade_me_testcase extends advanced_testcase {
      * @dataProvider provider_query_quiz
      */
     public function test_query_quiz($datafile, $expected) {
-        $this->standard_query_tests($datafile, $expected, 'quiz');
+        global $DB;
+
+        $this->resetAfterTest(true);
+        list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
+
+        $this->update_quiz_ngrade();
+
+        list($sql, $params) = block_grade_me_query_quiz(array($users[0]->id));
+        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('quiz');
+
+        $actual = array();
+        $result = $DB->get_recordset_sql($sql, array($params[0], $courses[0]->id));
+        foreach ($result as $rec) {
+            $actual[] = (array)$rec;
+        }
+
+        // Set proper values for the results
+        foreach ($expected as $key => $row) {
+            $row['coursemoduleid'] = $plugins[$row['coursemoduleid']]->cmid;
+            $row['coursename'] = $courses[$row['courseid']]->fullname;
+            $row['courseid'] = $courses[$row['courseid']]->id;
+            $row['iteminstance'] = $plugins[$row['iteminstance']]->id;
+            $row['userid'] = $users[$row['userid']]->id;
+            $expected[$key] = $row;
+        }
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -774,9 +809,16 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_get_content_multiple_user($plugin, $expectedvalues) {
         global $CFG, $DB, $USER;
-
         $this->resetAfterTest(true);
-        list($users, $courses) = $this->create_grade_me_data('block_grade_me.xml');
+        if ($plugin !== 'quiz') {
+            // Create data for assignements.
+            list($users, $courses) = $this->create_grade_me_data('block_grade_me.xml');
+        } else {
+            // Create data for quizzes.
+            list($users, $courses) = $this->create_grade_me_data('quiz1.xml');
+            // Update the block_grade_me_quiz_ngrade table for quizzes.
+            $this->update_quiz_ngrade();
+        }
 
         // Make sure that the plugin being tested has been enabled
         if (!$CFG->{'block_grade_me_enable'.$plugin} == true) {
@@ -852,5 +894,24 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->assertFalse(empty($gradeables), 'Expected results not found.');
         $actual = block_grade_me_tree($gradeables);
         $this->assertRegExp('/mod\/forum\/discuss.php\?d=100\#p1/', $actual);
+    }
+
+    /**
+     * Populate the block_grade_me_quiz_ngrade table with data to similate quiz_observers::attempt_submitted.
+     */
+    protected function update_quiz_ngrade() {
+        global $DB;
+        $DB->execute("INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid, questionattemptstepid, courseid )
+                SELECT qza.id, qza.userid, qza.quiz, qas.id, q.course
+                  FROM {question_attempt_steps} qas
+                  JOIN {question_attempts} qna ON qas.questionattemptid    = qna.id
+                  JOIN {quiz_attempts} qza     ON qna.questionusageid      = qza.uniqueid
+                  JOIN (SELECT questionattemptid, MAX(qas1.sequencenumber) maxseq
+                          FROM {question_attempt_steps} qas1, {question_attempts} qna1
+                         WHERE qas1.questionattemptid = qna1.id
+                      GROUP BY questionattemptid) maxseq ON maxseq.questionattemptid = qna.id
+                                                        AND qas.sequencenumber = maxseq.maxseq
+                  JOIN {quiz} q ON q.id = qza.quiz
+                 WHERE qas.state = 'needsgrading'");
     }
 }

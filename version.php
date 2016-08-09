@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014111007;
+$plugin->version   = 2014111008;
 $plugin->requires  = 2014111000;
 $plugin->cron      = 3600;
 $plugin->component = 'block_grade_me';
