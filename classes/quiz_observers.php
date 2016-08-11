@@ -82,9 +82,18 @@ class quiz_observers {
      * @return void
      */
     public static function attempt_submitted($event) {
+        \block_grade_me\quiz_util::update_quiz_ngrade($event->objectid);
+    }
+
+    /**
+     * An attempt has been manually graded.
+     *
+     * @param \core\event\base $event The event.
+     * @return void
+     */
+    public static function question_manually_graded($event) {
         global $DB;
-        $DB->delete_records('block_grade_me_quiz_ngrade', ['quizid' => $event->other['quizid'], 'userid' => $event->userid]);
-        $sql = "INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid, questionattemptstepid, courseid ) SELECT qza.uniqueid, qza.userid, qza.quiz, qas.id, q.course
+        $sql = "SELECT COUNT(*) attempts
                   FROM {question_attempt_steps} qas
                        JOIN {question_attempts} qna ON qas.questionattemptid    = qna.id
                        JOIN {quiz_attempts} qza     ON qna.questionusageid      = qza.uniqueid
@@ -96,19 +105,10 @@ class quiz_observers {
                                                             AND qas.sequencenumber       = maxseq.maxseq
                        JOIN {quiz} q ON q.id = qza.quiz
                  WHERE qas.state = 'needsgrading'";
-        $results = $DB->execute($sql, [$event->objectid]);
-    }
-
-    /**
-     * An attempt has been manually graded.
-     *
-     * @param \core\event\base $event The event.
-     * @return void
-     */
-    public static function question_manually_graded($event) {
-        global $DB;
-        foreach ($records as $record) {
-            $DB->delete_records('block_grade_me_quiz_ngrade', ['attemptid' => $event->other['attemptid'], 'quizid' => $event->other['quizid']]);
+        $count = $DB->get_record_sql($sql, [$event->other['attemptid']]);
+        // Delete attempts if all questions are graded for attempt, leave other attempts by user for quiz untouched.
+        if (empty($count->attempts)) {
+            $DB->delete_records('block_grade_me_quiz_ngrade', ['attemptid' => $event->other['attemptid'], 'quizid' => $event->other['quizid']]);            
         }
     }
 }
