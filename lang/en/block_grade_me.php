@@ -42,3 +42,9 @@ $string['settings_configenablepre'] = 'Should Grade Me show unrated activity fro
 $string['grade_me:addinstance'] = 'Add a new Grade Me block';
 $string['grade_me:myaddinstance'] = 'Add a new Grade Me block to the My Moodle page';
 $string['expand'] = 'Collapse / Expand All';
+
+$string['grade_me_tools'] = 'Tools';
+$string['grade_me_tools_desc'] = '<p><a href="{$a}/blocks/grade_me/quiz_update_ngrade.php">Refresh quiz attempts needing grading</a></p>';
+
+$string['quiz_update_ngrade_complete'] = 'Update complete';
+$string['quiz_update_ngrade_success'] = 'Quiz attempt list successfully updated, currently there is {$a} questions needing grading.';

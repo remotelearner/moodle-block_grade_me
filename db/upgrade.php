@@ -81,6 +81,7 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
         if (!$dbman->table_exists('block_grade_me_quiz_ngrade')) {
             $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'block_grade_me_quiz_ngrade');
         }
+        $DB->delete_records('block_grade_me_quiz_ngrade');
         // Pre populate block_grade_me_quiz_ngrade table.
         \block_grade_me\quiz_util::update_quiz_ngrade();
         upgrade_block_savepoint(true, '2015060403', 'grade_me');
