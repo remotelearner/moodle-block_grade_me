@@ -38,4 +38,8 @@ if ($ADMIN->fulltree) {
             }
         }
     }
+
+    $label = get_string('grade_me_tools', 'block_grade_me');
+    $desc = get_string('grade_me_tools_desc', 'block_grade_me', $CFG->wwwroot);
+    $settings->add(new admin_setting_heading('grade_me_tools', $label, $desc));
 }

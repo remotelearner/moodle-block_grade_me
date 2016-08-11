@@ -81,19 +81,9 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
         if (!$dbman->table_exists('block_grade_me_quiz_ngrade')) {
             $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'block_grade_me_quiz_ngrade');
         }
+        $DB->delete_records('block_grade_me_quiz_ngrade');
         // Pre populate block_grade_me_quiz_ngrade table.
-        $DB->execute("INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid, questionattemptstepid, courseid )
-                SELECT qza.id, qza.userid, qza.quiz, qas.id, q.course
-                  FROM {question_attempt_steps} qas
-                  JOIN {question_attempts} qna ON qas.questionattemptid    = qna.id
-                  JOIN {quiz_attempts} qza     ON qna.questionusageid      = qza.uniqueid
-                  JOIN (SELECT questionattemptid, MAX(qas1.sequencenumber) maxseq
-                          FROM {question_attempt_steps} qas1, {question_attempts} qna1
-                         WHERE qas1.questionattemptid = qna1.id
-                      GROUP BY questionattemptid) maxseq ON maxseq.questionattemptid = qna.id
-                                                        AND qas.sequencenumber = maxseq.maxseq
-                  JOIN {quiz} q ON q.id = qza.quiz
-                 WHERE qas.state = 'needsgrading'");
+        \block_grade_me\quiz_util::update_quiz_ngrade();
         upgrade_block_savepoint(true, '2014051209', 'grade_me');
     }
     return true;
