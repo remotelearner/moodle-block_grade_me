@@ -45,7 +45,7 @@ function block_grade_me_query_forum($gradebookusers) {
         JOIN {forum} f ON f.id = fd.forum
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = f.course AND bgm.iteminstance = f.id
        WHERE fp.userid $insql
-         AND f.assessed = 1
+         AND f.assessed != 0
          AND $concatid NOT IN (
              SELECT $concatitem
                FROM {rating} r
