@@ -32,7 +32,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -42,14 +42,14 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
         When I trigger cron
-        And I am on site homepage
+        And I am on homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
         And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
@@ -59,7 +59,7 @@ Feature: Forum posts are displayed in the block
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
         And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
     Scenario: Forum posts using "Count of ratings" show up in the block
@@ -74,7 +74,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -84,14 +84,14 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
         When I trigger cron
-        And I am on site homepage
+        And I am on homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
         And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
@@ -101,7 +101,7 @@ Feature: Forum posts are displayed in the block
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
         And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
     Scenario: Forum posts using "Sum of ratings" show up in the block
@@ -116,7 +116,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -126,14 +126,14 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
-        And I am on site homepage
+        And I am on homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
         When I trigger cron
-        And I am on site homepage
+        And I am on homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
         And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
@@ -143,5 +143,5 @@ Feature: Forum posts are displayed in the block
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
         And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
-        And I am on site homepage
+        And I am on homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
