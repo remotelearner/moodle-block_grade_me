@@ -28,7 +28,7 @@ require_once(__DIR__.'/../../../../lib/behat/behat_base.php');
 class behat_block_grade_me extends behat_base {
 
     /**
-     * @Given the grade me block is present on all pages.
+     * @Given /^the grade me block is present on all pages\.$/
      */
     public function the_grade_me_block_is_present_on_all_pages() {
         global $DB;
