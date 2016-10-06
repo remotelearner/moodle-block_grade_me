@@ -58,7 +58,7 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
@@ -100,7 +100,7 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
@@ -142,6 +142,6 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'indent')]//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
