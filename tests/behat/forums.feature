@@ -32,6 +32,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -41,6 +42,7 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -50,7 +52,7 @@ Feature: Forum posts are displayed in the block
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
-        And I should not see "Janie Doe" in the "Grade Me" "block"
+        And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
         When I click on "dd.module div.toggle" "css_element" in the "Grade Me" "block"
         Then I should see "Janie Doe" in the "Grade Me" "block"
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
@@ -72,6 +74,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -81,6 +84,7 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -90,7 +94,7 @@ Feature: Forum posts are displayed in the block
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
-        And I should not see "Janie Doe" in the "Grade Me" "block"
+        And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
         When I click on "dd.module div.toggle" "css_element" in the "Grade Me" "block"
         Then I should see "Janie Doe" in the "Grade Me" "block"
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
@@ -112,6 +116,7 @@ Feature: Forum posts are displayed in the block
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
@@ -121,6 +126,7 @@ Feature: Forum posts are displayed in the block
         And I follow "Reply"
         And I set the field "Message" to "This is a test reply"
         And I press "Post to forum"
+        And I am on site homepage
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -130,7 +136,7 @@ Feature: Forum posts are displayed in the block
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
-        And I should not see "Janie Doe" in the "Grade Me" "block"
+        And "Janie Doe" "text" in the "Grade Me" "block" should not be visible
         When I click on "dd.module div.toggle" "css_element" in the "Grade Me" "block"
         Then I should see "Janie Doe" in the "Grade Me" "block"
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
