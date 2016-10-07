@@ -67,12 +67,22 @@ class quiz_observers {
     /**
      * An attempt has been deleted.
      *
-     * @param \core\event\base $event The event.
+     * @param \mod_quiz\event\attempt_deleted $event The event.
      * @return void
      */
-    public static function attempt_deleted($event) {
+    public static function attempt_deleted(\mod_quiz\event\attempt_deleted $event) {
         global $DB;
-        $DB->delete_records('block_grade_me_quiz_ngrade', ['attemptid' => $event->objectid]);
+        // We need to convert the event's objectid (which is the quiz_attempts ID column) to the quiz_attempts uniqueid column.
+        // Since this is a "deleted" event, we can't do a direct DB query, record snapshots to the rescue!
+        try {
+            $attemptrecord = $event->get_record_snapshot('quiz_attempts', $event->objectid);
+            if (!empty($attemptrecord)) {
+                $params = ['attemptid' => $attemptrecord->uniqueid];
+                $DB->delete_records('block_grade_me_quiz_ngrade', $params);
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -88,11 +98,16 @@ class quiz_observers {
     /**
      * An attempt has been manually graded.
      *
-     * @param \core\event\base $event The event.
+     * @param \mod_quiz\event\question_manually_graded $event The event.
      * @return void
      */
-    public static function question_manually_graded($event) {
+    public static function question_manually_graded(\mod_quiz\event\question_manually_graded $event) {
         global $DB;
+        // Lookup uniqueid from quiz_attempts table.
+        $record = $DB->get_record('quiz_attempts', ['id' => $event->other['attemptid']]);
+        if (empty($record)) {
+            return false;
+        }
         $sql = "SELECT COUNT(*) attempts
                   FROM {question_attempt_steps} qas
                        JOIN {question_attempts} qna ON qas.questionattemptid    = qna.id
@@ -105,10 +120,11 @@ class quiz_observers {
                                                             AND qas.sequencenumber       = maxseq.maxseq
                        JOIN {quiz} q ON q.id = qza.quiz
                  WHERE qas.state = 'needsgrading'";
-        $count = $DB->get_record_sql($sql, [$event->other['attemptid']]);
+        $count = $DB->get_record_sql($sql, [$record->uniqueid]);
         // Delete attempts if all questions are graded for attempt, leave other attempts by user for quiz untouched.
         if (empty($count->attempts)) {
-            $DB->delete_records('block_grade_me_quiz_ngrade', ['attemptid' => $event->other['attemptid'], 'quizid' => $event->other['quizid']]);            
+            $ngradeparams = ['attemptid' => $record->uniqueid, 'quizid' => $event->other['quizid']];
+            $DB->delete_records('block_grade_me_quiz_ngrade', $ngradeparams);
         }
     }
 }
