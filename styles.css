@@ -8,16 +8,16 @@
 .block_grade_me dd,
 .block_grade_me ul,
 .block_grade_me li {
+    list-style: none;
     margin: 0;
     padding: 0;
-    list-style: none;
 }
 
 .block_grade_me .gm_icon {
-    width: 16px;
-    height: 16px;
     float: left;
+    height: 16px;
     margin-right: 4px;
+    width: 16px;
 }
 
 .block_grade_me .cmod {
@@ -27,19 +27,19 @@
 
 .block_grade_me .module {
     line-height: 16px;
-    position: relative;
     padding: 3px 0 3px 20px;
+    position: relative;
 }
 
 .block_grade_me .toggle {
-    position: relative;
-    left: 0;
-    display: block;
-    width: 16px;
-    height: 16px;
-    float: left;
-    cursor: pointer;
     background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50%;
+    cursor: pointer;
+    display: block;
+    float: left;
+    height: 16px;
+    left: 0;
+    position: relative;
+    width: 16px;
 }
 
 .block_grade_me .toggle.open {
@@ -51,14 +51,14 @@
 }
 
 .block_grade_me .cloakable {
+    border-top: 1px dotted #ccc;
     line-height: 1em;
     margin: 0 0 3px 0;
-    border-top: 1px dotted #ccc;
 }
 
 .block_grade_me .gradable {
-    padding: 2px 0;
     border-bottom: 1px dotted #ccc;
+    padding: 2px 0;
 }
 
 .block_grade_me .gradable .gm_icon {
@@ -74,16 +74,16 @@
 }
 
 .block_grade_me .empty img {
-    width: 15px;
-    height: 15px;
     float: left;
+    height: 15px;
     margin-right: 4px;
+    width: 15px;
 }
 
 .block_grade_me .excess {
+    color: rgb(205,0,0);
+    font-weight: bold;
     margin-top: 4px;
     padding: 4px 16px;
     text-align: center;
-    font-weight: bold;
-    color: rgb(205,0,0);
 }

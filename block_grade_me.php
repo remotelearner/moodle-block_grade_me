@@ -25,7 +25,6 @@
 class block_grade_me extends block_base {
 
     public function init() {
-        global $CFG;
         $this->title = get_string('pluginname', 'block_grade_me', array());
     }
 
@@ -48,7 +47,7 @@ class block_grade_me extends block_base {
         $PAGE->requires->jquery();
         $PAGE->requires->js('/blocks/grade_me/javascript/grademe.js');
 
-        // create the content class
+        // Create the content class.
         $this->content = new stdClass;
         $this->content->text = '';
         $this->content->footer = '';
@@ -57,11 +56,9 @@ class block_grade_me extends block_base {
             return $this->content;
         }
 
-        // setup arrays
-        $grader = array();
+        // Setup arrays.
         $gradeables = array();
 
-        $excess = false;
         $groups = null;
 
         $enabledplugins = block_grade_me_enabled_plugins();
@@ -85,15 +82,18 @@ class block_grade_me extends block_base {
             $gradeables = array();
             $gradebookusers = array();
             $context = context_course::instance($courseid);
-            foreach (explode(',', $CFG->gradebookroles) AS $roleid) {
+            foreach (explode(',', $CFG->gradebookroles) as $roleid) {
                 $roleid = trim($roleid);
-                if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                if ((groups_get_course_groupmode($course) == SEPARATEGROUPS) &&
+                    !has_capability('moodle/site:accessallgroups', $context)) {
                     $groups = groups_get_user_groups($courseid, $USER->id);
                     foreach ($groups[0] as $groupid) {
-                        $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC', null, $groupid)));
+                        $gradebookusers = array_merge($gradebookusers,
+                            array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC', null, $groupid)));
                     }
                 } else {
-                    $gradebookusers = array_merge($gradebookusers, array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')));
+                    $gradebookusers = array_merge($gradebookusers,
+                        array_keys(get_role_users($roleid, $context, false, 'u.id', 'u.id ASC')));
                 }
             }
 
@@ -135,7 +135,7 @@ class block_grade_me extends block_base {
             }
         }
         foreach ($graderroles as $roleid => $value) {
-            if (user_has_role_assignment($USER->id, $roleid) or is_siteadmin()) {
+            if (user_has_role_assignment($USER->id, $roleid) || is_siteadmin()) {
                 $showempty = true;
             } else {
                 $showempty = false;
@@ -144,7 +144,8 @@ class block_grade_me extends block_base {
 
         if (!empty($this->content->text)) {
              // Expand/Collapse button.
-             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">'.get_string('expand','block_grade_me').'</button>';
+             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">' .
+                get_string('expand', 'block_grade_me') . '</button>';
 
             $this->content->text = '<dl>'.$expand.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
         } else if (empty($this->content->text) && $showempty) {
@@ -163,7 +164,7 @@ class block_grade_me extends block_base {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
 
-        // We are going to measure execution times
+        // We are going to measure execution times.
         $starttime = microtime();
 
         $params = array();
@@ -193,7 +194,8 @@ class block_grade_me extends block_base {
                 'iteminstance'  => $rec->iteminstance,
                 'courseid'      => $rec->courseid
             );
-            $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND iteminstance = :iteminstance AND courseid = :courseid';
+            $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND '.
+                'iteminstance = :iteminstance AND courseid = :courseid';
             $params = array(
                 'itemname' => $rec->itemname,
                 'itemtype' => $rec->itemtype,
@@ -215,7 +217,7 @@ class block_grade_me extends block_base {
             }
         }
 
-        // Show times
+        // Show times.
         mtrace('');
         mtrace('Updated block_grade_me cache in ' . microtime_diff($starttime, microtime()) . ' seconds');
     }
