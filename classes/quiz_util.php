@@ -41,7 +41,8 @@ class quiz_util {
             $attemptsql = "AND qna1.questionusageid = (SELECT uniqueid FROM {quiz_attempts} WHERE id = ?)";
             $params[] = $attemptid;
         }
-        $sql = "INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid, questionattemptstepid, courseid ) SELECT qza.uniqueid, qza.userid, qza.quiz, qas.id, q.course
+        $sql = "INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid, questionattemptstepid, courseid )
+                SELECT qza.uniqueid, qza.userid, qza.quiz, qas.id, q.course
                   FROM {question_attempt_steps} qas
                        JOIN {question_attempts} qna ON qas.questionattemptid    = qna.id
                        JOIN {quiz_attempts} qza     ON qna.questionusageid      = qza.uniqueid
