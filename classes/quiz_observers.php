@@ -108,7 +108,8 @@ class quiz_observers {
         $count = $DB->get_record_sql($sql, [$event->other['attemptid']]);
         // Delete attempts if all questions are graded for attempt, leave other attempts by user for quiz untouched.
         if (empty($count->attempts)) {
-            $DB->delete_records('block_grade_me_quiz_ngrade', ['attemptid' => $event->other['attemptid'], 'quizid' => $event->other['quizid']]);            
+            $DB->delete_records('block_grade_me_quiz_ngrade',
+                ['attemptid' => $event->other['attemptid'], 'quizid' => $event->other['quizid']]);
         }
     }
 }

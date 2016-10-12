@@ -61,7 +61,7 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
 
         }
 
-        // grade_me savepoint reached
+        // Grade_me savepoint reached.
         upgrade_block_savepoint(true, 2013022600, 'grade_me');
     }
 
