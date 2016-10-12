@@ -39,7 +39,8 @@ function block_grade_me_array2str($array) {
  * @return string $query
  */
 function block_grade_me_query_prefix() {
-    $query = 'SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, bgm.coursemoduleid, bgm.itemsortorder';
+    $query = 'SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, ' .
+        'bgm.coursemoduleid, bgm.itemsortorder';
     return $query;
 }
 
@@ -65,7 +66,7 @@ function block_grade_me_enabled_plugins() {
     $plugins = get_list_of_plugins('blocks/grade_me/plugins');
     foreach ($plugins as $plugin) {
         if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php')
-            and $CFG->{'block_grade_me_enable'.$plugin} == true) {
+            && ($CFG->{'block_grade_me_enable'.$plugin} == true)) {
             include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php');
             if (function_exists('block_grade_me_required_capability_'.$plugin)) {
                 $requiredcapability = 'block_grade_me_required_capability_'.$plugin;
@@ -104,11 +105,11 @@ function block_grade_me_array($gradeables, $r) {
 function block_grade_me_tree($course) {
     global $CFG, $OUTPUT, $DB;
 
-    // get time format string
+    // Get time format string.
     $datetimestring = get_string('datetime', 'block_grade_me', array());
-    // Grading image
+    // Grading image.
     $gradeimg = $CFG->wwwroot.'/blocks/grade_me/pix/check_mark.png';
-    // Define text variable
+    // Define text variable.
     $text = '';
 
     $courseid = $course['meta']['courseid'];
@@ -132,8 +133,7 @@ function block_grade_me_tree($course) {
 
     ksort($course);
 
-    foreach ($course as $l2 => $item) {
-        $iteminstance = $item['meta']['iteminstance'];
+    foreach ($course as $item) {
         $itemmodule = $item['meta']['itemmodule'];
         $itemname = $item['meta']['itemname'];
         $coursemoduleid = $item['meta']['coursemoduleid'];
@@ -148,11 +148,10 @@ function block_grade_me_tree($course) {
         } else {
             $gradelink = $modulelink;
         }
-        $moduleimgtitle = get_string('link_mod_img', 'block_grade_me', array('mod_name' => $itemmodule));
         $moduletitle = get_string('link_mod', 'block_grade_me', array('mod_name' => $itemmodule));
         $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, $itemmodule, array('class' => 'gm_icon'));
 
-        $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  // open module
+        $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  // Open module.
         $text .= '<div class="toggle" onclick="$(\'dd#cmid'.$coursemoduleid.
             ' > div.toggle\').toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.
             ' > ul\').toggleClass(\'block_grade_me_hide\');"></div>'."\n";
@@ -163,7 +162,7 @@ function block_grade_me_tree($course) {
 
         ksort($item);
 
-        // Assign module needs to have a rownum and useridlist
+        // Assign module needs to have a rownum and useridlist.
         $rownum = 0;
         $useridlistid = $coursemoduleid.time();
         $useridlist = array();
@@ -175,7 +174,8 @@ function block_grade_me_tree($course) {
 
             $submissionlink = $CFG->wwwroot;
             if ($itemmodule == 'assignment') {
-                $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid='.$userid.'&amp;mode=single&amp;filter=0&amp;offset=0';
+                $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid=' . $userid .
+                    '&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
                 $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&useridlistid=$useridlistid";
                 $rownum++;
@@ -202,14 +202,14 @@ function block_grade_me_tree($course) {
             $userfirstlast = $user->firstname.' '.$user->lastname;
             $userprofiletitle = get_string('link_user_profile', 'block_grade_me', array('first_name' => $userfirst));
 
-            $text .= '<li class="gradable">';  // open gradable
+            $text .= '<li class="gradable">';  // Open gradable.
             $text .= '<a href="'.$submissionlink.'" title="'.$submissiontitle.'"><img src="'.$gradeimg.
-                '" class="gm_icon" alt="'.$altmark.'" /></a>';  // grade icon
+                '" class="gm_icon" alt="'.$altmark.'" /></a>';  // Grade icon.
             $text .= $OUTPUT->user_picture($user, array('size' => 16, 'courseid' => $courseid, 'link' => true));
             $text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.
-                $courseid.'" title="'.$userprofiletitle.'">'.$userfirstlast.'</a>';  // user name and profile link
-            $text .= '<br />'.userdate($timesubmitted, $datetimestring);  // output submission date
-            $text .= '</li>'."\n";  // end gradable
+                $courseid.'" title="'.$userprofiletitle.'">'.$userfirstlast.'</a>';  // User name and profile link.
+            $text .= '<br />'.userdate($timesubmitted, $datetimestring);  // Output submission date.
+            $text .= '</li>'."\n";  // End gradable.
         }
 
         if ($itemmodule == 'assign') {
@@ -218,7 +218,7 @@ function block_grade_me_tree($course) {
         }
 
         $text .= '</ul>'."\n";
-        $text .= '</dd>'."\n";  // close module
+        $text .= '</dd>'."\n";  // Close module.
     }
     $text .= '</div>';
 
