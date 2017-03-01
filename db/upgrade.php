@@ -86,5 +86,28 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
         \block_grade_me\quiz_util::update_quiz_ngrade();
         upgrade_block_savepoint(true, '2015060403', 'grade_me');
     }
+
+    if ($oldversion < 2015060409) {
+
+        // Define index itemmodule (not unique) to be added to grade_me.
+        $table = new xmldb_table('block_grade_me');
+        $index = new xmldb_index('itemmodule', XMLDB_INDEX_NOTUNIQUE, array('itemmodule'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index iteminstance (unique) to be added to grade_me.
+        $table = new xmldb_table('block_grade_me');
+        $index = new xmldb_index('iteminstance', XMLDB_INDEX_NOTUNIQUE, array('iteminstance'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Grade me  savepoint reached.
+        upgrade_block_savepoint(true, 2015060409, 'grade_me');
+    }
+
     return true;
 }

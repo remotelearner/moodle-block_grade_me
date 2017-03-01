@@ -15,18 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grade Me block
- *
- * @package   block_grade_me
- * @copyright 2012 Dakota Duff
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_grade_me
+ * @copyright  2017 Derek Henderson {@link http://www.remote-learner.net}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015060409;
-$plugin->requires = 2015051100;
-$plugin->cron = 3600;
-$plugin->component = 'block_grade_me';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.9.0.7';
+$tasks = array(
+    array(
+        'classname' => 'block_grade_me\task\cache_grade_data',
+        'blocking' => 0,
+        'minute' => '*/15',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+    array(
+        'classname' => 'block_grade_me\task\reset_block',
+        'blocking' => 0,
+        'minute' => '15',
+        'hour' => '1',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ),
+);
