@@ -224,3 +224,109 @@ function block_grade_me_tree($course) {
 
     return $text;
 }
+// Reset table cron function.
+function block_grade_me_cache_reset() {
+    global $CFG, $DB;
+    $DB->delete_records('block_grade_me');
+    $DB->delete_records('block_grade_me_quiz_ngrade');
+    block_grade_me_cache_grade_data();
+    set_config('cachedatalast', time(), 'reset_block');
+}
+// Main cron function.
+function block_grade_me_cache_grade_data() {
+    global $CFG, $DB;
+    $lastrun = $DB->get_field('task_scheduled', 'lastruntime', array('classname' => 'cache_grade_data'));
+    $params = array();
+    $params['itemtype'] = 'mod';
+    $enabledplugins = array_keys(block_grade_me_enabled_plugins());
+    // Get the id for each plugin name.
+    $enabledpluginsid = array();
+    foreach ($enabledplugins as $plugin) {
+        $enabledpluginsid[] = $DB->get_field('modules', 'id', array('name' => $plugin));
+    }
+    $timedif = time() - $lastrun;
+    // Check the size of the grade me table. If its 0, then ignore time stamp.
+    $tablesize = $DB->count_records('block_grade_me');
+    if ($tablesize == '0') {
+        $lastrun = '0';
+    }
+    // Get the list of all active courses in the database.
+    $activeselect = "visible = 1";
+    $courselist = $DB->get_records_select('course', $activeselect);
+    foreach ($courselist as $actcourse) {
+        $cid = $actcourse->id;
+        $coursemod = $actcourse->timemodified;
+        if ($lastrun == '0') {
+            $coursemod = '0';
+        } else {
+            if ($coursemod > $lastrun) {
+                // This handles the case if the course was hidden and made visible.
+                $coursemod = '0';
+            } else {
+                $coursemod = $lastrun;
+            }
+        }
+        // Validate the course has active users.
+        $sqlcourse = "SELECT count(enrol.id)
+                      FROM {user_enrolments} enrol
+                      LEFT JOIN {user} user ON enrol.userid = user.id
+                      LEFT JOIN {enrol} en ON enrol.enrolid = en.id
+                      WHERE en.courseid = ?
+                      AND user.deleted = 0";
+        $validcourse = $DB->count_records_sql($sqlcourse, array('courseid' => $cid));
+        if ($validcourse > '0') {
+            $paramscourse =array();
+            $paramscourse['itemtype'] = 'mod';
+
+            $paramscourse['id'] = $cid;
+            $paramscourse['timemodified'] = $coursemod;
+            list($insql, $inparams) = $DB->get_in_or_equal($enabledpluginsid);
+            $sql = "SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
+                           gi.itemmodule itemmodule, gi.iteminstance iteminstance,
+                           gi.sortorder itemsortorder, c.id courseid, c.shortname coursename,
+                           cm.id coursemoduleid
+                    FROM {grade_items} gi
+               LEFT JOIN {course} c ON gi.courseid = c.id
+               LEFT JOIN {modules} m ON m.name = gi.itemmodule
+                    JOIN {course_modules} cm ON cm.course = c.id AND cm.module = m.id AND cm.instance = gi.iteminstance
+                    WHERE gi.itemtype = ?
+                          AND c.id = ?
+                          AND gi.timemodified > ?
+                          AND m.id $insql";
+            $paramscourse = array_merge($paramscourse, $inparams);
+            $rs = $DB->get_recordset_sql($sql, $paramscourse);
+            foreach ($rs as $rec) {
+                $values = array(
+                    'itemtype'      => $rec->itemtype,
+                    'itemmodule'    => $rec->itemmodule,
+                    'iteminstance'  => $rec->iteminstance,
+                    'courseid'      => $rec->courseid
+                );
+                $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND '.
+                            'iteminstance = :iteminstance AND courseid = :courseid';
+                $params = array(
+                    'itemname' => $rec->itemname,
+                    'itemtype' => $rec->itemtype,
+                    'itemmodule' => $rec->itemmodule,
+                    'iteminstance' => $rec->iteminstance,
+                    'itemsortorder' => $rec->itemsortorder,
+                    'courseid' => $rec->courseid,
+                    'coursename' => $rec->coursename,
+                    'coursemoduleid' => $rec->coursemoduleid,
+                 );
+
+                // Note: We use get_fieldset_select because duplicates may already exist.
+
+                $ids = $DB->get_fieldset_select('block_grade_me', 'id', $fragment, $values);
+                if (empty($ids)) {
+                    $DB->insert_record('block_grade_me', $params);
+                } else {
+                    $params['id'] = reset($ids);
+                    $DB->update_record('block_grade_me', $params);
+                }
+            }
+        }
+    }
+    set_config('cachedatalast', time(), 'block_grade_me');
+    return true;
+}

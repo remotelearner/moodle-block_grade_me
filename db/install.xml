@@ -25,6 +25,9 @@
       <INDEXES>
         <INDEX NAME="courseid-itemmodule" UNIQUE="false" FIELDS="courseid, itemmodule" NEXT="itemsortorder"/>
         <INDEX NAME="itemsortorder" UNIQUE="false" FIELDS="itemsortorder" PREVIOUS="courseid-itemmodule"/>
+        <INDEX NAME="itemmodule" UNIQUE="false" FIELDS="itemmodule"/>
+        <INDEX NAME="iteminstance" UNIQUE="false" FIELDS="iteminstance"/>
+
       </INDEXES>
     </TABLE>
     <TABLE NAME="block_grade_me_quiz_ngrade" COMMENT="Caches information about quizes needing grades.">
