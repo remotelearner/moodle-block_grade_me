@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['pluginname'] = 'Grade Me';
+$string['pluginname-reset'] = 'Grade Me - reset table';
 $string['title'] = 'Grade Me';
 $string['datetime'] = '%B %d, %l:%M %p';
 $string['excess'] = 'There are more than {$a->maxcourses} courses with ungraded work.';
