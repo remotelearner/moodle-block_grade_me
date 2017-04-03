@@ -485,8 +485,15 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
         $rec3->timesubmitted = '6';
+        
+        $rec4 = new stdClass();
+        $rec4->id = $plugins[1]->id;
+        $rec4->courseid = $courses[0]->id;
+        $rec4->submissionid = '1';
+        $rec4->userid = $users[0]->id;
+        $rec4->timesubmitted = '1';
 
-        $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3);
+        $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
         $actual = $DB->get_records_sql($sql, $insqlparams);
         $this->assertEquals($expected, $actual);
         $this->assertFalse(block_grade_me_query_assign(array()));
