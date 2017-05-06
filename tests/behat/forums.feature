@@ -1,4 +1,4 @@
-@block @block_grade_me @javascript
+@block @block_grade_me @javascript @block_grade_me_forums
 Feature: Forum posts are displayed in the block
 
     Background:
