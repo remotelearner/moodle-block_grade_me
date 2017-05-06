@@ -1,4 +1,4 @@
-@block @block_grade_me @javascript
+@block @block_grade_me @javascript @block_grade_me_quiz
 Feature: Quizzes are supported by the block.
 
     Background:
@@ -47,8 +47,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
         And I press "Next"
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -59,8 +59,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
         And I press "Next"
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
