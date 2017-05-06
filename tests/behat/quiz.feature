@@ -1,4 +1,4 @@
-@block @block_grade_me @javascript
+@block @block_grade_me @javascript @block_grade_me_quiz
 Feature: Quizzes are supported by the block.
 
     Background:
@@ -47,8 +47,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -59,8 +59,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -87,7 +87,8 @@ Feature: Quizzes are supported by the block.
         And I click on "//div[@id='q2']//div[@class='commentlink']//a" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
-        And I press "Save" and switch to main window
+        And I press "Save"
+        And I switch to the main window
         # After grading one of two questions, we verify both users still appear in the block.
         Then "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[2]" "xpath_element" should exist in the "Grade Me" "block"
@@ -96,7 +97,9 @@ Feature: Quizzes are supported by the block.
         When I click on "//div[@id='q3']//div[@class='commentlink']//a" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
-        And I press "Save" and switch to main window
+        And I press "Save"
+        And I switch to the main window
+        And I am on site homepage
         # After grading both questions for the first user we verify only one user remains in the block.
         Then "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[2]" "xpath_element" should not exist in the "Grade Me" "block"

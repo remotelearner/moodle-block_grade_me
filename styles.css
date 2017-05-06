@@ -61,6 +61,10 @@
     padding: 2px 0;
 }
 
+.block_grade_me .gradable a {
+    display: inline-block;
+}
+
 .block_grade_me .gradable .gm_icon {
     margin-top: 1px;
 }

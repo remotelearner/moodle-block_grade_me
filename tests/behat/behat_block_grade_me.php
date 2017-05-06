@@ -42,4 +42,19 @@ class behat_block_grade_me extends behat_base {
         ];
         $DB->insert_record('block_instances', $instancerec);
     }
+
+    /**
+     * Sets the specified value to the field with xpath.
+     *
+     * @Given /^I set the hidden field with xpath "(?P<fieldxpath_string>(?:[^"]|\\")*)" to "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $value
+     * @return void
+     */
+    public function i_set_the_hidden_field_with_xpath_to($fieldxpath, $value) {
+        $fieldnode = $this->find('xpath', $fieldxpath);
+        $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+        $field->set_value($value);
+    }
 }
