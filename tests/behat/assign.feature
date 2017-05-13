@@ -1,4 +1,4 @@
-@block @block_grade_me @javascript
+@block @block_grade_me @javascript @block_grade_me_assign
 Feature: Assignments are displayed in the block
 
     Background:
@@ -9,7 +9,6 @@ Feature: Assignments are displayed in the block
           | student1 | Janie | Doe | student1@example.com |
           | student2 | Kevin | Smith | student2@example.com |
           | student3 | Jill  | Green | student3@example.com |
-
         And the following "courses" exist:
           | fullname | shortname | category |
           | Course 1 | C1 | 0 |
@@ -20,14 +19,13 @@ Feature: Assignments are displayed in the block
           | student1 | C1 | student |
           | student2 | C1 | student |
           | student3 | C1 | student |
-
         And the following config values are set as admin:
           | config | value |
           | block_grade_me_enableaassign | 1 |
           | block_grade_me_enableadminviewall | 1 |
 
     Scenario: Assignments show up in the block
-      And I log in as "teacher1"
+      Given I log in as "teacher1"
       And I follow "Course 1"
       And I turn editing mode on
       And I add a "Assignment" to section "1" and I fill the form with:
@@ -70,7 +68,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Now we check the block.
       When I log in as "admin"
-      And I trigger cron
+      And I run the grade me cache grade data scheduled task
       And I am on homepage
       Then I should see "C1" in the "Grade Me" "block"
       And I should see "Assign" in the "Grade Me" "block"
@@ -117,7 +115,7 @@ Feature: Assignments are displayed in the block
       Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
     Scenario: Assignments with scaler grades show up in the block
-      And I log in as "teacher1"
+      Given I log in as "teacher1"
       And I follow "Course 1"
       And I turn editing mode on
       And I add a "Assignment" to section "1" and I fill the form with:
@@ -161,7 +159,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Now we check the block.
       When I log in as "admin"
-      And I trigger cron
+      And I run the grade me cache grade data scheduled task
       And I am on homepage
       Then I should see "C1" in the "Grade Me" "block"
       And I should see "Assign" in the "Grade Me" "block"

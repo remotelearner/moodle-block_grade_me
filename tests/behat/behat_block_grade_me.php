@@ -57,4 +57,54 @@ class behat_block_grade_me extends behat_base {
         $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
         $field->set_value($value);
     }
+
+    /**
+     * Runs the cache_grade_data scheduled task immediately.
+     *
+     * This is copied from the "I run the scheduled task" step in M29+.
+     *
+     * @Given /^I run the grade me cache grade data scheduled task$/
+     */
+    public function i_run_the_grade_me_cache_grade_data_scheduled_task() {
+        $taskname = 'block_grade_me\task\cache_grade_data';
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        if (!$task) {
+            throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
+        }
+
+        // Do setup for cron task.
+        raise_memory_limit(MEMORY_EXTRA);
+        cron_setup_user();
+
+        // Get lock.
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new DriverException('Unable to obtain core_cron lock for scheduled task');
+        }
+        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+            $cronlock->release();
+            throw new DriverException('Unable to obtain task lock for scheduled task');
+        }
+        $task->set_lock($lock);
+        if (!$task->is_blocking()) {
+            $cronlock->release();
+        } else {
+            $task->set_cron_lock($cronlock);
+        }
+
+        try {
+            // Discard task output as not appropriate for Behat output!
+            ob_start();
+            $task->execute();
+            ob_end_clean();
+
+            // Mark task complete.
+            \core\task\manager::scheduled_task_complete($task);
+        } catch (Exception $e) {
+            // Mark task failed and throw exception.
+            \core\task\manager::scheduled_task_failed($task);
+            throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
+        }
+    }
+
 }
