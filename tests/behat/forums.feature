@@ -46,7 +46,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
-        When I trigger cron
+        When I run the scheduled task "block_grade_me\task\cache_grade_data"
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
@@ -86,7 +86,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
-        When I trigger cron
+        When I run the scheduled task "block_grade_me\task\cache_grade_data"
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"
@@ -126,7 +126,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
-        When I trigger cron
+        When I run the scheduled task "block_grade_me\task\cache_grade_data"
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Forum" in the "Grade Me" "block"

@@ -67,7 +67,7 @@ Feature: Quizzes are supported by the block.
         And I log out
         # Log in as admin and verify block contents.
         When I log in as "admin"
-        And I trigger cron
+        And I run the scheduled task "block_grade_me\task\cache_grade_data"
         And I am on site homepage
         Then I should see "C1" in the "Grade Me" "block"
         And I should see "Test Quiz" in the "Grade Me" "block"
