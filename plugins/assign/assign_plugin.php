@@ -48,7 +48,8 @@ function block_grade_me_query_assign($gradebookusers) {
     }
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
 
-    $query = ", asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted
+    $query = ", asgn_sub.id submissionid, asgn_sub.userid, asgn_sub.timemodified timesubmitted,
+                asgn_sub.attemptnumber, a.maxattempts
         FROM {assign_submission} asgn_sub
         JOIN {assign} a ON a.id = asgn_sub.assignment
    LEFT JOIN {block_grade_me} bgm ON bgm.courseid = a.course AND bgm.iteminstance = a.id
