@@ -108,9 +108,21 @@ class block_grade_me extends block_base {
                         $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
                         $values = array_merge($inparams, $params);
                         $rs = $DB->get_recordset_sql($query, $values);
-
                         foreach ($rs as $r) {
-                            $gradeables = block_grade_me_array($gradeables, $r);
+                            if ($r->itemmodule == 'assign' && $r->maxattempts != '1') {
+                                /* Check to be sure its the most recent attempt being graded */
+                                $iteminstance = $r->iteminstance;
+                                $userid = $r->userid;
+                                $attemptnumber = $r->attemptnumber;
+                                $sql = 'select MAX(attemptnumber) from {assign_submission} where assignment = '.$iteminstance .
+                                       ' and userid = '.$userid;
+                                $maxattempt = $DB->get_field_sql($sql);
+                                if ($maxattempt == $attemptnumber) {
+                                    $gradeables = block_grade_me_array($gradeables, $r);
+                                }
+                            } else {
+                                $gradeables = block_grade_me_array($gradeables, $r);
+                            }
                         }
                     }
                 }
