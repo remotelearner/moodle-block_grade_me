@@ -470,6 +470,8 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec->submissionid = '2';
         $rec->userid = $users[0]->id;
         $rec->timesubmitted = '2';
+        $rec->attemptnumber = '1';
+        $rec->maxattempts = '-1';
 
         $rec2 = new stdClass();
         $rec2->id = $plugins[3]->id;
@@ -477,6 +479,8 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec2->submissionid = '3';
         $rec2->userid = $users[0]->id;
         $rec2->timesubmitted = '3';
+        $rec2->attemptnumber = '1';
+        $rec2->maxattempts = '-1';
 
         // Tests resubmission.
         $rec3 = new stdClass();
@@ -485,6 +489,8 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
         $rec3->timesubmitted = '6';
+        $rec3->attemptnumber = '1';
+        $rec3->maxattempts = '-1';
 
         $rec4 = new stdClass();
         $rec4->id = $plugins[1]->id;
@@ -492,6 +498,8 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec4->submissionid = '1';
         $rec4->userid = $users[0]->id;
         $rec4->timesubmitted = '1';
+        $rec4->attemptnumber = '1';
+        $rec4->maxattempts = '-1';
 
         $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
         $actual = $DB->get_records_sql($sql, $insqlparams);
