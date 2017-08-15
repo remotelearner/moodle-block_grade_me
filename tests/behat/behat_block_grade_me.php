@@ -106,5 +106,50 @@ class behat_block_grade_me extends behat_base {
             throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
         }
     }
+    /**
+     * @Given /^I run the grade me reset block scheduled task$/
+     */
+    public function iRunTheGradeMeResetBlockScheduledTask()
+    {
+        $taskname = 'block_grade_me\task\reset_block';
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        if (!$task) {
+            throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
+        }
+
+        // Do setup for cron task.
+        raise_memory_limit(MEMORY_EXTRA);
+        cron_setup_user();
+
+        // Get lock.
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            throw new DriverException('Unable to obtain core_cron lock for scheduled task');
+        }
+        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+            $cronlock->release();
+            throw new DriverException('Unable to obtain task lock for scheduled task');
+        }
+        $task->set_lock($lock);
+        if (!$task->is_blocking()) {
+            $cronlock->release();
+        } else {
+            $task->set_cron_lock($cronlock);
+        }
+
+        try {
+            // Discard task output as not appropriate for Behat output!
+            ob_start();
+            $task->execute();
+            ob_end_clean();
+
+            // Mark task complete.
+            \core\task\manager::scheduled_task_complete($task);
+        } catch (Exception $e) {
+            // Mark task failed and throw exception.
+            \core\task\manager::scheduled_task_failed($task);
+            throw new DriverException('The "' . $taskname . '" scheduled task failed', 0, $e);
+        }
+    }
 
 }

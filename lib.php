@@ -230,6 +230,7 @@ function block_grade_me_cache_reset() {
     $DB->delete_records('block_grade_me');
     $DB->delete_records('block_grade_me_quiz_ngrade');
     block_grade_me_cache_grade_data();
+    \block_grade_me\quiz_util::update_quiz_ngrade();
     set_config('cachedatalast', time(), 'reset_block');
 }
 // Main cron function.
