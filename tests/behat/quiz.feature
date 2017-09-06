@@ -27,7 +27,7 @@ Feature: Quizzes are supported by the block.
           | activity | course | idnumber | name |
           | quiz | C1 | testforum | Test Quiz |
         And I log in as "admin"
-        And I follow "Course 1"
+        And I follow "C1"
         And I add a "True/False" question to the "Test Quiz" quiz with:
           | Question name | First question |
           | Question text | First question |
@@ -43,7 +43,7 @@ Feature: Quizzes are supported by the block.
         And I log out
         # Submit the quiz as the first user.
         And I log in as "student1"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
@@ -55,7 +55,7 @@ Feature: Quizzes are supported by the block.
         And I log out
         # Submit the quiz as the second user.
         And I log in as "student2"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"

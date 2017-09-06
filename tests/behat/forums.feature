@@ -26,7 +26,7 @@ Feature: Forum posts are displayed in the block
           | forum | C1 | testforum | Test Forum | 1 | 100 |
         # First the teacher creates an initial post.
         When I log in as "admin"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I press "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
@@ -35,7 +35,7 @@ Feature: Forum posts are displayed in the block
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"
@@ -66,7 +66,7 @@ Feature: Forum posts are displayed in the block
           | forum | C1 | testforum | Test Forum | 2 | 100 |
         # First the teacher creates an initial post.
         When I log in as "admin"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I press "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
@@ -75,7 +75,7 @@ Feature: Forum posts are displayed in the block
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"
@@ -106,7 +106,7 @@ Feature: Forum posts are displayed in the block
           | forum | C1 | testforum | Test Forum | 5 | 100 |
         # First the teacher creates an initial post.
         When I log in as "admin"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I press "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
@@ -115,7 +115,7 @@ Feature: Forum posts are displayed in the block
         And I log out
         # Now the student submits a reply.
         When I log in as "student1"
-        And I follow "Course 1"
+        And I follow "C1"
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"

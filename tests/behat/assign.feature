@@ -26,7 +26,7 @@ Feature: Assignments are displayed in the block
 
     Scenario: Assignments show up in the block
       Given I log in as "teacher1"
-      And I follow "Course 1"
+      And I follow "C1"
       And I turn editing mode on
       And I add a "Assignment" to section "1" and I fill the form with:
         | Assignment name | Assign |
@@ -38,7 +38,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Now the students submit assignments.
       And I log in as "student1"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
@@ -48,7 +48,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Student2  submit assigment.
       And I log in as "student2"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
@@ -58,7 +58,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Student3 submits assignment.
       And I log in as "student3"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
@@ -116,7 +116,7 @@ Feature: Assignments are displayed in the block
 
     Scenario: Assignments with scaler grades show up in the block
       Given I log in as "teacher1"
-      And I follow "Course 1"
+      And I follow "C1"
       And I turn editing mode on
       And I add a "Assignment" to section "1" and I fill the form with:
         | Assignment name | Assign |
@@ -129,7 +129,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Now the students submit assignments.
       And I log in as "student1"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
@@ -139,7 +139,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Student2  submit assigment.
       And I log in as "student2"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
@@ -149,7 +149,7 @@ Feature: Assignments are displayed in the block
       And I log out
       # Student3 submits assignment.
       And I log in as "student3"
-      And I follow "Course 1"
+      And I follow "C1"
       And I follow "Assign"
       When I press "Add submission"
       And I set the following fields to these values:
