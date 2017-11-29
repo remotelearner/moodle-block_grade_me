@@ -30,15 +30,12 @@ Feature: Reset task works.
 
 
     Scenario: A quiz and assignment show up in the block and they are both there after reset
-        Given the following "activities" exist:
-          | activity | course | idnumber | name |
-          | quiz | C1 | testforum | Test Quiz |
         And I log in as "admin"
         And I follow "Course 1"
-        And I add a "True/False" question to the "Test Quiz" quiz with:
-          | Question name | First question |
-          | Question text | First question |
-          | Default mark  | 2.0 |
+        And I turn editing mode on
+        And I add a "Quiz" to section "1" and I fill the form with:
+          | Name        | Test Quiz             |
+          | Description | Test quiz description |
         And I add a "Essay" question to the "Test Quiz" quiz with:
           | Question name | Second question |
           | Question text | Second question |
@@ -47,7 +44,9 @@ Feature: Reset task works.
           | Question name | Third question |
           | Question text | Third question |
           | Default mark  | 2.0 |
-        And I follow "C2"
+        And I log out
+        And I log in as "admin"
+        And I follow "Course 2"
         And I turn editing mode on
         And I add a "Assignment" to section "1" and I fill the form with:
           | Assignment name | Assign |
@@ -62,9 +61,7 @@ Feature: Reset task works.
         And I follow "Course 1"
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
-        And I click on "True" "radio" in the "First question" "question"
-        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//div[@id='q1']//textarea" to "This is my answer to the second question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"

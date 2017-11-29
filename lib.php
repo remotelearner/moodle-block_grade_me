@@ -104,7 +104,6 @@ function block_grade_me_array($gradeables, $r) {
  */
 function block_grade_me_tree($course) {
     global $CFG, $DB, $OUTPUT, $SESSION;
-
     // Get time format string.
     $datetimestring = get_string('datetime', 'block_grade_me', array());
     // Grading image.
@@ -230,7 +229,6 @@ function block_grade_me_cache_reset() {
     $DB->delete_records('block_grade_me');
     $DB->delete_records('block_grade_me_quiz_ngrade');
     block_grade_me_cache_grade_data();
-    \block_grade_me\quiz_util::update_quiz_ngrade();
     set_config('cachedatalast', time(), 'reset_block');
 }
 // Main cron function.
@@ -276,7 +274,7 @@ function block_grade_me_cache_grade_data() {
                       AND user.deleted = 0";
         $validcourse = $DB->count_records_sql($sqlcourse, array('courseid' => $cid));
         if ($validcourse > '0') {
-            $paramscourse =array();
+            $paramscourse = array();
             $paramscourse['itemtype'] = 'mod';
 
             $paramscourse['id'] = $cid;
@@ -324,6 +322,55 @@ function block_grade_me_cache_grade_data() {
                 } else {
                     $params['id'] = reset($ids);
                     $DB->update_record('block_grade_me', $params);
+                }
+            }
+            /**
+             * Build the quiz table per course. Cannot do this in bulk
+             * because temp tables can cause large disk usage.
+             * First get the list of quiz attempts for a course with manualgraded questions,
+             * and that have active students in them.
+             **/
+
+            $sqlquizlist = "SELECT mq.id quizid, mqa.id quiattemptid, mqa.userid, mq.course, mqa.uniqueid,
+                            qna.id questionattemptid
+                            FROM {quiz} mq
+                            JOIN {quiz_attempts} mqa ON mqa.quiz = mq.id
+                            JOIN {question_attempts} qna ON qna.questionusageid = mqa.uniqueid
+                            JOIN {user} mu  ON mu.id = mqa.userid
+                            WHERE course = ?
+                            AND behaviour = 'manualgraded'
+                            AND mu.deleted = 0";
+            $paramsquiz = array($cid);
+            $rsq = $DB->get_recordset_sql($sqlquizlist, $paramsquiz);
+            foreach ($rsq as $recattempt) {
+                $questionattemptid = $recattempt->questionattemptid;
+                $userid = $recattempt->userid;
+                $sqlcount = "SELECT count(sequencenumber) mseq
+                             FROM {question_attempt_steps}
+                             WHERE questionattemptid = ? and userid = ? and state ='needsgrading'";
+                $paramsteps = array($questionattemptid, $userid);
+                $gradingneeded = $DB->count_records_sql($sqlcount, $paramsteps);
+                if ($gradingneeded > '0') {
+                    $sqlsteps = "SELECT max(sequencenumber) mseq
+                                 FROM {question_attempt_steps}
+                                 WHERE questionattemptid = ? and userid = ? and state ='needsgrading'";
+                    $rsattempts = $DB->get_record_sql($sqlsteps, $paramsteps);
+                    $maxseq = $rsattempts->mseq;
+
+                    if (!empty($maxseq)) {
+                        $quizid = $recattempt->quizid;
+                        $sqlstepid = "SELECT id FROM {question_attempt_steps} WHERE questionattemptid = ?
+                                      AND sequencenumber = ? and userid = ? and state = 'needsgrading'";
+                        $paramsstepid = array($questionattemptid, $maxseq, $userid);
+                        $rstepid = $DB->get_record_sql($sqlstepid, $paramsstepid);
+                        $questionstepid = $rstepid->id;
+                        $quizattemptid = $recattempt->uniqueid;
+                        $courseid = $recattempt->course;
+                        $sqlngrade = "INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid,
+                                      questionattemptstepid, courseid ) VALUES( ?, ?, ?, ?, ?)";
+                        $paramsngrade = array($quizattemptid, $userid, $quizid, $questionstepid, $courseid);
+                        $DB->execute($sqlngrade, $paramsngrade);
+                    }
                 }
             }
         }
