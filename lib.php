@@ -230,7 +230,6 @@ function block_grade_me_cache_reset() {
     $DB->delete_records('block_grade_me');
     $DB->delete_records('block_grade_me_quiz_ngrade');
     block_grade_me_cache_grade_data();
-    \block_grade_me\quiz_util::update_quiz_ngrade();
     set_config('cachedatalast', time(), 'reset_block');
 }
 // Main cron function.
@@ -326,6 +325,56 @@ function block_grade_me_cache_grade_data() {
                     $DB->update_record('block_grade_me', $params);
                 }
             }
+            /**
+             * Build the quiz table per course. Cannot do this in bulk
+             * because temp tables can cause large disk usage.
+             * First get the list of quiz attempts for a course with manualgraded questions,
+             * and that have active students in them.
+             **/
+
+            $sqlquizlist = "SELECT mq.id quizid, mqa.id quiattemptid, mqa.userid, mq.course, mqa.uniqueid, 
+                            qna.id questionattemptid
+                            FROM {quiz} mq
+                            JOIN {quiz_attempts} mqa ON mqa.quiz = mq.id
+                            JOIN {question_attempts} qna ON qna.questionusageid = mqa.uniqueid
+                            JOIN {user} mu  ON mu.id = mqa.userid
+                            WHERE course = ?
+                            AND behaviour = 'manualgraded'
+                            AND mu.deleted = 0";
+            $paramsquiz = array($cid);
+            $rsq = $DB->get_recordset_sql($sqlquizlist, $paramsquiz);
+            foreach ($rsq as $recattempt) {
+                $questionattemptid = $recattempt->questionattemptid;
+                $sqlcount = "SELECT count(sequencenumber) mseq
+                             FROM {question_attempt_steps}
+                             WHERE questionattemptid = ? and state ='needsgrading'";
+                $paramsteps = array($questionattemptid);
+                $gradingneeded = $DB->count_records_sql($sqlcount, $paramsteps);
+                if ($gradingneeded > '0') {
+                    $sqlsteps = "SELECT max(sequencenumber) mseq
+                             FROM {question_attempt_steps}
+                             WHERE questionattemptid = ? and state ='needsgrading'";
+                    $rsattempts = $DB->get_record_sql($sqlsteps, $paramsteps);
+                    $maxseq = $rsattempts->mseq;
+
+                    if (!empty($maxseq)) {
+                        $quizid = $recattempt->quizid;
+                        $sqlstepid = "SELECT id FROM {question_attempt_steps} WHERE questionattemptid = ?
+                                      AND sequencenumber = ? and state = 'needsgrading'";
+                        $paramsstepid = array($questionattemptid, $maxseq);
+                        $rstepid = $DB->get_record_sql($sqlstepid, $paramsstepid);
+                        $questionstepid = $rstepid->id;
+                        $quizattemptid = $recattempt->uniqueid;
+                        $courseid = $recattempt->course;
+                        $userid = $recattempt->userid;
+                        $sqlngrade = "INSERT INTO {block_grade_me_quiz_ngrade} ( attemptid, userid, quizid,
+                                      questionattemptstepid, courseid ) VALUES( ?, ?, ?, ?, ?)";
+                        $paramsngrade = array($quizattemptid, $userid, $quizid, $questionstepid, $courseid);
+                        $DB->execute($sqlngrade, $paramsngrade);
+                    }
+                }
+            }
+
         }
     }
     set_config('cachedatalast', time(), 'block_grade_me');
