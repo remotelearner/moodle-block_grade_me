@@ -39,6 +39,8 @@ class behat_block_grade_me extends behat_base {
             'pagetypepattern' => '*',
             'defaultregion' => 'side-post',
             'defaultweight' => '-2',
+            'timecreated' => time(),
+            'timemodified' => time(),
         ];
         $DB->insert_record('block_instances', $instancerec);
     }
