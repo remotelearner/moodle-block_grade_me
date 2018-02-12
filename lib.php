@@ -270,10 +270,10 @@ function block_grade_me_cache_grade_data() {
         // Validate the course has active users.
         $sqlcourse = "SELECT count(enrol.id)
                       FROM {user_enrolments} enrol
-                      LEFT JOIN {user} user ON enrol.userid = user.id
+                      LEFT JOIN {user} usr ON enrol.userid = usr.id
                       LEFT JOIN {enrol} en ON enrol.enrolid = en.id
                       WHERE en.courseid = ?
-                      AND user.deleted = 0";
+                      AND usr.deleted = 0";
         $validcourse = $DB->count_records_sql($sqlcourse, array('courseid' => $cid));
         if ($validcourse > '0') {
             $paramscourse =array();
