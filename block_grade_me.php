@@ -147,11 +147,10 @@ class block_grade_me extends block_base {
                 $graderroles[$role] = true;
             }
         }
+        $showempty = false;
         foreach ($graderroles as $roleid => $value) {
             if (user_has_role_assignment($USER->id, $roleid) || is_siteadmin()) {
                 $showempty = true;
-            } else {
-                $showempty = false;
             }
         }
 
