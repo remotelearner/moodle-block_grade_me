@@ -250,8 +250,15 @@ function block_grade_me_cache_grade_data() {
         $lastrun = '0';
     }
     // Get the list of all active courses in the database.
-    $activeselect = "visible = 1";
-    $courselist = $DB->get_records_select('course', $activeselect);
+
+    $paramscourse = array();
+    $sqlactive = "SELECT c.id, c.timemodified
+                  FROM {course} c
+                  JOIN {context} x ON c.id = x.instanceid
+                  JOIN {block_instances} b ON b.parentcontextid = x.id
+                  WHERE b.blockname = 'grade_me' and c.visible = '1'";
+
+    $courselist = $DB->get_recordset_sql($sqlactive, $paramscourse);
     foreach ($courselist as $actcourse) {
         $cid = $actcourse->id;
         $coursemod = $actcourse->timemodified;
@@ -347,17 +354,27 @@ function block_grade_me_cache_grade_data() {
                 $userid = $recattempt->userid;
                 $sqlcount = "SELECT count(sequencenumber) mseq
                              FROM {question_attempt_steps}
-                             WHERE questionattemptid = ? and userid = ? and state ='needsgrading'";
-                $paramsteps = array($questionattemptid, $userid);
+                             WHERE questionattemptid = ? and state ='needsgrading'";
+                $paramsteps = array($questionattemptid);
                 $gradingneeded = $DB->count_records_sql($sqlcount, $paramsteps);
                 if ($gradingneeded > '0') {
                     $sqlsteps = "SELECT max(sequencenumber) mseq
                                  FROM {question_attempt_steps}
-                                 WHERE questionattemptid = ? and userid = ? and state ='needsgrading'";
+                                 WHERE questionattemptid = ? and state ='needsgrading'";
                     $rsattempts = $DB->get_record_sql($sqlsteps, $paramsteps);
                     $maxseq = $rsattempts->mseq;
-
+                    $needsgrading = '0';
                     if (!empty($maxseq)) {
+                        $sqlmax = "SELECT max(sequencenumber) mseq2
+                                   FROM {question_attempt_steps}
+                                   WHERE questionattemptid = ?";
+                        $rsmax = $DB->get_record_sql($sqlmax, $paramsteps);
+                        $maxattempt = $rsmax->mseq2;
+                        if ($maxattempt == $maxseq) {
+                            $needsgrading = '1';
+                        }
+                    }
+                    if ($needsgrading == '1') {
                         $quizid = $recattempt->quizid;
                         $sqlstepid = "SELECT id FROM {question_attempt_steps} WHERE questionattemptid = ?
                                       AND sequencenumber = ? and userid = ? and state = 'needsgrading'";
