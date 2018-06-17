@@ -41,7 +41,7 @@ function block_grade_me_query_quiz($gradebookusers) {
         return false;
     }
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
-    $query = ", qas.id step_id, qza.userid, qza.timemodified timemodified, qza.timefinish timefinish, qza.id submissionid, qas.sequencenumber
+    $query = ", qas.id step_id, qza.userid, qza.timemodified timemodified, qza.timefinish timesubmitted, qza.id submissionid, qas.sequencenumber
         FROM {question_attempt_steps} qas
         JOIN {block_grade_me_quiz_ngrade} bneeds ON bneeds.questionattemptstepid = qas.id
                                                     AND bneeds.userid $insql

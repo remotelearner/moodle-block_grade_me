@@ -83,8 +83,8 @@ function block_grade_me_enabled_plugins() {
  * @return array $gradeables
  */
 function block_grade_me_array($gradeables, $r) {
-    // Make a unique key
-    $uniquekey = "{$r->courseid}_{$r->itemmodule}_{$r->iteminstance}_{$r->itemsortorder}_{$r->userid}_{$r->timefinish}";
+    // Make a unique key.
+    $uniquekey = "{$r->courseid}_{$r->itemmodule}_{$r->iteminstance}_{$r->itemsortorder}_{$r->userid}_{$r->timesubmitted}";
 
     $gradeables['meta']['courseid'] = $r->courseid;
     $gradeables['meta']['coursename'] = $r->coursename;
@@ -94,7 +94,7 @@ function block_grade_me_array($gradeables, $r) {
     $gradeables[$r->itemsortorder]['meta']['coursemoduleid'] = $r->coursemoduleid;
     $gradeables[$r->itemsortorder][$uniquekey]['meta']['userid'] = $r->userid;
     $gradeables[$r->itemsortorder][$uniquekey]['meta']['submissionid'] = $r->submissionid;
-    $gradeables[$r->itemsortorder][$uniquekey]['meta']['timefinish'] = $r->timefinish;
+    $gradeables[$r->itemsortorder][$uniquekey]['meta']['timesubmitted'] = $r->timesubmitted;
     if (isset($r->forum_discussion_id)) {
         $gradeables[$r->itemsortorder][$uniquekey]['meta']['forum_discussion_id'] = $r->forum_discussion_id;
     }
@@ -172,7 +172,7 @@ function block_grade_me_tree($course) {
         $useridlist = array();
 
         foreach ($item as $submission) {
-            $timesubmitted = $submission['meta']['timefinish'];
+            $timesubmitted = $submission['meta']['timesubmitted'];
             $userid = $submission['meta']['userid'];
             $submissionid = $submission['meta']['submissionid'];
 
