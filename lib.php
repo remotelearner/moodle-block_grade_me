@@ -254,9 +254,9 @@ function block_grade_me_cache_grade_data() {
 
     $paramscourse = array();
     $sqlactive = "SELECT c.id, c.timemodified
-                  FROM {course} c
-                  JOIN {context} x ON c.id = x.instanceid
-                  JOIN {block_instances} b ON b.parentcontextid = x.id
+                   FROM {course} c
+                   JOIN {context} x ON c.id = x.instanceid
+                   JOIN {block_instances} b ON b.parentcontextid = x.id
                   WHERE b.blockname = 'grade_me' and c.visible = '1'";
 
     $courselist = $DB->get_recordset_sql($sqlactive, $paramscourse);
