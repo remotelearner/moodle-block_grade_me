@@ -36,7 +36,7 @@ class behat_block_grade_me extends behat_base {
             'blockname' => 'grade_me',
             'parentcontextid' => 1,
             'showinsubcontexts' => 1,
-            'pagetypepattern' => '*',
+            'pagetypepattern' => 'site-index',
             'defaultregion' => 'side-post',
             'defaultweight' => '-2',
         ];
