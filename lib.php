@@ -250,15 +250,28 @@ function block_grade_me_cache_grade_data() {
     if ($tablesize == '0') {
         $lastrun = '0';
     }
+
+    // See if the block has been added course wide
+    $paramsystem = array('site-index');
+    $sqlsystem = "SELECT count(b.id) bcount
+                   FROM {block_instances} b
+                   WHERE b.blockname = 'grade_me'
+                  AND b.pagetypepattern = ?";
+    $systemblock = $DB->get_record_sql($sqlsystem, $paramsystem);
+    $systemcount = $systemblock->bcount;
     // Get the list of all active courses in the database.
-
     $paramscourse = array();
-    $sqlactive = "SELECT c.id, c.timemodified
-                   FROM {course} c
-                   JOIN {context} x ON c.id = x.instanceid
-                   JOIN {block_instances} b ON b.parentcontextid = x.id
-                  WHERE b.blockname = 'grade_me' and c.visible = '1'";
-
+    if ($systemcount > '0') {
+        $sqlactive = "SELECT c.id, c.timemodified
+                       FROM {course} c
+                      WHERE c.visible = '1'";
+    } else {
+        $sqlactive = "SELECT c.id, c.timemodified
+                       FROM {course} c
+                       JOIN {context} x ON c.id = x.instanceid
+                       JOIN {block_instances} b ON b.parentcontextid = x.id
+                      WHERE b.blockname = 'grade_me' and c.visible = '1'";
+    }
     $courselist = $DB->get_recordset_sql($sqlactive, $paramscourse);
     foreach ($courselist as $actcourse) {
         $cid = $actcourse->id;
