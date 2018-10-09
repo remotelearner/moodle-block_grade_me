@@ -252,11 +252,12 @@ function block_grade_me_cache_grade_data() {
     }
 
     // See if the block has been added course wide
-    $paramsystem = array('site-index');
+    $paramsystem = array('site-index', 'my-index', '*');
     $sqlsystem = "SELECT count(b.id) bcount
                    FROM {block_instances} b
                    WHERE b.blockname = 'grade_me'
-                  AND b.pagetypepattern = ?";
+                  AND (b.pagetypepattern = ? or b.pagetypepattern = ?
+                       or b.pagetypepattern = ?)";
     $systemblock = $DB->get_record_sql($sqlsystem, $paramsystem);
     $systemcount = $systemblock->bcount;
     // Get the list of all active courses in the database.
