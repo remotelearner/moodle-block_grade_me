@@ -28,7 +28,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I follow "C1"
         And I follow "Test Forum"
-        And I press "Add a new discussion topic"
+        And I follow "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
@@ -39,8 +39,8 @@ Feature: Forum posts are displayed in the block
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"
-        And I set the field "Message" to "This is a test reply"
-        And I press "Post to forum"
+        And I set the field "post" to "This is a test reply"
+        And I press "Submit"
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -56,7 +56,7 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
@@ -68,7 +68,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I follow "C1"
         And I follow "Test Forum"
-        And I press "Add a new discussion topic"
+        And I follow "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
@@ -79,8 +79,8 @@ Feature: Forum posts are displayed in the block
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"
-        And I set the field "Message" to "This is a test reply"
-        And I press "Post to forum"
+        And I set the field "post" to "This is a test reply"
+        And I press "Submit"
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -96,7 +96,7 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"
 
@@ -108,7 +108,7 @@ Feature: Forum posts are displayed in the block
         When I log in as "admin"
         And I follow "C1"
         And I follow "Test Forum"
-        And I press "Add a new discussion topic"
+        And I follow "Add a new discussion topic"
         And I set the field "Subject" to "A test discussion topic"
         And I set the field "Message" to "This is a test discussion topic"
         And I press "Post to forum"
@@ -119,8 +119,8 @@ Feature: Forum posts are displayed in the block
         And I follow "Test Forum"
         And I follow "A test discussion topic"
         And I follow "Reply"
-        And I set the field "Message" to "This is a test reply"
-        And I press "Post to forum"
+        And I set the field "post" to "This is a test reply"
+        And I press "Submit"
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -136,6 +136,6 @@ Feature: Forum posts are displayed in the block
         And "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Now we rate the post and verify it disappears from the block.
         When I click on "//li[contains(@class, 'gradable')]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I set the field with xpath "//div[contains(@class, 'lastpost')]//select[@name='rating']" to "60"
+        And I set the field with xpath "//div[contains(@class, 'forumpost')]//select[@name='rating']" to "60"
         And I am on site homepage
         Then I should see "Nothing to grade!" in the "Grade Me" "block"

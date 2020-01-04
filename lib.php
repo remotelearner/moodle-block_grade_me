@@ -162,11 +162,6 @@ function block_grade_me_tree($course) {
 
         ksort($item);
 
-        // Assign module needs to have a rownum and useridlist.
-        $rownum = 0;
-        $useridlistid = $coursemoduleid.time();
-        $useridlist = array();
-
         foreach ($item as $l3 => $submission) {
             $timesubmitted = $l3;
             $userid = $submission['meta']['userid'];
@@ -177,9 +172,7 @@ function block_grade_me_tree($course) {
                 $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid=' . $userid .
                     '&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
-                $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&rownum=$rownum&useridlistid=$useridlistid";
-                $rownum++;
-                $useridlist[] = $userid;
+                $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&userid=$userid";
             } else if ($itemmodule == 'data') {
                 $submissionlink .= '/mod/data/view.php?rid='.$submissionid.'&amp;mode=single';
             } else if ($itemmodule == 'forum') {
@@ -210,11 +203,6 @@ function block_grade_me_tree($course) {
                 $courseid.'" title="'.$userprofiletitle.'">'.$userfirstlast.'</a>';  // User name and profile link.
             $text .= '<br />'.userdate($timesubmitted, $datetimestring);  // Output submission date.
             $text .= '</li>'."\n";  // End gradable.
-        }
-
-        if ($itemmodule == 'assign') {
-            $useridlistkey = $coursemoduleid.'_'.$useridlistid;
-            $SESSION->mod_assign_useridlist[$useridlistkey] = $useridlist;
         }
 
         $text .= '</ul>'."\n";
