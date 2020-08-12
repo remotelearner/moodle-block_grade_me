@@ -92,6 +92,12 @@ class quiz_observers {
      * @return void
      */
     public static function attempt_submitted($event) {
+	$simplequiz = get_config('block_grade_me','simplequiz');
+	//if we are doing simple quiz checkign, skip this
+	if($simplequiz){
+	    return;
+	}
+
         \block_grade_me\quiz_util::update_quiz_ngrade($event->objectid);
     }
 
@@ -103,6 +109,13 @@ class quiz_observers {
      */
     public static function question_manually_graded(\mod_quiz\event\question_manually_graded $event) {
         global $DB;
+
+	//if we are doing simple quiz checkign, skip this
+	$simplequiz = get_config('block_grade_me','simplequiz');
+	if($simplequiz){
+	    return;
+	}
+
         // Lookup uniqueid from quiz_attempts table.
         $record = $DB->get_record('quiz_attempts', ['id' => $event->other['attemptid']]);
         if (empty($record)) {

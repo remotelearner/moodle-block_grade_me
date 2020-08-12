@@ -49,3 +49,6 @@ $string['grade_me_tools_desc'] = '<p><a href="{$a}/blocks/grade_me/quiz_update_n
 
 $string['quiz_update_ngrade_complete'] = 'Update complete';
 $string['quiz_update_ngrade_success'] = 'Quiz attempt list successfully updated, currently there is {$a} questions needing grading.';
+
+$string['simplequiz'] = 'Simpler Quiz Check';
+$string['simplequiz_desc'] = 'The standard method of checking quiz completion requires queries against the question attempts table. For courses with lots of users, this can be a very slow and memory intensive process. Normally the plugin checks to make sure every manually graded question attempt has been reviewed, enabling this setting makes the plugin just check to see if the whole quiz has been assigned a grade. If you disable this setting, you will need to run the \'Refresh quiz attempts needing grading\' tool';

@@ -41,15 +41,29 @@ function block_grade_me_query_quiz($gradebookusers) {
         return false;
     }
     list($insql, $inparams) = $DB->get_in_or_equal($gradebookusers);
-    $query = ", qas.id step_id, qza.userid, qza.timemodified timesubmitted, qza.id submissionid, qas.sequencenumber
-        FROM {question_attempt_steps} qas
-        JOIN {block_grade_me_quiz_ngrade} bneeds ON bneeds.questionattemptstepid = qas.id
-                                                    AND bneeds.userid $insql
-        JOIN {quiz_attempts} qza ON qas.id = bneeds.questionattemptstepid
-        JOIN {question_attempts} qna ON qna.questionusageid = qza.uniqueid
-                                        AND qas.questionattemptid = qna.id
-        JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
-                                     AND bgm.itemmodule = 'quiz'
-       WHERE qas.state = '".question_state::$needsgrading."'";
+
+    //Simple quiz checking means we only want to check if quiz attempts sumofgrades is null
+    //this saves querying against the questions_attempts table -- which can be quite bukly
+    $simplequiz = get_config('block_grade_me','simplequiz');
+    if($simplequiz){
+        $query = ", qza.userid, qza.timemodified timesubmitted, qza.id submissionid, qza.id attemptid
+            FROM {quiz} q
+            JOIN {block_grade_me} bgm ON bgm.courseid = q.course AND bgm.iteminstance = q.id
+            JOIN {quiz_attempts} qza ON qza.quiz = q.id and qza.userid $insql
+           WHERE qza.state = 'finished'
+                 AND qza.sumgrades is NULL
+         ";
+    }else{
+        $query = ", qas.id step_id, qza.userid, qza.timemodified timesubmitted, qza.id submissionid, qas.sequencenumber
+            FROM {question_attempt_steps} qas
+            JOIN {block_grade_me_quiz_ngrade} bneeds ON bneeds.questionattemptstepid = qas.id
+                                                        AND bneeds.userid $insql
+            JOIN {quiz_attempts} qza ON qas.id = bneeds.questionattemptstepid
+            JOIN {question_attempts} qna ON qna.questionusageid = qza.uniqueid
+                                            AND qas.questionattemptid = qna.id
+            JOIN {block_grade_me} bgm ON bgm.iteminstance = qza.quiz
+                                         AND bgm.itemmodule = 'quiz'
+           WHERE qas.state = '".question_state::$needsgrading."'";
+    }
     return array($query, $inparams);
 }

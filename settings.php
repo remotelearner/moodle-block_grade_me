@@ -39,6 +39,11 @@ if ($ADMIN->fulltree) {
         }
     }
 
+
+    $settings->add(new admin_setting_configcheckbox('block_grade_me/simplequiz', get_string('simplequiz', 'block_grade_me'),
+        get_string('simplequiz_desc', 'block_grade_me'), 0));
+
+
     $label = get_string('grade_me_tools', 'block_grade_me');
     $desc = get_string('grade_me_tools_desc', 'block_grade_me', $CFG->wwwroot);
     $settings->add(new admin_setting_heading('grade_me_tools', $label, $desc));
