@@ -334,6 +334,13 @@ function block_grade_me_cache_grade_data() {
                     $DB->update_record('block_grade_me', $params);
                 }
             }
+
+
+	    //If using simple quiz grade checking, we don't need to cache data about manually graded questions
+	    $simplequiz = get_config('block_grade_me','simplequiz');
+	    if($simplquiz){
+                continue;
+	    }
             /**
              * Build the quiz table per course. Cannot do this in bulk
              * because temp tables can cause large disk usage.
