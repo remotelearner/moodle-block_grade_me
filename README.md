@@ -27,3 +27,4 @@ Developers will triage issues and deal with more serious problems first. We will
 
 ## What is different in this branch (Madhu Avasarala)
 - This branch is customized to add a config setting to include hidden courses. If selected, hidden courses will also be searched for ungraded items.
+- The db/tasks.php file has been edited to set the update time for 30m every hour and reset every day at 03:15
