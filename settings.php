@@ -20,6 +20,10 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('block_grade_me_enableadminviewall',
         get_string('settings_adminviewall', 'block_grade_me'), get_string('settings_configadminviewall', 'block_grade_me'), 0));
+        
+    // new setting added to include hidden courses to also be searched for gradeable activities
+    $settings->add(new admin_setting_configcheckbox('block_grade_me_includehiddencourses',
+        get_string('settings_hiddencourses', 'block_grade_me'), get_string('settings_confighiddencourses', 'block_grade_me'), 0));
 
     $settings->add(new admin_setting_configtext('block_grade_me_maxcourses', get_string('settings_maxcourses', 'block_grade_me'),
         get_string('settings_configmaxcourses', 'block_grade_me'), 10, PARAM_INT));

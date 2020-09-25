@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Every day 1t 03:15 server time, a reset is done
+ * Every hour of every day at 30m intervals, the cache is updated with grade activities due
  * @package    block_grade_me
  * @copyright  2017 Derek Henderson {@link http://www.remote-learner.net}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,7 +27,7 @@ $tasks = array(
     array(
         'classname' => 'block_grade_me\task\cache_grade_data',
         'blocking' => 0,
-        'minute' => '*/15',
+        'minute' => '*/30',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
@@ -35,7 +37,7 @@ $tasks = array(
         'classname' => 'block_grade_me\task\reset_block',
         'blocking' => 0,
         'minute' => '15',
-        'hour' => '1',
+        'hour' => '3',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
