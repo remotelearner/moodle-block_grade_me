@@ -24,6 +24,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_grade_me_maxcourses', get_string('settings_maxcourses', 'block_grade_me'),
         get_string('settings_configmaxcourses', 'block_grade_me'), 10, PARAM_INT));
 
+    $settings->add(new admin_setting_configcheckbox('block_grade_me_enableshowhidden',
+        get_string('settings_showhidden', 'block_grade_me'), get_string('settings_configshowhidden', 'block_grade_me'), 0));
+
     $plugins = get_list_of_plugins('blocks/grade_me/plugins');
     foreach ($plugins as $plugin) {
         if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php')) {
