@@ -248,19 +248,26 @@ function block_grade_me_cache_grade_data() {
                        or b.pagetypepattern = ?)";
     $systemblock = $DB->get_record_sql($sqlsystem, $paramsystem);
     $systemcount = $systemblock->bcount;
+
     // Get the list of all active courses in the database.
     $paramscourse = array();
     if ($systemcount > '0') {
         $sqlactive = "SELECT c.id, c.timemodified
-                       FROM {course} c
-                      WHERE c.visible = '1'";
+                       FROM {course} c";
     } else {
         $sqlactive = "SELECT c.id, c.timemodified
                        FROM {course} c
                        JOIN {context} x ON c.id = x.instanceid
-                       JOIN {block_instances} b ON b.parentcontextid = x.id
-                      WHERE b.blockname = 'grade_me' and c.visible = '1'";
+                       JOIN {block_instances} b
+                         ON (b.parentcontextid = x.id
+                             AND b.blockname = 'grade_me')";
     }
+
+    // Determine whether to show hidden courses based on config setting.
+    if (false == get_config(null, 'block_grade_me_enableshowhidden')) {
+        $sqlactive .= " WHERE c.visible = '1'";
+    }
+
     $courselist = $DB->get_recordset_sql($sqlactive, $paramscourse);
     foreach ($courselist as $actcourse) {
         $cid = $actcourse->id;
