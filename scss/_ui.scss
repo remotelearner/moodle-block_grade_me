@@ -1,94 +1,263 @@
-.block_grade_me .content {
-    flex: 1;
-    font-size: 0.75em !important;
-    padding: 0 4px 4px 4px;
+/* Define vars */
+$gray-50:  #f8f9fa;
+$gray-100: #f0f3f7;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #868e96;
+$gray-700: #495057;
+$gray-800: #373a3c;
+$gray-900: #212529;
+
+
+/* All styles scoped to block */
+.block_grade_me {
+    flex-direction: column;
+
+    /* Reset list styles */
+    dl, dt, dd, ul, li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Reset block content styles */
+    .content {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Duplicated from bootstrap core
+       for non bootstrap based themes */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Toggle component styles */
+    .toggle {
+        padding: 1rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 200ms ease;
+
+        /* Toggle icon */
+        &:before {
+            color: $gray-700;
+        }
+
+        /* Rotate icon when open */
+        &.open:before {
+            transform: rotate(90deg);
+        }
+
+        /* Hover/focus effect element */
+        &:after {
+            content: "";
+            background: rgba(0,0,0,.05);
+            height: 2rem;
+            width: 2rem;
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0;
+            transform: scale(.75);
+            z-index: 0;
+            transition: all 200ms ease;
+        }
+
+        /* Trigger toggle hover/focus effect */
+        &:hover:after {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Toggle styles - mod */
+    .module .toggle {
+        margin-right: -.75rem;
+    }
+
+    /* Block list */
+    dl {
+        margin-top: 1rem;
+    }
+
+    dl > div:not(.excess) {
+        background: $gray-50;
+        border-radius: 3px;
+        box-shadow: 0 0 0 1px $gray-200;
+        margin: 0 0 .75rem;
+    }
+
+    .cmod {
+        display: flex;
+        padding: .4rem .4rem .4rem 0;
+        background: $gray-100;
+        box-shadow: 0 1px 0 0px $gray-200;
+        border-radius: 3px 3px 0 0;
+    }
+
+    .grademe-mod-name {
+        font-size: .9rem;
+        font-weight: 600;
+        padding: .3rem .5rem 0 0;
+    }
+
+    .badge {
+        align-self: flex-start;
+        margin: .4rem .5rem 0 auto;
+        color: $gray-700;
+        background-color: $gray-200;
+    }
+
+    .module {
+        border-bottom: 1px solid $gray-200;
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+
+        .dd-wrap {
+            display: flex;
+            background: $gray-50;
+            border-radius: 3px;
+            padding: .25rem 0 .3rem;
+        }
+    }
+
+    .grademe-course-icon {
+        margin: 0 .25rem 0 0;
+        padding: 1rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0; /* needed for ie11 :( */
+        cursor: pointer;
+        background: transparent;
+        transition: all 200ms ease;
+        position: relative;
+
+        &:before {
+            content: "";
+            background: rgba(0,0,0,.05);
+            height: 2rem;
+            width: 2rem;
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0;
+            transform: scale(.75);
+            z-index: 0;
+            transition: all 200ms ease;
+        }
+
+        &:hover:before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+       img,
+        .fa {
+            margin: 0;
+            padding: 0;
+            z-index: 1;
+        }
+    }
+
+    .grademe-course-name {
+        margin-top: .2rem;
+        width: 100%;
+    }
+
+    .gradable-list {
+        background: #fff;
+    }
+
+    .gradable {
+        border-bottom: 1px solid $gray-200;
+        padding: .25rem 1.25rem;
+        font-size: .8rem;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+
+        &:first-of-type {
+            border-top: 1px solid $gray-200;
+        }
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    .gradable-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        width: 1rem;
+        height: 1rem;
+        padding: 1rem;
+        color: $gray-600;
+
+        .fa:before {
+            margin-left: 2px;
+        }
+
+        &:after {
+            content: "";
+            background: rgba(0,0,0,.05);
+            height: 2rem;
+            width: 2rem;
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0;
+            transform: scale(.75);
+            z-index: 0;
+            transition: all 200ms ease;
+        }
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+            border-radius: 50%;
+
+            &:after {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    }
+
+    .gradable-user {
+        font-weight: 600;
+    }
+
+    .excess {
+        margin: 1rem 0 0;
+        text-align: center;
+    }
 }
 
-.block_grade_me dl,
-.block_grade_me dt,
-.block_grade_me dd,
-.block_grade_me ul,
-.block_grade_me li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.block_grade_me .gm_icon {
-    float: left;
-    height: 16px;
-    margin-right: 4px;
-    width: 16px;
-}
-
-.block_grade_me .cmod {
-    line-height: 16px;
-    margin: 6px 0 2px 0;
-}
-
-.block_grade_me .module {
-    line-height: 16px;
-    padding: 3px 0 3px 20px;
-    position: relative;
-}
-
-.block_grade_me .toggle {
-    background: transparent url('[[pix:block_grade_me|closed]]') no-repeat 50% 50%;
-    cursor: pointer;
-    display: block;
-    float: left;
-    height: 16px;
-    left: 0;
-    position: relative;
-    width: 16px;
-}
-
-.block_grade_me .toggle.open {
-    background: transparent url('[[pix:block_grade_me|open]]') no-repeat 50% 50% !important;
-}
-
+/* Used for hiding elements in JS
+   Should be replaced with bootstrap .hide class */
 .jsenabled .block_grade_me_hide {
     display: none;
-}
-
-.block_grade_me .cloakable {
-    border-top: 1px dotted #ccc;
-    line-height: 1em;
-    margin: 0 0 3px 0;
-}
-
-.block_grade_me .gradable {
-    border-bottom: 1px dotted #ccc;
-    padding: 2px 0;
-}
-
-.block_grade_me .gradable a {
-    display: inline-block;
-}
-
-.block_grade_me .gradable .gm_icon {
-    margin-top: 1px;
-}
-
-.block_grade_me .cloakable * {
-    font-size: 9px;
-}
-
-.block_grade_me .empty {
-    line-height: 15px;
-}
-
-.block_grade_me .empty img {
-    float: left;
-    height: 15px;
-    margin-right: 4px;
-    width: 15px;
-}
-
-.block_grade_me .excess {
-    color: rgb(205,0,0);
-    font-weight: bold;
-    margin-top: 4px;
-    padding: 4px 16px;
-    text-align: center;
 }

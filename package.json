@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "license": "GPL-3.0",
   "author": "Ryan DeBerardinis",
-  "description": "This block shows a list of gradable items.",
+  "description": "This file controls the NPM build process for compiling SCSS",
   "scripts": {
-    "compile": "node-sass scss/styles.scss styles.css --no-source-map",
-    "prefix": "postcss --use autoprefixer -b 'last 25 versions' styles.css -o styles.css --no-map",
+    "compile": "node-sass scss/styles.scss styles.css --output-style compressed --no-source-map",
+    "prefix": "postcss --use autoprefixer -b 'last 2 versions' -r styles.css --no-map",
     "build": "npm-run-all compile prefix"
   },
   "browserslist": [
-    "last 25 versions"
+    "last 2 versions"
   ],
   "repository": {
     "type": "git",

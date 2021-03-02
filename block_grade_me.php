@@ -156,14 +156,12 @@ class block_grade_me extends block_base {
 
         if (!empty($this->content->text)) {
              // Expand/Collapse button.
-             $expand = '<button class="btn btn-mini btn-primary" type="button" onclick="togglecollapseall();">' .
-                get_string('expand', 'block_grade_me') . '</button>';
+             $expand = '<button class="btn btn-sm btn-outline-secondary" type="button" onclick="togglecollapseall();">' .
+                get_string('expand', 'block_grade_me').'</button>';
 
-            $this->content->text = '<dl>'.$expand.$this->content->text.'<div class="excess">'.$additional.'</div></dl>';
+            $this->content->text = $expand.'<dl>'.$this->content->text.'</dl><div class="excess">'.$additional.'</div>';
         } else if (empty($this->content->text) && $showempty) {
-            $this->content->text .= '<div class="empty">'.
-                $OUTPUT->pix_icon('s/smiley', get_string('alt_smiley', 'block_grade_me')).' '.
-                get_string('nothing', 'block_grade_me').'</div>'."\n";
+            $this->content->text .= '<div class="excess">'.get_string('nothing', 'block_grade_me').'</div>'."\n";
         }
 
         return $this->content;

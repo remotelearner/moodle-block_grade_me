@@ -125,13 +125,15 @@ function block_grade_me_tree($course) {
     $gradebookicon = $OUTPUT->pix_icon('i/grades', $altgradebook, null, array('class' => 'gm_icon'));
     $courselink = $CFG->wwwroot.'/course/view.php?id='.$courseid;
     $coursetitle = get_string('link_gradebook', 'block_grade_me', array('course_name' => $coursename));
-    $text .= '<div>';
-    $text .= '<dt id="courseid'.$courseid.'" class="cmod">
-    <div class="toggle open" onclick="$(\'dt#courseid'.$courseid.
-        ' > div.toggle\').toggleClass(\'open\');$(\'dt#courseid'.$courseid.
-        ' ~ dd\').toggleClass(\'block_grade_me_hide\');"></div>
-    <a href="'.$gradebooklink.'">'.$gradebookicon.'</a>
-    <a href="'.$courselink.'" title="'.$coursetitle.'">'.$coursename.'</a></dt>'."\n";
+    $text .= '<div><dt id="courseid'.$courseid.'" class="cmod">
+                <div tabindex=0 class="toggle open fa fa-caret-right" aria-hidden="true"
+                    onclick="$(\'dt#courseid'.$courseid.' > div.toggle\')
+                    .toggleClass(\'open\');$(\'dt#courseid'.$courseid.' ~ dd\')
+                    .toggleClass(\'block_grade_me_hide\');">
+                        <span class="sr-only">Toggle Section</span>
+                </div>
+                <a href="'.$courselink.'" class="grademe-course-name"'.$coursetitle.'">'.$coursename.'</a>
+              </dt>'."\n";
     $text .= "\n";
 
     ksort($course);
@@ -155,13 +157,18 @@ function block_grade_me_tree($course) {
         $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, $itemmodule, array('class' => 'gm_icon'));
 
         $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  // Open module.
-        $text .= '<div class="toggle" onclick="$(\'dd#cmid'.$coursemoduleid.
-            ' > div.toggle\').toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.
-            ' > ul\').toggleClass(\'block_grade_me_hide\');"></div>'."\n";
-        $text .= '<a href="'.$gradelink.'" title="'.$moduletitle.'">'.$moduleicon.'</a>';
-        $text .= '<a href="'.$modulelink.'" title="'.$moduletitle.'">'.$itemname.'</a> ('.count($item).')'."\n";
-
-        $text .= '<ul class="block_grade_me_hide">'."\n";
+        $text .= '<div class="dd-wrap">'."\n";
+        $text .= '<div tabindex=0 class="toggle fa fa-caret-right" aria-hidden="true"
+                    onclick="$(\'dd#cmid'.$coursemoduleid.' > div div.toggle\')
+                    .toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.' > ul\')
+                    .toggleClass(\'block_grade_me_hide\');">
+                        <span class="sr-only">Toggle Section</span>
+                    </div>'."\n";
+        $text .= '<a href="'.$gradelink.'" class="grademe-course-icon" title="'.$moduletitle.'">'.$moduleicon.'</a>'."\n";
+        $text .= '<a href="'.$modulelink.'" class="grademe-mod-name" title="'.$moduletitle.'">'.$itemname.'</a>'."\n";
+        $text .= '<span class="badge badge-pill badge-primary">'.count($item).'</span>'."\n";
+        $text .= '</div>'."\n";
+        $text .= '<ul class="gradable-list block_grade_me_hide">'."\n";
 
         ksort($item);
 
@@ -199,19 +206,24 @@ function block_grade_me_tree($course) {
             $userprofiletitle = get_string('link_user_profile', 'block_grade_me', array('first_name' => $userfirst));
 
             $text .= '<li class="gradable">';  // Open gradable.
-            $text .= '<a href="'.$submissionlink.'" title="'.$submissiontitle.'"><img src="'.$gradeimg.
-                '" class="gm_icon" alt="'.$altmark.'" /></a>';  // Grade icon.
-            $text .= $OUTPUT->user_picture($user, array('size' => 16, 'courseid' => $courseid, 'link' => true));
-            $text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.
-                $courseid.'" title="'.$userprofiletitle.'">'.$userfirstlast.'</a>';  // User name and profile link.
-            $text .= '<br />'.userdate($timesubmitted, $datetimestring);  // Output submission date.
+            $text .= '<a class="gradable-icon" href="'.$submissionlink.'" title="'.$submissiontitle.'">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        <span class="sr-only">'.$submissiontitle.'</span>
+                      </a>';
+            $text .= '<div class="gradable-wrap">';
+            $text .= '<a class="gradable-user" href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'" title="'.$userprofiletitle.'">';
+            $text .= $userfirstlast;
+            $text .= '</a>';
+            $text .= '<div class="gradable-date">'.userdate($timesubmitted, $datetimestring).'</div>';
+            $text .= '</div>';
             $text .= '</li>'."\n";  // End gradable.
         }
 
         $text .= '</ul>'."\n";
         $text .= '</dd>'."\n";  // Close module.
     }
-    $text .= '</div>';
+
+    $text .= '</div>'."\n";
 
     return $text;
 }

@@ -81,7 +81,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the first student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "grade" to "2"
       And I press "Save changes"
       # After grading we verify two users still appear in the block.
@@ -96,7 +96,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the seconds student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "grade" to "90"
       And I press "Save changes"
       Then I should see "C1" in the "Grade Me" "block"
@@ -108,7 +108,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the last student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "grade" to "90"
       And I press "Save changes"
       And I am on site homepage
@@ -172,7 +172,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the first student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "grade" to "2"
       And I press "Save changes"
       # After grading we verify two users still appear in the block.
@@ -187,7 +187,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the seconds student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "Feedback comments" to "feed back comments"
       And I press "Save changes"
       Then I should see "C1" in the "Grade Me" "block"
@@ -199,7 +199,7 @@ Feature: Assignments are displayed in the block
       And "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
       And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
       # Grade the last student's submission.
-      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+      When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
       And I set the field "grade" to "1"
       And I press "Save changes"
       And I am on site homepage

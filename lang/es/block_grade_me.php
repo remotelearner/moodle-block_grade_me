@@ -28,7 +28,6 @@ $string['link_user_profile'] = 'Perfil de {$a->first_name}…';
 $string['alt_gradebook'] = 'Ir a calificaciones de {$a->course_name}…';
 $string['alt_mod'] = 'Ir a {$a->mod_name} en calificaciones…';
 $string['alt_mark'] = 'check';
-$string['alt_smiley'] = 'smiley';
 $string['settings_maxcourses'] = 'Número máximo de cursos para mostrar';
 $string['settings_configmaxcourses'] = 'Configure el número máximo de cursos para mostrar. Un número alto afecta al rendimiento de la web.';
 $string['settings_adminviewall'] = 'Los Administradores ven todo';

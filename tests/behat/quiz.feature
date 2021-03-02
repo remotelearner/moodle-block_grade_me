@@ -83,7 +83,7 @@ Feature: Quizzes are supported by the block.
         And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[2]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Grade the first student's submission.
-        When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+        When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
         And I click on "//div[@id='q2']//div[@class='commentlink']//a" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
@@ -107,7 +107,7 @@ Feature: Quizzes are supported by the block.
         Then I should not see "Johnny Doe" in the "Grade Me" "block"
         And I should see "Janie Doe" in the "Grade Me" "block"
         # Grade the second student's submission.
-        When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]//img" "xpath_element" in the "Grade Me" "block"
+        When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
         And I click on "//div[@id='q2']//div[@class='commentlink']//a" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"

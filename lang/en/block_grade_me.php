@@ -31,7 +31,6 @@ $string['link_user_profile'] = '{$a->first_name}\'s profile…';
 $string['alt_gradebook'] = 'Go to {$a->course_name} gradebook…';
 $string['alt_mod'] = 'Go to {$a->mod_name} in gradebook…';
 $string['alt_mark'] = 'check';
-$string['alt_smiley'] = 'smiley';
 
 $string['settings_maxcourses'] = 'Maximum Courses Displayed';
 $string['settings_configmaxcourses'] = 'Set the maximum number of ungraded courses to show. Setting this too high may impact performance.';

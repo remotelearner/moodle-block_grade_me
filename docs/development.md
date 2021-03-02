@@ -10,7 +10,7 @@ This guide details how to work with the NPM build process to compile the SCSS.
 ## Setup Local Dev Environment
 
 1. You will need Node.js/NPM installed on your computer. You can check if you already have Node.js installed by running `node -v`, if you see a version number, it’s installed. If not, follow installation instructions for your OS here: [https://nodejs.org/](https://nodejs.org/).
-2. Navigate to the plugin root directory in the command line and install the plugin dependencies: `npm install`. You may need to run `sudo npm install` depending on OS permissions.
+2. Navigate to the plugin root directory in the command line and install the plugin dependencies: `npm ci`. You may need to run `sudo npm ci` depending on OS permissions. We use `npm ci` instead of `npm install` here to preserve a consistent dev environment by forcing the install to read from the package-lock.json file. This will produce a faster and more reliable dev environment across teams/products. Read more here about why ci here: [https://blog.npmjs.org/post/171556855892/introducing-npm-ci-for-faster-more-reliable.html](https://blog.npmjs.org/post/171556855892/introducing-npm-ci-for-faster-more-reliable.html)
 
 ## Working with SCSS
 

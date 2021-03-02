@@ -40,7 +40,7 @@ Feature: Forum posts are displayed in the block
         And I follow "A test discussion topic"
         And I follow "Reply"
         And I set the field "post" to "This is a test reply"
-        And I press "Submit"
+        And I press "Post to forum"
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -80,7 +80,7 @@ Feature: Forum posts are displayed in the block
         And I follow "A test discussion topic"
         And I follow "Reply"
         And I set the field "post" to "This is a test reply"
-        And I press "Submit"
+        And I press "Post to forum"
         And I log out
         # Now we check the block.
         When I log in as "admin"
@@ -120,7 +120,7 @@ Feature: Forum posts are displayed in the block
         And I follow "A test discussion topic"
         And I follow "Reply"
         And I set the field "post" to "This is a test reply"
-        And I press "Submit"
+        And I press "Post to forum"
         And I log out
         # Now we check the block.
         When I log in as "admin"
