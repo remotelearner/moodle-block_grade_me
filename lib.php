@@ -196,6 +196,8 @@ function block_grade_me_tree($course) {
                 $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
             } else if ($itemmodule == 'quiz') {
                 $submissionlink .= '/mod/quiz/review.php?attempt='.$submissionid;
+            } else if ($itemmodule == 'lesson') {
+                $submissionlink .= '/mod/lesson/essay.php?id='.$coursemoduleid.'&mode=grade&attemptid='.$submissionid.'&sesskey='.sesskey();
             }
 
             unset($submission['meta']);
