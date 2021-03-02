@@ -33,6 +33,7 @@ require_once($CFG->dirroot.'/blocks/grade_me/plugins/data/data_plugin.php');
 require_once($CFG->dirroot.'/blocks/grade_me/plugins/forum/forum_plugin.php');
 require_once($CFG->dirroot.'/blocks/grade_me/plugins/glossary/glossary_plugin.php');
 require_once($CFG->dirroot.'/blocks/grade_me/plugins/quiz/quiz_plugin.php');
+require_once($CFG->dirroot.'/blocks/grade_me/plugins/turnitintooltwo/turnitintooltwo_plugin.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -169,7 +170,9 @@ class block_grade_me_testcase extends advanced_testcase {
                     $field = $value['field'];
                     for ($row = 0; $row < $rows; $row += 1) {
                         $index = $table->getValue($row, $column);
-                        $table->setValue($row, $column, ${$list}[$index]->$field);
+                        if (isset(${$list}[$index])) {
+                            $table->setValue($row, $column, ${$list}[$index]->$field);
+                        }
                     }
                 }
             }
@@ -590,6 +593,66 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_query_glossary($datafile, $expected) {
         $this->standard_query_tests($datafile, $expected, 'glossary');
+    }
+
+    /**
+     * Data provider for the testing the turnitintooltwo plugin.
+     *
+     * @return array Entries
+     */
+    public function provider_query_turnitintooltwo() {
+        $datafile = 'turnitintooltwo.xml';
+        // Represents entries that are finished and ready to be graded.
+        $entries = array();
+        $entries[0] = array(
+            'courseid' => 0,
+            'coursename' => '0',
+            'itemmodule' => 'turnitintooltwo',
+            'iteminstance' => 1,
+            'itemname' => 'turnitin1',
+            'coursemoduleid' => 0,
+            'itemsortorder' => 0,
+            'submissionid' => 1,
+            'userid' => 0,
+            'timesubmitted' => 1424354368,
+        );
+
+        $data = array(
+            'test1' => array($datafile, $entries)
+        );
+
+        return $data;
+    }
+
+    /**
+     * Test the block_grade_me_query_glossary function
+     *
+     * @param string $datafile The database file to load for the test
+     * @param array $expected The expected results
+     * @dataProvider provider_query_turnitintooltwo
+     */
+    public function test_query_turnitintooltwo($datafile, $expected) {
+        global $DB;
+        $this->resetAfterTest(true);
+        $dbman = $DB->get_manager();
+        if ($dbman->table_exists('turnitintooltwo')) {
+            // Load the data.
+            $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/'.$datafile);
+            $filtered = new \PHPUnit\DbUnit\DataSet\Filter($dataset);
+            $this->loadDataSet($filtered);
+            [$sql, $params] = block_grade_me_query_turnitintooltwo([0]);
+            $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('turnitintooltwo');
+            $sql .=' ORDER BY submissionid ASC';
+
+            $actual = array();
+            $result = $DB->get_recordset_sql($sql, array($params[0], 0));
+            foreach ($result as $rec) {
+                $actual[] = (array)$rec;
+            }
+            $this->assertEquals($expected, $actual);
+        } else {
+            $this->markTestSkipped();
+        }
     }
 
     /**
