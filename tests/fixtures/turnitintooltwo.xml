@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <table name="block_grade_me">
+        <column>id</column>
+        <column>itemname</column>
+        <column>itemtype</column>
+        <column>itemmodule</column>
+        <column>iteminstance</column>
+        <column>courseid</column>
+        <column>coursename</column>
+        <column>coursemoduleid</column>
+        <!-- Item awaiting grading. -->
+        <row>
+            <value>1</value>
+            <value>turnitin1</value>
+            <value>mod</value>
+            <value>turnitintooltwo</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="turnitintooltwo">
+        <column>id</column>
+        <column>course</column>
+        <column>name</column>
+        <column>intro</column>
+        <column>dateformat</column>
+        <column>usegrademark</column>
+        <column>grade</column>
+        <column>gradedisplay</column>
+        <column>autoupdates</column>
+        <column>commentedittime</column>
+        <column>commentmaxsize</column>
+        <column>autosubmission</column>
+        <column>shownonsubmission</column>
+        <row>
+            <value>1</value>
+            <value>0</value>
+            <value>TurnItIn #1</value>
+            <value>intro</value>
+            <value>YYYY-MM-DD</value>
+            <value>0</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+        </row>
+    </table>
+    <table name="turnitintooltwo_submissions">
+        <column>id</column>
+        <column>turnitintooltwoid</column>
+        <column>userid</column>
+        <column>submission_modified</column>
+        <column>submission_grade</column>
+        <column>submission_title</column>
+        <row>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1424354368</value>
+            <value>5</value>
+            <value>Test submission</value>
+        </row>
+    </table>
+    <table name="rating">
+        <column>id</column>
+    </table>
+</dataset>
