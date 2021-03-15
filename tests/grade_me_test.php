@@ -36,6 +36,10 @@ require_once($CFG->dirroot.'/blocks/grade_me/plugins/quiz/quiz_plugin.php');
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Unit tests for block_grade_me.
+ * @group block_grade_me
+ */
 class block_grade_me_testcase extends advanced_testcase {
 
     /**
@@ -172,262 +176,12 @@ class block_grade_me_testcase extends advanced_testcase {
         }
 
         // Load the data.
-        $filtered = new PHPUnit_Extensions_Database_DataSet_DataSetFilter($dataset);
+        $filtered = new \PHPUnit\DbUnit\DataSet\Filter($dataset);
         $filtered->addExcludeTables($excludes);
         $this->loadDataSet($filtered);
 
         // Return the generated users and courses because the tests often need them for result calculations.
         return array($users, $courses, $plugins);
-    }
-
-    /**
-     * Provide input data to the parameters of the test_censusreport_null_grade_check() method.
-     *
-     * @TODO See if this can be merged with provider_single_user
-     *
-     * Test data is composed of:
-     *     The plugin to be tested
-     *     Regular expressions to matched against the output
-     *     A list of users
-     *     A list of courses
-     *
-     * @return array An array containing the test data
-     */
-    public function provider_get_content_multiple_user() {
-        $data = array();
-
-        // New assign test.
-        $plugin = 'assign';
-        $matches = array(
-            1 => '/Go to assign/',
-            2 => '|mod/assign/view.php|',
-            3 => '/action=grade&rownum=0&useridlistid=/',
-            4 => '/action=grade&rownum=1&useridlistid=/',
-            5 => '/testassignment3/',
-            6 => '/testassignment4/'
-        );
-        $data['assign'] = array($plugin, $matches);
-
-        // Legacy assignment test.
-        $plugin = 'assignment';
-        $matches = array(
-            1 => '/Go to assignment/',
-            2 => '|mod/assignment/submissions.php|',
-            3 => '/userid=[user0]&amp;mode=single/',
-            4 => '/userid=[user1]&amp;mode=single/',
-            5 => '/testassignment5/',
-            6 => '/testassignment6/',
-        );
-        $data['assignment'] = array($plugin, $matches);
-
-        // Quiz test.
-        $plugin = 'quiz';
-        $matches = array(
-            1 => '/Go to quiz/',
-            2 => '|mod/quiz/view.php|',
-            3 => '/\/mod\/quiz\/review.php\?attempt=4/',
-            5 => '/quizitem4/',
-        );
-        $data['quiz'] = array($plugin, $matches);
-        return $data;
-    }
-
-    /**
-     * Provide input data to the parameters of the test_block_grade_me_get_content_single_user() method.
-     *
-     * Test data is composed of:
-     *     The plugin to be tested
-     *     Regular expressions to matched against the output
-     *     A list of users
-     *     A list of courses
-     *
-     * @return array An array containing the test data
-     */
-    public function provider_get_content_single_user() {
-        $data = array();
-
-        // New assign test.
-        $plugin = 'assign';
-        $matches = array(
-            1 => '/Go to assign/',
-            2 => '|mod/assign/view.php|',
-            3 => '/action=grade&rownum=0&useridlistid=/',
-            5 => '/testassignment3/',
-            6 => '/testassignment4/',
-        );
-        $data['assign'] = array($plugin, $matches);
-
-        // Legacy assignment test.
-        $plugin = 'assignment';
-        $matches = array(
-            1 => '/Go to assignment/',
-            2 => '|mod/assignment/submissions.php|',
-            3 => '/userid=[user0]&amp;mode=single/',
-            5 => '/testassignment5/',
-            6 => '/testassignment6/',
-        );
-        $data['assignment'] = array($plugin, $matches);
-
-        return $data;
-    }
-
-    /**
-     * Data provider for the forum plugin.
-     *
-     * @TODO Make this data provider less useless.
-     *
-     * @return array Forum items
-     */
-    public function provider_query_forum() {
-        // Represents forum items that are ready for grading. Forum items that have already been graded are not included.
-        $forumitem1 = array(
-            'courseid'            => 0,
-            'coursename'          => '',
-            'itemmodule'          => 'forum',
-            'iteminstance'        => 0,
-            'itemname'            => 'forumitem1',
-            'coursemoduleid'      => 0,
-            'itemsortorder'       => 0,
-            'submissionid'        => 1,
-            'userid'              => 0,
-            'timesubmitted'       => 0,
-            'forum_discussion_id' => 1
-        );
-
-        $forumitem2 = array(
-            'courseid'            => 0,
-            'coursename'          => '',
-            'itemmodule'          => 'forum',
-            'iteminstance'        => 0,
-            'itemname'            => 'forumitem1',
-            'coursemoduleid'      => 0,
-            'itemsortorder'       => 0,
-            'submissionid'        => 2,
-            'userid'              => 0,
-            'timesubmitted'       => 0,
-            'forum_discussion_id' => 2
-        );
-
-        $data = array(array(array($forumitem1, $forumitem2)));
-
-        return $data;
-    }
-
-    /**
-     * Data provider for the testing the quiz plugin.
-     *
-     * @return array Glossary entries
-     */
-    public function provider_query_glossary() {
-        $datafile = 'glossary.xml';
-        // Represents entries that are finished and ready to be graded.
-        $entries = array();
-        $entries[0] = array(
-            'courseid'       => 0,
-            'coursename'     => '0',
-            'itemmodule'     => 'glossary',
-            'iteminstance'   => 0,
-            'itemname'       => 'glossaryitem1',
-            'coursemoduleid' => 0,
-            'itemsortorder'  => 0,
-            'userid'         => 0,
-            'timesubmitted'  => 1424354368,
-            'submissionid'   => 1,
-        );
-
-        $entries[1] = array(
-            'courseid'       => 0,
-            'coursename'     => '0',
-            'itemmodule'     => 'glossary',
-            'iteminstance'   => 1,
-            'itemname'       => 'glossaryitem2',
-            'coursemoduleid' => 1,
-            'itemsortorder'  => 0,
-            'userid'         => 0,
-            'timesubmitted'  => 1424354369,
-            'submissionid'   => 2,
-        );
-
-        $entries[2] = array(
-            'courseid'       => 0,
-            'coursename'     => '0',
-            'itemmodule'     => 'glossary',
-            'iteminstance'   => 2,
-            'itemname'       => 'glossaryitem3',
-            'coursemoduleid' => 2,
-            'itemsortorder'  => 0,
-            'userid'         => 0,
-            'timesubmitted'  => 1424354370,
-            'submissionid'   => 3,
-        );
-
-        $data = array(
-            'test1' => array($datafile, $entries)
-        );
-
-        return $data;
-    }
-
-    /**
-     * Data provider for the testing the quiz plugin.
-     *
-     * @return array Quiz questions
-     */
-    public function provider_query_quiz() {
-        // Represents questions that are finished and ready to be graded.
-        // In progress questions or questions that are already graded are not included.
-        $items = array();
-        $items[0] = array(
-            'courseid'       => 0,
-            'coursename'     => '',
-            'itemmodule'     => 'quiz',
-            'iteminstance'   => 1,
-            'itemname'       => 'quizitem2',
-            'coursemoduleid' => 1,
-            'itemsortorder'  => 0,
-            'step_id'        => 4,
-            'userid'         => 0,
-            'timesubmitted'  => 0,
-            'submissionid'   => 2,
-            'sequencenumber' => 2
-        );
-
-        $items[1] = array(
-            'courseid'       => 0,
-            'coursename'     => '',
-            'itemmodule'     => 'quiz',
-            'iteminstance'   => 3,
-            'itemname'       => 'quizitem4',
-            'coursemoduleid' => 3,
-            'itemsortorder'  => 0,
-            'step_id'        => 11,
-            'userid'         => 0,
-            'timesubmitted'  => 0,
-            'submissionid'   => 4,
-            'sequencenumber' => 2
-        );
-
-        $items[2] = array(
-            'courseid'       => 0,
-            'coursename'     => '',
-            'itemmodule'     => 'quiz',
-            'iteminstance'   => 0,
-            'itemname'       => 'Quiz #1',
-            'coursemoduleid' => 0,
-            'itemsortorder'  => 0,
-            'step_id'        => 9,
-            'userid'         => 0,
-            'timesubmitted'  => 0,
-            'submissionid'   => 1,
-            'sequencenumber' => 2
-        );
-
-        $data = array(
-            'simple'      => array('quiz1.xml', array($items[0], $items[1])),
-            'complexquiz' => array('quiz2.xml', array($items[2])),
-        );
-
-        return $data;
     }
 
     /**
@@ -526,6 +280,68 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for the testing the quiz plugin.
+     *
+     * @return array Quiz questions
+     */
+    public function provider_query_quiz() {
+        // Represents questions that are finished and ready to be graded.
+        // In progress questions or questions that are already graded are not included.
+        $items = array();
+        $items[0] = array(
+            'courseid'       => 0,
+            'coursename'     => '',
+            'itemmodule'     => 'quiz',
+            'iteminstance'   => 1,
+            'itemname'       => 'quizitem2',
+            'coursemoduleid' => 1,
+            'itemsortorder'  => 0,
+            'step_id'        => 4,
+            'userid'         => 0,
+            'timesubmitted'  => 0,
+            'submissionid'   => 2,
+            'sequencenumber' => 2
+        );
+
+        $items[1] = array(
+            'courseid'       => 0,
+            'coursename'     => '',
+            'itemmodule'     => 'quiz',
+            'iteminstance'   => 3,
+            'itemname'       => 'quizitem4',
+            'coursemoduleid' => 3,
+            'itemsortorder'  => 0,
+            'step_id'        => 11,
+            'userid'         => 0,
+            'timesubmitted'  => 0,
+            'submissionid'   => 4,
+            'sequencenumber' => 2
+        );
+
+        $items[2] = array(
+            'courseid'       => 0,
+            'coursename'     => '',
+            'itemmodule'     => 'quiz',
+            'iteminstance'   => 0,
+            'itemname'       => 'Quiz #1',
+            'coursemoduleid' => 0,
+            'itemsortorder'  => 0,
+            'step_id'        => 9,
+            'userid'         => 0,
+            'timesubmitted'  => 0,
+            'submissionid'   => 1,
+            'sequencenumber' => 2
+        );
+
+        $data = array(
+            'simple'      => array('quiz1.xml', array($items[0], $items[1])),
+            'complexquiz' => array('quiz2.xml', array($items[2])),
+        );
+
+        return $data;
+    }
+
+    /**
      * Test the quiz plugin where a list of questions not yet graded is returned.
      *
      * @param string $datafile The database file to load for the test
@@ -564,6 +380,48 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for the forum plugin.
+     *
+     * @TODO Make this data provider less useless.
+     *
+     * @return array Forum items
+     */
+    public function provider_query_forum() {
+        // Represents forum items that are ready for grading. Forum items that have already been graded are not included.
+        $forumitem1 = array(
+            'courseid'            => 0,
+            'coursename'          => '',
+            'itemmodule'          => 'forum',
+            'iteminstance'        => 0,
+            'itemname'            => 'forumitem1',
+            'coursemoduleid'      => 0,
+            'itemsortorder'       => 0,
+            'submissionid'        => 1,
+            'userid'              => 0,
+            'timesubmitted'       => 0,
+            'forum_discussion_id' => 1
+        );
+
+        $forumitem2 = array(
+            'courseid'            => 0,
+            'coursename'          => '',
+            'itemmodule'          => 'forum',
+            'iteminstance'        => 0,
+            'itemname'            => 'forumitem1',
+            'coursemoduleid'      => 0,
+            'itemsortorder'       => 0,
+            'submissionid'        => 2,
+            'userid'              => 0,
+            'timesubmitted'       => 0,
+            'forum_discussion_id' => 2
+        );
+
+        $data = array(array(array($forumitem1, $forumitem2)));
+
+        return $data;
+    }
+
+    /**
      * Test the forum plugin where a list of forum activites not yet graded is returned.
      *
      * @dataProvider provider_query_forum
@@ -571,6 +429,61 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     public function test_query_forum($expected) {
         $this->standard_query_tests('forum.xml', $expected, 'forum');
+    }
+
+    /**
+     * Data provider for the testing the quiz plugin.
+     *
+     * @return array Glossary entries
+     */
+    public function provider_query_glossary() {
+        $datafile = 'glossary.xml';
+        // Represents entries that are finished and ready to be graded.
+        $entries = array();
+        $entries[0] = array(
+            'courseid'       => 0,
+            'coursename'     => '0',
+            'itemmodule'     => 'glossary',
+            'iteminstance'   => 0,
+            'itemname'       => 'glossaryitem1',
+            'coursemoduleid' => 0,
+            'itemsortorder'  => 0,
+            'userid'         => 0,
+            'timesubmitted'  => 1424354368,
+            'submissionid'   => 1,
+        );
+
+        $entries[1] = array(
+            'courseid'       => 0,
+            'coursename'     => '0',
+            'itemmodule'     => 'glossary',
+            'iteminstance'   => 1,
+            'itemname'       => 'glossaryitem2',
+            'coursemoduleid' => 1,
+            'itemsortorder'  => 0,
+            'userid'         => 0,
+            'timesubmitted'  => 1424354369,
+            'submissionid'   => 2,
+        );
+
+        $entries[2] = array(
+            'courseid'       => 0,
+            'coursename'     => '0',
+            'itemmodule'     => 'glossary',
+            'iteminstance'   => 2,
+            'itemname'       => 'glossaryitem3',
+            'coursemoduleid' => 2,
+            'itemsortorder'  => 0,
+            'userid'         => 0,
+            'timesubmitted'  => 1424354370,
+            'submissionid'   => 3,
+        );
+
+        $data = array(
+            'test1' => array($datafile, $entries)
+        );
+
+        return $data;
     }
 
     /**
@@ -667,6 +580,45 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
+     * Provide input data to the parameters of the test_block_grade_me_get_content_single_user() method.
+     *
+     * Test data is composed of:
+     *     The plugin to be tested
+     *     Regular expressions to matched against the output
+     *     A list of users
+     *     A list of courses
+     *
+     * @return array An array containing the test data
+     */
+    public function provider_get_content_single_user() {
+        $data = array();
+
+        // New assign test.
+        $plugin = 'assign';
+        $matches = array(
+            1 => '/Go to assign/',
+            2 => '|mod/assign/view.php|',
+            3 => '/action=grade&userid=[user0]/',
+            5 => '/testassignment3/',
+            6 => '/testassignment4/',
+        );
+        $data['assign'] = array($plugin, $matches);
+
+        // Legacy assignment test.
+        $plugin = 'assignment';
+        $matches = array(
+            1 => '/Go to assignment/',
+            2 => '|mod/assignment/submissions.php|',
+            3 => '/userid=[user0]&amp;mode=single/',
+            5 => '/testassignment5/',
+            6 => '/testassignment6/',
+        );
+        $data['assignment'] = array($plugin, $matches);
+
+        return $data;
+    }
+
+    /**
      * Test the function get_content for one user in the gradebook for a course.
      * Check that urls returned are what they should be
      *
@@ -721,6 +673,58 @@ class block_grade_me_testcase extends advanced_testcase {
             $match = str_replace('[user0]', $users[0]->id, $expected);
             $this->assertRegExp($match, $content->text);
         }
+    }
+
+    /**
+     * Provide input data to the parameters of the test_censusreport_null_grade_check() method.
+     *
+     * @TODO See if this can be merged with provider_single_user
+     *
+     * Test data is composed of:
+     *     The plugin to be tested
+     *     Regular expressions to matched against the output
+     *     A list of users
+     *     A list of courses
+     *
+     * @return array An array containing the test data
+     */
+    public function provider_get_content_multiple_user() {
+        $data = array();
+
+        // New assign test.
+        $plugin = 'assign';
+        $matches = array(
+            1 => '/Go to assign/',
+            2 => '|mod/assign/view.php|',
+            3 => '/action=grade&userid=[user0]/',
+            4 => '/action=grade&userid=[user1]/',
+            5 => '/testassignment3/',
+            6 => '/testassignment4/'
+        );
+        $data['assign'] = array($plugin, $matches);
+
+        // Legacy assignment test.
+        $plugin = 'assignment';
+        $matches = array(
+            1 => '/Go to assignment/',
+            2 => '|mod/assignment/submissions.php|',
+            3 => '/userid=[user0]&amp;mode=single/',
+            4 => '/userid=[user1]&amp;mode=single/',
+            5 => '/testassignment5/',
+            6 => '/testassignment6/',
+        );
+        $data['assignment'] = array($plugin, $matches);
+
+        // Quiz test.
+        $plugin = 'quiz';
+        $matches = array(
+            1 => '/Go to quiz/',
+            2 => '|mod/quiz/view.php|',
+            3 => '/\/mod\/quiz\/review.php\?attempt=4/',
+            5 => '/quizitem4/',
+        );
+        $data['quiz'] = array($plugin, $matches);
+        return $data;
     }
 
     /**
