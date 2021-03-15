@@ -65,12 +65,15 @@ function block_grade_me_enabled_plugins() {
     $enabledplugins = array();
     $plugins = get_list_of_plugins('blocks/grade_me/plugins');
     foreach ($plugins as $plugin) {
-        if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php')
-            && ($CFG->{'block_grade_me_enable'.$plugin} == true)) {
-            include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php');
-            if (function_exists('block_grade_me_required_capability_'.$plugin)) {
-                $requiredcapability = 'block_grade_me_required_capability_'.$plugin;
-                $enabledplugins = array_merge($enabledplugins, $requiredcapability());
+        $pluginfile = $CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php';
+        if (file_exists($pluginfile)) {
+            $enablekey = 'block_grade_me_enable'.$plugin;
+            if (isset($CFG->$enablekey) && $CFG->$enablekey == true) {
+                include_once($pluginfile);
+                $requiredcapabilityfunc = 'block_grade_me_required_capability_'.$plugin;
+                if (function_exists($requiredcapabilityfunc)) {
+                    $enabledplugins = array_merge($enabledplugins, $requiredcapabilityfunc());
+                }
             }
         }
     }
