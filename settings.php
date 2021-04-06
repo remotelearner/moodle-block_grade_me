@@ -24,6 +24,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('block_grade_me_maxcourses', get_string('settings_maxcourses', 'block_grade_me'),
         get_string('settings_configmaxcourses', 'block_grade_me'), 10, PARAM_INT));
 
+    $settings->add(new admin_setting_configtext('block_grade_me_maxage', get_string('settings_maxage', 'block_grade_me'),
+        get_string('settings_configmaxage', 'block_grade_me'), 0, PARAM_INT));
+
     $settings->add(new admin_setting_configcheckbox('block_grade_me_enableshowhidden',
         get_string('settings_showhidden', 'block_grade_me'), get_string('settings_configshowhidden', 'block_grade_me'), 0));
 

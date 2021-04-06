@@ -265,21 +265,116 @@ class block_grade_me_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the block_grade_me_query_prefix function
+     * Test the function block_grade_me_query_assign using a maximum age.
+     *
+     * @depends test_load_db
      */
-    public function test_query_prefix() {
-        $expected = "SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, " .
-            "bgm.coursemoduleid, bgm.itemsortorder";
-        $this->assertEquals($expected, block_grade_me_query_prefix());
+    public function test_query_assign_maxage() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // 0 maxage indicates unlimited age.
+        set_config('block_grade_me_maxage', 0);
+        list($users, $courses, $plugins) = $this->create_grade_me_data('block_grade_me.xml');
+
+        $rec = new stdClass();
+        $rec->id = $plugins[2]->id;
+        $rec->courseid = $courses[0]->id;
+        $rec->submissionid = '2';
+        $rec->userid = $users[0]->id;
+        $rec->timesubmitted = '2';
+        $rec->attemptnumber = '1';
+        $rec->maxattempts = '-1';
+
+        $rec2 = new stdClass();
+        $rec2->id = $plugins[3]->id;
+        $rec2->courseid = $courses[0]->id;
+        $rec2->submissionid = '3';
+        $rec2->userid = $users[0]->id;
+        $rec2->timesubmitted = '3';
+        $rec2->attemptnumber = '1';
+        $rec2->maxattempts = '-1';
+
+        // Tests resubmission.
+        $rec3 = new stdClass();
+        $rec3->id = $plugins[4]->id;
+        $rec3->courseid = $courses[0]->id;
+        $rec3->submissionid = '7';
+        $rec3->userid = $users[0]->id;
+        $rec3->timesubmitted = '6';
+        $rec3->attemptnumber = '1';
+        $rec3->maxattempts = '-1';
+
+        $rec4 = new stdClass();
+        $rec4->id = $plugins[1]->id;
+        $rec4->courseid = $courses[0]->id;
+        $rec4->submissionid = '1';
+        $rec4->userid = $users[0]->id;
+        $rec4->timesubmitted = '1';
+        $rec4->attemptnumber = '1';
+        $rec4->maxattempts = '-1';
+
+        $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
+        list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
+        $query = block_grade_me_query_prefix().', a.id as assignid '.$sql.block_grade_me_query_suffix('assign');
+        $values = array_merge($inparams, ['courseid' => $courses[0]->id]);
+        $actual = [];
+        $rs = $DB->get_recordset_sql($query, $values);
+        foreach ($rs as $record) {
+            $actual[$record->assignid] = (object)[
+                'id' => $record->assignid,
+                'courseid' => $record->courseid,
+                'submissionid' => $record->submissionid,
+                'userid' => $record->userid,
+                'timesubmitted' => $record->timesubmitted,
+                'attemptnumber' => $record->attemptnumber,
+                'maxattempts' => $record->maxattempts
+            ];
+        }
+        $this->assertEquals($expected, $actual);
+        $this->assertFalse(block_grade_me_query_assign(array()));
+
+        // Test with a maximum age.
+        set_config('block_grade_me_maxage', 10);
+        $now = time();
+        $oldesttimestamp = $now - (10*DAYSECS);
+        // Set all submissions to be current, therefore included.
+        $DB->execute('UPDATE {assign_submission} SET timemodified = '.$now);
+        // Set submission 2 to be older than configured max age.
+        $DB->execute('UPDATE {assign_submission} SET timemodified = '.($oldesttimestamp-1000).' WHERE id = 2');
+        // Expected array should now not include $rec.
+        $expected = array($rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
+        foreach ($expected as $id => $record) {
+            $expected[$id]->timesubmitted = $now;
+        }
+        list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
+        $query = block_grade_me_query_prefix().', a.id as assignid '.$sql.block_grade_me_query_suffix('assign');
+        $values = array_merge($inparams, ['courseid' => $courses[0]->id]);
+        $actual = [];
+        $rs = $DB->get_recordset_sql($query, $values);
+        foreach ($rs as $record) {
+            $actual[$record->assignid] = (object)[
+                'id' => $record->assignid,
+                'courseid' => $record->courseid,
+                'submissionid' => $record->submissionid,
+                'userid' => $record->userid,
+                'timesubmitted' => $record->timesubmitted,
+                'attemptnumber' => $record->attemptnumber,
+                'maxattempts' => $record->maxattempts
+            ];
+        }
+        $this->assertEquals($expected, $actual);
+        $this->assertFalse(block_grade_me_query_assign(array()));
     }
 
     /**
-     * Test the block_grade_me_query_suffix function
+     * Test the block_grade_me_query_prefix function
      */
-    public function test_query_suffix() {
-        $expected = " AND bgm.courseid = ?
- AND bgm.itemmodule = 'assign'";
-        $this->assertEquals($expected, block_grade_me_query_suffix('assign'));
+    public function test_query_prefix() {
+        $expected = "SELECT * FROM (SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, " .
+            "bgm.coursemoduleid, bgm.itemsortorder";
+        $this->assertEquals($expected, block_grade_me_query_prefix());
     }
 
     /**

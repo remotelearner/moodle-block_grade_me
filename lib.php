@@ -39,7 +39,7 @@ function block_grade_me_array2str($array) {
  * @return string $query
  */
 function block_grade_me_query_prefix() {
-    $query = 'SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, ' .
+    $query = 'SELECT * FROM (SELECT bgm.courseid, bgm.coursename, bgm.itemmodule, bgm.iteminstance, bgm.itemname, ' .
         'bgm.coursemoduleid, bgm.itemsortorder';
     return $query;
 }
@@ -51,8 +51,12 @@ function block_grade_me_query_prefix() {
  * @return string $string
  */
 function block_grade_me_query_suffix($mod) {
-    $query = " AND bgm.courseid = ?
- AND bgm.itemmodule = '$mod'";
+    $query = " AND bgm.courseid = ? AND bgm.itemmodule = '$mod') allitems";
+    $maxage = get_config(null, 'block_grade_me_maxage');
+    if (!empty($maxage) && is_numeric($maxage)) {
+        $maxtimesubmitted = time()-((int)$maxage * DAYSECS);
+        $query .= " WHERE allitems.timesubmitted >= ".$maxtimesubmitted;
+    }
     return $query;
 }
 
