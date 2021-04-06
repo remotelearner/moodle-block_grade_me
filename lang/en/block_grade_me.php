@@ -34,6 +34,8 @@ $string['alt_mark'] = 'check';
 
 $string['settings_maxcourses'] = 'Maximum Courses Displayed';
 $string['settings_configmaxcourses'] = 'Set the maximum number of ungraded courses to show. Setting this too high may impact performance.';
+$string['settings_maxage'] = 'Maximum Age';
+$string['settings_configmaxage'] = 'The maximum age of gradable items, in days, to show. Items older than this will be hidden. Enter 0 for no limit.';
 $string['settings_adminviewall'] = 'Admins View All';
 $string['settings_configadminviewall'] = 'Enable to give administrators the rights to see all ungraded work — not just for courses where they have a grader role.';
 $string['settings_configshowhidden'] = 'Enable showing items to grade within hidden courses';
