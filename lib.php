@@ -52,7 +52,7 @@ function block_grade_me_query_prefix() {
  */
 function block_grade_me_query_suffix($mod) {
     $query = " AND bgm.courseid = ?
- AND bgm.itemmodule = '$mod'";
+ AND bgm.itemmodule = '$mod' ORDER BY submissionid ASC";
     return $query;
 }
 
