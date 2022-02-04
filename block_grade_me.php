@@ -43,7 +43,7 @@ class block_grade_me extends block_base {
             return $this->content;
         }
 
-        require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
+        require_once($CFG->dirroot . '/blocks/grade_me/lib.php');
         $PAGE->requires->jquery();
         $PAGE->requires->js('/blocks/grade_me/javascript/grademe.js');
 
@@ -101,11 +101,11 @@ class block_grade_me extends block_base {
 
             foreach ($enabledplugins as $plugin => $a) {
                 if (has_capability($a['capability'], $context)) {
-                    $fn = 'block_grade_me_query_'.$plugin;
+                    $fn = 'block_grade_me_query_' . $plugin;
                     $pluginfn = $fn($gradebookusers);
                     if ($pluginfn !== false) {
                         list($sql, $inparams) = $fn($gradebookusers);
-                        $query = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($plugin);
+                        $query = block_grade_me_query_prefix() . $sql . block_grade_me_query_suffix($plugin);
                         $values = array_merge($inparams, $params);
                         $rs = $DB->get_recordset_sql($query, $values);
 
@@ -115,8 +115,8 @@ class block_grade_me extends block_base {
                                 $iteminstance = $r->iteminstance;
                                 $userid = $r->userid;
                                 $attemptnumber = $r->attemptnumber;
-                                $sql = 'select MAX(attemptnumber) from {assign_submission} where assignment = '.$iteminstance .
-                                       ' and userid = '.$userid;
+                                $sql = 'select MAX(attemptnumber) from {assign_submission} where assignment = ' . $iteminstance .
+                                       ' and userid = ' . $userid;
                                 $maxattempt = $DB->get_field_sql($sql);
                                 if ($maxattempt == $attemptnumber) {
                                     $gradeables = block_grade_me_array($gradeables, $r);
@@ -157,11 +157,11 @@ class block_grade_me extends block_base {
         if (!empty($this->content->text)) {
              // Expand/Collapse button.
              $expand = '<button class="btn btn-sm btn-outline-secondary" type="button" onclick="togglecollapseall();">' .
-                get_string('expand', 'block_grade_me').'</button>';
+                get_string('expand', 'block_grade_me') . '</button>';
 
-            $this->content->text = $expand.'<dl>'.$this->content->text.'</dl><div class="excess">'.$additional.'</div>';
+            $this->content->text = $expand . '<dl>' . $this->content->text . '</dl><div class="excess">' . $additional . '</div>';
         } else if (empty($this->content->text) && $showempty) {
-            $this->content->text .= '<div class="excess">'.get_string('nothing', 'block_grade_me').'</div>'."\n";
+            $this->content->text .= '<div class="excess">' . get_string('nothing', 'block_grade_me') . '</div>' . "\n";
         }
 
         return $this->content;

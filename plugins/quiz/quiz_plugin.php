@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
-require_once($CFG->dirroot.'/question/engine/states.php');
+require_once($CFG->dirroot . '/question/engine/states.php');
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
