@@ -32,18 +32,18 @@ if ($ADMIN->fulltree) {
 
     $plugins = get_list_of_plugins('blocks/grade_me/plugins');
     foreach ($plugins as $plugin) {
-        if (file_exists($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php')) {
-            include_once($CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php');
-            if (function_exists('block_grade_me_required_capability_'.$plugin)) {
-                $requiredcapability = 'block_grade_me_required_capability_'.$plugin;
+        if (file_exists($CFG->dirroot . '/blocks/grade_me/plugins/' . $plugin . '/' . $plugin . '_plugin.php')) {
+            include_once($CFG->dirroot . '/blocks/grade_me/plugins/' . $plugin . '/' . $plugin . '_plugin.php');
+            if (function_exists('block_grade_me_required_capability_' . $plugin)) {
+                $requiredcapability = 'block_grade_me_required_capability_' . $plugin;
                 $a = $requiredcapability();
-                $component = 'mod_'.$plugin;
+                $component = 'mod_' . $plugin;
                 if (\core_plugin_manager::instance()->get_plugin_info($component)) {
                     $langshowmod = get_string('settings_enablepre', 'block_grade_me');
-                    $langshowmod .= ' '.get_string('modulenameplural', $component);
+                    $langshowmod .= ' ' . get_string('modulenameplural', $component);
                     $langmodname = get_string('modulename', $component);
                     $langshowdesc = get_string('settings_configenablepre', 'block_grade_me', ['plugin_name' => $langmodname]);
-                    $settingname = 'block_grade_me_enable'.$plugin;
+                    $settingname = 'block_grade_me_enable' . $plugin;
                     $default = (isset($a[$plugin]) && isset($a[$plugin]['default_on'])) ? $a[$plugin]['default_on'] : false;
                     $settings->add(new admin_setting_configcheckbox($settingname, $langshowmod, $langshowdesc, $default));
                 }

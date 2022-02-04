@@ -54,8 +54,8 @@ function block_grade_me_query_suffix($mod) {
     $query = " AND bgm.courseid = ? AND bgm.itemmodule = '$mod') allitems";
     $maxage = get_config(null, 'block_grade_me_maxage');
     if (!empty($maxage) && is_numeric($maxage)) {
-        $maxtimesubmitted = time()-((int)$maxage * DAYSECS);
-        $query .= " WHERE allitems.timesubmitted >= ".$maxtimesubmitted;
+        $maxtimesubmitted = time() - ((int)$maxage * DAYSECS);
+        $query .= " WHERE allitems.timesubmitted >= " . $maxtimesubmitted;
     }
     return $query;
 }
@@ -69,12 +69,12 @@ function block_grade_me_enabled_plugins() {
     $enabledplugins = array();
     $plugins = get_list_of_plugins('blocks/grade_me/plugins');
     foreach ($plugins as $plugin) {
-        $pluginfile = $CFG->dirroot.'/blocks/grade_me/plugins/'.$plugin.'/'.$plugin.'_plugin.php';
+        $pluginfile = $CFG->dirroot . '/blocks/grade_me/plugins/' . $plugin . '/' . $plugin . '_plugin.php';
         if (file_exists($pluginfile)) {
-            $enablekey = 'block_grade_me_enable'.$plugin;
+            $enablekey = 'block_grade_me_enable' . $plugin;
             if (isset($CFG->$enablekey) && $CFG->$enablekey == true) {
                 include_once($pluginfile);
-                $requiredcapabilityfunc = 'block_grade_me_required_capability_'.$plugin;
+                $requiredcapabilityfunc = 'block_grade_me_required_capability_' . $plugin;
                 if (function_exists($requiredcapabilityfunc)) {
                     $enabledplugins = array_merge($enabledplugins, $requiredcapabilityfunc());
                 }
@@ -115,7 +115,7 @@ function block_grade_me_tree($course) {
     // Get time format string.
     $datetimestring = get_string('datetime', 'block_grade_me', array());
     // Grading image.
-    $gradeimg = $CFG->wwwroot.'/blocks/grade_me/pix/check_mark.png';
+    $gradeimg = $CFG->wwwroot . '/blocks/grade_me/pix/check_mark.png';
     // Define text variable.
     $text = '';
 
@@ -123,21 +123,21 @@ function block_grade_me_tree($course) {
     $coursename = $course['meta']['coursename'];
     unset($course['meta']);
 
-    $gradebooklink = $CFG->wwwroot.'/grade/report/index.php?id='.$courseid.'" title="'.
+    $gradebooklink = $CFG->wwwroot . '/grade/report/index.php?id=' . $courseid . '" title="' .
         get_string('link_gradebook_icon', 'block_grade_me', array('course_name' => $coursename));
     $altgradebook = get_string('alt_gradebook', 'block_grade_me', array('course_name' => $coursename));
     $gradebookicon = $OUTPUT->pix_icon('i/grades', $altgradebook, null, array('class' => 'gm_icon'));
-    $courselink = $CFG->wwwroot.'/course/view.php?id='.$courseid;
+    $courselink = $CFG->wwwroot . '/course/view.php?id=' . $courseid;
     $coursetitle = get_string('link_gradebook', 'block_grade_me', array('course_name' => $coursename));
-    $text .= '<div><dt id="courseid'.$courseid.'" class="cmod">
+    $text .= '<div><dt id="courseid' . $courseid . '" class="cmod">
                 <div tabindex=0 class="toggle open fa fa-caret-right" aria-hidden="true"
-                    onclick="$(\'dt#courseid'.$courseid.' > div.toggle\')
-                    .toggleClass(\'open\');$(\'dt#courseid'.$courseid.' ~ dd\')
+                    onclick="$(\'dt#courseid' . $courseid . ' > div.toggle\')
+                    .toggleClass(\'open\');$(\'dt#courseid' . $courseid . ' ~ dd\')
                     .toggleClass(\'block_grade_me_hide\');">
                         <span class="sr-only">Toggle Section</span>
                 </div>
-                <a href="'.$courselink.'" class="grademe-course-name"'.$coursetitle.'">'.$coursename.'</a>
-              </dt>'."\n";
+                <a href="' . $courselink . '" class="grademe-course-name"' . $coursetitle . '">' . $coursename . '</a>
+              </dt>' . "\n";
     $text .= "\n";
 
     ksort($course);
@@ -148,31 +148,32 @@ function block_grade_me_tree($course) {
         $coursemoduleid = $item['meta']['coursemoduleid'];
         unset($item['meta']);
 
-        $modulelink = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$coursemoduleid;
+        $modulelink = $CFG->wwwroot . '/mod/' . $itemmodule . '/view.php?id=' . $coursemoduleid;
         $gradelink = $CFG->wwwroot;
         if ($itemmodule == 'assignment') {
-            $gradelink .= '/mod/assignment/submissions.php?id='.$coursemoduleid;
+            $gradelink .= '/mod/assignment/submissions.php?id=' . $coursemoduleid;
         } else if ($itemmodule == 'quiz') {
-            $gradelink .= '/mod/quiz/report.php?id='.$coursemoduleid;
+            $gradelink .= '/mod/quiz/report.php?id=' . $coursemoduleid;
         } else {
             $gradelink = $modulelink;
         }
         $moduletitle = get_string('link_mod', 'block_grade_me', array('mod_name' => $itemmodule));
         $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, $itemmodule, array('class' => 'gm_icon'));
 
-        $text .= '<dd id="cmid'.$coursemoduleid.'" class="module">'."\n";  // Open module.
-        $text .= '<div class="dd-wrap">'."\n";
+        $text .= '<dd id="cmid' . $coursemoduleid . '" class="module">' . "\n";  // Open module.
+        $text .= '<div class="dd-wrap">' . "\n";
         $text .= '<div tabindex=0 class="toggle fa fa-caret-right" aria-hidden="true"
-                    onclick="$(\'dd#cmid'.$coursemoduleid.' > div div.toggle\')
-                    .toggleClass(\'open\');$(\'dd#cmid'.$coursemoduleid.' > ul\')
+                    onclick="$(\'dd#cmid' . $coursemoduleid . ' > div div.toggle\')
+                    .toggleClass(\'open\');$(\'dd#cmid' . $coursemoduleid . ' > ul\')
                     .toggleClass(\'block_grade_me_hide\');">
                         <span class="sr-only">Toggle Section</span>
-                    </div>'."\n";
-        $text .= '<a href="'.$gradelink.'" class="grademe-course-icon" title="'.$moduletitle.'">'.$moduleicon.'</a>'."\n";
-        $text .= '<a href="'.$modulelink.'" class="grademe-mod-name" title="'.$moduletitle.'">'.$itemname.'</a>'."\n";
-        $text .= '<span class="badge badge-pill badge-primary">'.count($item).'</span>'."\n";
-        $text .= '</div>'."\n";
-        $text .= '<ul class="gradable-list block_grade_me_hide">'."\n";
+                    </div>' . "\n";
+        $text .= '<a href="' . $gradelink . '" class="grademe-course-icon" title="'
+                 . $moduletitle . '">' . $moduleicon . '</a>' . "\n";
+        $text .= '<a href="' . $modulelink . '" class="grademe-mod-name" title="' . $moduletitle . '">' . $itemname . '</a>' . "\n";
+        $text .= '<span class="badge badge-pill badge-primary">' . count($item) . '</span>' . "\n";
+        $text .= '</div>' . "\n";
+        $text .= '<ul class="gradable-list block_grade_me_hide">' . "\n";
 
         ksort($item);
 
@@ -183,21 +184,22 @@ function block_grade_me_tree($course) {
 
             $submissionlink = $CFG->wwwroot;
             if ($itemmodule == 'assignment') {
-                $submissionlink .= '/mod/assignment/submissions.php?id='.$coursemoduleid.'&amp;userid=' . $userid .
+                $submissionlink .= '/mod/assignment/submissions.php?id=' . $coursemoduleid . '&amp;userid=' . $userid .
                     '&amp;mode=single&amp;filter=0&amp;offset=0';
             } else if ($itemmodule == 'assign') {
                 $submissionlink .= "/mod/assign/view.php?id=$coursemoduleid&action=grade&userid=$userid";
             } else if ($itemmodule == 'data') {
-                $submissionlink .= '/mod/data/view.php?rid='.$submissionid.'&amp;mode=single';
+                $submissionlink .= '/mod/data/view.php?rid=' . $submissionid . '&amp;mode=single';
             } else if ($itemmodule == 'forum') {
                 $forumdiscussionid = $submission['meta']['forum_discussion_id'];
-                $submissionlink .= '/mod/forum/discuss.php?d='.$forumdiscussionid.'#p'.$submissionid;
+                $submissionlink .= '/mod/forum/discuss.php?d=' . $forumdiscussionid . '#p' . $submissionid;
             } else if ($itemmodule == 'glossary') {
-                $submissionlink .= '/mod/glossary/view.php?id='.$coursemoduleid.'#postrating'.$submissionid;
+                $submissionlink .= '/mod/glossary/view.php?id=' . $coursemoduleid . '#postrating' . $submissionid;
             } else if ($itemmodule == 'quiz') {
-                $submissionlink .= '/mod/quiz/review.php?attempt='.$submissionid;
+                $submissionlink .= '/mod/quiz/review.php?attempt=' . $submissionid;
             } else if ($itemmodule == 'lesson') {
-                $submissionlink .= '/mod/lesson/essay.php?id='.$coursemoduleid.'&mode=grade&attemptid='.$submissionid.'&sesskey='.sesskey();
+                $submissionlink .= '/mod/lesson/essay.php?id=' . $coursemoduleid . '&mode=grade&attemptid='
+                                   . $submissionid . '&sesskey=' . sesskey();
             }
 
             unset($submission['meta']);
@@ -208,28 +210,29 @@ function block_grade_me_tree($course) {
             $user = $DB->get_record('user', array('id' => $userid));
 
             $userfirst = $user->firstname;
-            $userfirstlast = $user->firstname.' '.$user->lastname;
+            $userfirstlast = $user->firstname . ' ' . $user->lastname;
             $userprofiletitle = get_string('link_user_profile', 'block_grade_me', array('first_name' => $userfirst));
 
             $text .= '<li class="gradable">';  // Open gradable.
-            $text .= '<a class="gradable-icon" href="'.$submissionlink.'" title="'.$submissiontitle.'">
+            $text .= '<a class="gradable-icon" href="' . $submissionlink . '" title="' . $submissiontitle . '">
                         <i class="fa fa-check" aria-hidden="true"></i>
-                        <span class="sr-only">'.$submissiontitle.'</span>
+                        <span class="sr-only">' . $submissiontitle . '</span>
                       </a>';
             $text .= '<div class="gradable-wrap">';
-            $text .= '<a class="gradable-user" href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'&amp;course='.$courseid.'" title="'.$userprofiletitle.'">';
+            $text .= '<a class="gradable-user" href="' . $CFG->wwwroot . '/user/view.php?id=' . $userid
+                     . '&amp;course=' . $courseid . '" title="' . $userprofiletitle . '">';
             $text .= $userfirstlast;
             $text .= '</a>';
-            $text .= '<div class="gradable-date">'.userdate($timesubmitted, $datetimestring).'</div>';
+            $text .= '<div class="gradable-date">' . userdate($timesubmitted, $datetimestring) . '</div>';
             $text .= '</div>';
-            $text .= '</li>'."\n";  // End gradable.
+            $text .= '</li>' . "\n";  // End gradable.
         }
 
-        $text .= '</ul>'."\n";
-        $text .= '</dd>'."\n";  // Close module.
+        $text .= '</ul>' . "\n";
+        $text .= '</dd>' . "\n";  // Close module.
     }
 
-    $text .= '</div>'."\n";
+    $text .= '</div>' . "\n";
 
     return $text;
 }
@@ -260,7 +263,7 @@ function block_grade_me_cache_grade_data() {
         $lastrun = '0';
     }
 
-    // See if the block has been added course wide
+    // See if the block has been added course wide.
     $paramsystem = array('site-index', 'my-index', '*');
     $sqlsystem = "SELECT count(b.id) bcount
                    FROM {block_instances} b
@@ -312,7 +315,7 @@ function block_grade_me_cache_grade_data() {
                          AND u.deleted = 0";
         $validcourse = $DB->count_records_sql($sqlcourse, array('courseid' => $cid));
         if ($validcourse > '0') {
-            $paramscourse =array();
+            $paramscourse = array();
             $paramscourse['itemtype'] = 'mod';
 
             $paramscourse['id'] = $cid;
@@ -339,7 +342,7 @@ function block_grade_me_cache_grade_data() {
                     'iteminstance'  => $rec->iteminstance,
                     'courseid'      => $rec->courseid
                 );
-                $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND '.
+                $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND ' .
                             'iteminstance = :iteminstance AND courseid = :courseid';
                 $params = array(
                     'itemname' => $rec->itemname,
@@ -362,12 +365,12 @@ function block_grade_me_cache_grade_data() {
                     $DB->update_record('block_grade_me', $params);
                 }
             }
-            /**
-             * Build the quiz table per course. Cannot do this in bulk
-             * because temp tables can cause large disk usage.
-             * First get the list of quiz attempts for a course with manualgraded questions,
-             * and that have active students in them.
-             **/
+            //
+            // Build the quiz table per course. Cannot do this in bulk
+            // because temp tables can cause large disk usage.
+            // First get the list of quiz attempts for a course with manualgraded questions,
+            // and that have active students in them.
+            //
 
             $sqlquizlist = "SELECT mq.id quizid, mqa.id quiattemptid, mqa.userid, mq.course, mqa.uniqueid,
                             qna.id questionattemptid

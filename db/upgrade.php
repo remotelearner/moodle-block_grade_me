@@ -79,7 +79,7 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
 
     if ($oldversion < 2015102402) {
         if (!$dbman->table_exists('block_grade_me_quiz_ngrade')) {
-            $dbman->install_one_table_from_xmldb_file(__DIR__.'/install.xml', 'block_grade_me_quiz_ngrade');
+            $dbman->install_one_table_from_xmldb_file(__DIR__ . '/install.xml', 'block_grade_me_quiz_ngrade');
         }
         $DB->delete_records('block_grade_me_quiz_ngrade');
         // Pre populate block_grade_me_quiz_ngrade table.

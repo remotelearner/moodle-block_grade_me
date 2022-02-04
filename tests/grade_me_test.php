@@ -23,19 +23,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $CFG;
-require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-require_once($CFG->dirroot.'/blocks/grade_me/lib.php');
-require_once($CFG->dirroot.'/blocks/grade_me/block_grade_me.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/assign/assign_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/assignment/assignment_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/data/data_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/forum/forum_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/glossary/glossary_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/quiz/quiz_plugin.php');
-require_once($CFG->dirroot.'/blocks/grade_me/plugins/turnitintooltwo/turnitintooltwo_plugin.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
+require_once($CFG->dirroot . '/blocks/grade_me/lib.php');
+require_once($CFG->dirroot . '/blocks/grade_me/block_grade_me.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/assign/assign_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/assignment/assignment_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/data/data_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/forum/forum_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/glossary/glossary_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/quiz/quiz_plugin.php');
+require_once($CFG->dirroot . '/blocks/grade_me/plugins/turnitintooltwo/turnitintooltwo_plugin.php');
 
 /**
  * Unit tests for block_grade_me.
@@ -52,7 +52,7 @@ class block_grade_me_testcase extends advanced_testcase {
      */
     protected function create_grade_me_data($file) {
         // Read the datafile and get the table names.
-        $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/'.$file);
+        $dataset = $this->createXMLDataSet(__DIR__ . '/fixtures/' . $file);
         $names = array_flip($dataset->getTableNames());
 
         // Generate Data.
@@ -317,7 +317,7 @@ class block_grade_me_testcase extends advanced_testcase {
 
         $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
         list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
-        $query = block_grade_me_query_prefix().', a.id as assignid '.$sql.block_grade_me_query_suffix('assign');
+        $query = block_grade_me_query_prefix() . ', a.id as assignid ' . $sql . block_grade_me_query_suffix('assign');
         $values = array_merge($inparams, ['courseid' => $courses[0]->id]);
         $actual = [];
         $rs = $DB->get_recordset_sql($query, $values);
@@ -338,18 +338,18 @@ class block_grade_me_testcase extends advanced_testcase {
         // Test with a maximum age.
         set_config('block_grade_me_maxage', 10);
         $now = time();
-        $oldesttimestamp = $now - (10*DAYSECS);
+        $oldesttimestamp = $now - (10 * DAYSECS);
         // Set all submissions to be current, therefore included.
-        $DB->execute('UPDATE {assign_submission} SET timemodified = '.$now);
+        $DB->execute('UPDATE {assign_submission} SET timemodified = ' . $now);
         // Set submission 2 to be older than configured max age.
-        $DB->execute('UPDATE {assign_submission} SET timemodified = '.($oldesttimestamp-1000).' WHERE id = 2');
+        $DB->execute('UPDATE {assign_submission} SET timemodified = ' . ($oldesttimestamp - 1000) . ' WHERE id = 2');
         // Expected array should now not include $rec.
         $expected = array($rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
         foreach ($expected as $id => $record) {
             $expected[$id]->timesubmitted = $now;
         }
         list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
-        $query = block_grade_me_query_prefix().', a.id as assignid '.$sql.block_grade_me_query_suffix('assign');
+        $query = block_grade_me_query_prefix() . ', a.id as assignid ' . $sql.block_grade_me_query_suffix('assign');
         $values = array_merge($inparams, ['courseid' => $courses[0]->id]);
         $actual = [];
         $rs = $DB->get_recordset_sql($query, $values);
@@ -455,7 +455,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->update_quiz_ngrade();
 
         list($sql, $params) = block_grade_me_query_quiz(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('quiz') .
+        $sql = block_grade_me_query_prefix() . $sql . block_grade_me_query_suffix('quiz') .
             ' ORDER BY submissionid ASC';
 
         $actual = array();
@@ -637,12 +637,12 @@ class block_grade_me_testcase extends advanced_testcase {
         $dbman = $DB->get_manager();
         if ($dbman->table_exists('turnitintooltwo')) {
             // Load the data.
-            $dataset = $this->createXMLDataSet(__DIR__.'/fixtures/'.$datafile);
+            $dataset = $this->createXMLDataSet(__DIR__ . '/fixtures/' . $datafile);
             $filtered = new \PHPUnit\DbUnit\DataSet\Filter($dataset);
             $this->loadDataSet($filtered);
             [$sql, $params] = block_grade_me_query_turnitintooltwo([0]);
-            $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('turnitintooltwo');
-            $sql .=' ORDER BY submissionid ASC';
+            $sql = block_grade_me_query_prefix() . $sql . block_grade_me_query_suffix('turnitintooltwo');
+            $sql .= ' ORDER BY submissionid ASC';
 
             $actual = array();
             $result = $DB->get_recordset_sql($sql, array($params[0], 0));
@@ -664,9 +664,9 @@ class block_grade_me_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         list($users, $courses, $plugins) = $this->create_grade_me_data($datafile);
 
-        $dbfunction = 'block_grade_me_query_'.$suffix;
+        $dbfunction = 'block_grade_me_query_' . $suffix;
         list($sql, $params) = $dbfunction(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix($suffix) .
+        $sql = block_grade_me_query_prefix() . $sql . block_grade_me_query_suffix($suffix) .
             ' ORDER BY submissionid ASC';
 
         $actual = array();
@@ -792,8 +792,8 @@ class block_grade_me_testcase extends advanced_testcase {
         list($users, $courses) = $this->create_grade_me_data('block_grade_me.xml');
 
         // Make sure that the plugin being tested has been enabled.
-        if (!$CFG->{'block_grade_me_enable'.$plugin} == true) {
-            set_config('block_grade_me_enable'.$plugin, true);
+        if (!$CFG->{'block_grade_me_enable' . $plugin} == true) {
+            set_config('block_grade_me_enable' . $plugin, true);
         }
 
         if (!$CFG->block_grade_me_enableadminviewall) {
@@ -910,8 +910,8 @@ class block_grade_me_testcase extends advanced_testcase {
         }
 
         // Make sure that the plugin being tested has been enabled.
-        if (!$CFG->{'block_grade_me_enable'.$plugin} == true) {
-            set_config('block_grade_me_enable'.$plugin, true);
+        if (!$CFG->{'block_grade_me_enable' . $plugin} == true) {
+            set_config('block_grade_me_enable' . $plugin, true);
         }
 
         if (!$CFG->block_grade_me_enableadminviewall) {
@@ -973,7 +973,7 @@ class block_grade_me_testcase extends advanced_testcase {
         list($users, $courses, $plugins) = $this->create_grade_me_data('block_grade_me.xml');
 
         list($sql, $params) = block_grade_me_query_forum(array($users[0]->id));
-        $sql = block_grade_me_query_prefix().$sql.block_grade_me_query_suffix('forum');
+        $sql = block_grade_me_query_prefix() . $sql . block_grade_me_query_suffix('forum');
         $result = $DB->get_recordset_sql($sql, array($params[0], 'courseid' => $courses[0]->id));
         $gradeables = array();
         foreach ($result as $rec) {

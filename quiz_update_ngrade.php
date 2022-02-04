@@ -23,9 +23,9 @@
  * @copyright  (C) 2016 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-require_once(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 
-$PAGE->set_url(new moodle_url($CFG->wwwroot.'/blocks/grade_me/quiz_update_ngrade.php'));
+$PAGE->set_url(new moodle_url($CFG->wwwroot . '/blocks/grade_me/quiz_update_ngrade.php'));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_context(context_system::instance());
 $title = get_string("quiz_update_ngrade_complete", "block_grade_me");

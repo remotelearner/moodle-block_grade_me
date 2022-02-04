@@ -20,7 +20,7 @@
  * @copyright 2016 onwards Remote-Learner Inc (http://www.remote-learner.net)
  */
 
-require_once(__DIR__.'/../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 /**
  * Behat step definitions for block_grade_me.
