@@ -47,8 +47,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//textarea[contains(@id, '2_answer_id')]" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//textarea[contains(@id, '3_answer_id')]" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -59,8 +59,8 @@ Feature: Quizzes are supported by the block.
         And I follow "Test Quiz"
         And I press "Attempt quiz now"
         And I click on "True" "radio" in the "First question" "question"
-        And I set the hidden field with xpath "//div[@id='q2']//textarea" to "This is my answer to the second question"
-        And I set the hidden field with xpath "//div[@id='q3']//textarea" to "This is my answer to the third question"
+        And I set the hidden field with xpath "//textarea[contains(@id, '2_answer_id')]" to "This is my answer to the second question"
+        And I set the hidden field with xpath "//textarea[contains(@id, '3_answer_id')]" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
         And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -84,7 +84,7 @@ Feature: Quizzes are supported by the block.
         And "//dd[@class='module']//ul//li[2]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Grade the first student's submission.
         When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I click on "//div[@id='q2']//div[@class='commentlink']//a" "xpath_element"
+        And I click on "//div[starts-with(@id, 'question-') and contains(@id, '-2')]//div[@class='commentlink']//a[contains(@href, 'slot=2')]" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
         And I press "Save"
@@ -94,7 +94,7 @@ Feature: Quizzes are supported by the block.
         And "//dd[@class='module']//ul//li[2]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[2]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
-        When I click on "//div[@id='q3']//div[@class='commentlink']//a" "xpath_element"
+        And I click on "//div[starts-with(@id, 'question-') and contains(@id, '-3')]//div[@class='commentlink']//a[contains(@href, 'slot=3')]" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
         And I press "Save"
@@ -108,7 +108,7 @@ Feature: Quizzes are supported by the block.
         And I should see "Janie Doe" in the "Grade Me" "block"
         # Grade the second student's submission.
         When I click on "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" in the "Grade Me" "block"
-        And I click on "//div[@id='q2']//div[@class='commentlink']//a" "xpath_element"
+        And I click on "//div[starts-with(@id, 'question-') and contains(@id, '-2')]//div[@class='commentlink']//a[contains(@href, 'slot=2')]" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
         And I press "Save" and switch to main window
@@ -116,7 +116,7 @@ Feature: Quizzes are supported by the block.
         Then "//dd[@class='module']//ul//li[1]" "xpath_element" should exist in the "Grade Me" "block"
         And "//dd[@class='module']//ul//li[1]//a[contains(@title, 'Grade assignment')]" "xpath_element" should exist in the "Grade Me" "block"
         # Grade the last question, after which no more items should appear in the block.
-        When I click on "//div[@id='q3']//div[@class='commentlink']//a" "xpath_element"
+        And I click on "//div[starts-with(@id, 'question-') and contains(@id, '-3')]//div[@class='commentlink']//a[contains(@href, 'slot=3')]" "xpath_element"
         And I switch to "commentquestion" window
         And I set the field "Mark" to "2"
         And I press "Save" and switch to main window
