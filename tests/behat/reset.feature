@@ -34,7 +34,8 @@ Feature: Reset task works.
           | activity | course | idnumber | name |
           | quiz | C1 | testforum | Test Quiz |
         And I log in as "admin"
-        And I follow "C1"
+        And I follow "My courses"
+        And I follow "Course 1"
         And I add a "True/False" question to the "Test Quiz" quiz with:
           | Question name | First question |
           | Question text | First question |
@@ -47,7 +48,8 @@ Feature: Reset task works.
           | Question name | Third question |
           | Question text | Third question |
           | Default mark  | 2.0 |
-        And I follow "C2"
+        And I follow "My courses"
+        And I follow "Course 2"
         And I turn editing mode on
         And I add a "Assignment" to section "1" and I fill the form with:
           | Assignment name | Assign |
@@ -59,9 +61,10 @@ Feature: Reset task works.
         And I log out
         # Submit the quiz as the first user.
         And I log in as "student1"
-        And I follow "C1"
+        And I follow "My courses"
+        And I follow "Course 1"
         And I follow "Test Quiz"
-        And I press "Attempt quiz now"
+        And I press "Attempt quiz"
         And I click on "True" "radio" in the "First question" "question"
         And I set the field with xpath "//div[@role='textbox']" to "This is my answer to the second question"
         And I press "Finish attempt ..."
@@ -70,7 +73,8 @@ Feature: Reset task works.
         And I log out
         # Submit the assignment as the second user.
         And I log in as "student2"
-        And I follow "C2"
+        And I follow "My courses"
+        And I follow "Course 2"
         And I follow "Assign"
         When I press "Add submission"
         And I set the following fields to these values:
