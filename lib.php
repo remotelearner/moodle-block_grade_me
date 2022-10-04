@@ -148,7 +148,11 @@ function block_grade_me_tree($course) {
         $coursemoduleid = $item['meta']['coursemoduleid'];
         unset($item['meta']);
 
-        $modulelink = $CFG->wwwroot . '/mod/' . $itemmodule . '/view.php?id=' . $coursemoduleid;
+        if ($itemmodule == 'wholeforum') {
+            $modulelink = '/mod/forum/view.php?id=' . $coursemoduleid;
+        } else {
+            $modulelink = $CFG->wwwroot . '/mod/' . $itemmodule . '/view.php?id=' . $coursemoduleid;
+        }
         $gradelink = $CFG->wwwroot;
         if ($itemmodule == 'assignment') {
             $gradelink .= '/mod/assignment/submissions.php?id=' . $coursemoduleid;
@@ -158,7 +162,11 @@ function block_grade_me_tree($course) {
             $gradelink = $modulelink;
         }
         $moduletitle = get_string('link_mod', 'block_grade_me', array('mod_name' => $itemmodule));
-        $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, $itemmodule, array('class' => 'gm_icon'));
+        if ($itemmodule == 'wholeforum') {
+            $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, 'forum', array('class' => 'gm_icon'));
+        } else {
+            $moduleicon = $OUTPUT->pix_icon('icon', $moduletitle, $itemmodule, array('class' => 'gm_icon'));
+        }
 
         $text .= '<dd id="cmid' . $coursemoduleid . '" class="module">' . "\n";  // Open module.
         $text .= '<div class="dd-wrap">' . "\n";
@@ -200,6 +208,8 @@ function block_grade_me_tree($course) {
             } else if ($itemmodule == 'lesson') {
                 $submissionlink .= '/mod/lesson/essay.php?id=' . $coursemoduleid . '&mode=grade&attemptid='
                                    . $submissionid . '&sesskey=' . sesskey();
+            } else if ($itemmodule == 'wholeforum') {
+                $submissionlink = $gradelink;
             }
 
             unset($submission['meta']);
@@ -324,6 +334,7 @@ function block_grade_me_cache_grade_data() {
             $sql = "SELECT gi.id itemid, gi.itemname itemname, gi.itemtype itemtype,
                            gi.itemmodule itemmodule, gi.iteminstance iteminstance,
                            gi.sortorder itemsortorder, c.id courseid, c.shortname coursename,
+                           gi.itemnumber itemnumber,
                            cm.id coursemoduleid
                     FROM {grade_items} gi
                LEFT JOIN {course} c ON gi.courseid = c.id
@@ -336,6 +347,9 @@ function block_grade_me_cache_grade_data() {
             $paramscourse = array_merge($paramscourse, $inparams);
             $rs = $DB->get_recordset_sql($sql, $paramscourse);
             foreach ($rs as $rec) {
+                if ($rec->itemmodule == 'forum' && $rec->itemnumber == 1) { 
+                    $rec->itemmodule = 'wholeforum'; 
+                }
                 $values = array(
                     'itemtype'      => $rec->itemtype,
                     'itemmodule'    => $rec->itemmodule,
