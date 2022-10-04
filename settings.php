@@ -46,6 +46,13 @@ if ($ADMIN->fulltree) {
                     $settingname = 'block_grade_me_enable' . $plugin;
                     $default = (isset($a[$plugin]) && isset($a[$plugin]['default_on'])) ? $a[$plugin]['default_on'] : false;
                     $settings->add(new admin_setting_configcheckbox($settingname, $langshowmod, $langshowdesc, $default));
+                } else if ($plugin == 'wholeforum' && \core_plugin_manager::instance()->get_plugin_info('forum')) {
+                    $langmodname = get_string('grade_forum_name', 'forum');
+                    $langshowmod = get_string('settings_enablepre', 'block_grade_me') . ' ' . $langmodname;
+                    $langshowdesc = get_string('settings_configenablepre', 'block_grade_me', ['plugin_name' => $langmodname]);
+                    $settingname = 'block_grade_me_enable' . $plugin;
+                    $default = (isset($a[$plugin]) && isset($a[$plugin]['default_on'])) ? $a[$plugin]['default_on'] : false;
+                    $settings->add(new admin_setting_configcheckbox($settingname, $langshowmod, $langshowdesc, $default));
                 }
             }
         }
