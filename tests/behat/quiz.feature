@@ -53,7 +53,7 @@ Feature: Quizzes are supported by the block.
         And I set the hidden field with xpath "//textarea[contains(@id, '3_answer_id')]" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
-        And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+        And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
         And I log out
         # Submit the quiz as the second user.
         And I log in as "student2"
@@ -66,7 +66,7 @@ Feature: Quizzes are supported by the block.
         And I set the hidden field with xpath "//textarea[contains(@id, '3_answer_id')]" to "This is my answer to the third question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
-        And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+        And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
         And I log out
         # Log in as admin and verify block contents.
         When I log in as "admin"

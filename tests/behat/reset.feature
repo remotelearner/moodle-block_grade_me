@@ -69,7 +69,7 @@ Feature: Reset task works.
         And I set the field with xpath "//div[@role='textbox']" to "This is my answer to the second question"
         And I press "Finish attempt ..."
         And I press "Submit all and finish"
-        And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
+        And I click on "Submit all and finish" "button" in the "Submit all your answers and finish?" "dialogue"
         And I log out
         # Submit the assignment as the second user.
         And I log in as "student2"
