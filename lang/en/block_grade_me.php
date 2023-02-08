@@ -45,6 +45,7 @@ $string['settings_showhidden'] = 'Hidden course items shown';
 
 $string['grade_me:addinstance'] = 'Add a new Grade Me block';
 $string['grade_me:myaddinstance'] = 'Add a new Grade Me block to the My Moodle page';
+$string['grade_me:viewblock'] = 'View block';
 $string['expand'] = 'Collapse / Expand All';
 
 $string['grade_me_tools'] = 'Tools';
