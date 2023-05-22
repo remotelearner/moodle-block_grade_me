@@ -52,3 +52,11 @@ $string['grade_me_tools_desc'] = '<p><a href="{$a}/blocks/grade_me/quiz_update_n
 
 $string['quiz_update_ngrade_complete'] = 'Update complete';
 $string['quiz_update_ngrade_success'] = 'Quiz attempt list successfully updated, currently there is {$a} questions needing grading.';
+
+$string['privacy:metadata:block_grade_me_quiz_ngrade'] = 'Caches information about quizes needing grades.';
+$string['privacy:metadata:block_grade_me_quiz_ngrade:userid'] = 'User id';
+$string['privacy:metadata:block_grade_me_quiz_ngrade:quizid'] = 'Quiz id';
+$string['privacy:metadata:block_grade_me_quiz_ngrade:questionattemptstepid'] = 'Question Attempt';
+$string['privacy:metadata:block_grade_me_quiz_ngrade:courseid'] = 'Course id';
+$string['privacy:metadata:block_grade_me_quiz_ngrade:attemptid'] = 'Attempt id';
+$string['privacydata'] = 'Grade me';
