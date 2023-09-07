@@ -26,6 +26,29 @@
 namespace block_grade_me;
 
 class quiz_observers {
+    const DELETE_RECORDS_CHUNK = 10000;
+
+    /**
+     * Deletes records with specified IDs from block_grade_me_quiz_ngrade table
+     * in chunks of self::DELETE_RECORDS_CHUNK to prevent timeouts in larger InnoDB tables.
+     *
+     * @param array $ids Array of record IDs.
+     * @return void
+     */
+    private static function delete_from_ids( $ids ) {
+        global $DB;
+        if(empty($ids)) {
+            return;
+        }
+        foreach (array_chunk($ids, self::DELETE_RECORDS_CHUNK) as $todelete) {
+            list($idsql, $idparams) = $DB->get_in_or_equal($todelete);
+            $DB->execute('
+                DELETE FROM {block_grade_me_quiz_ngrade}
+                WHERE id ' . $idsql,
+                $idparams
+            );
+        }
+    }
 
     /**
      * A course content has been deleted.
@@ -35,7 +58,13 @@ class quiz_observers {
      */
     public static function course_content_deleted($event) {
         global $DB;
-        $DB->delete_records('block_grade_me_quiz_ngrade', ['courseid' => $event->courseid]);
+        $allids = $DB->get_records_sql_menu('
+            SELECT DISTINCT id, id AS id2
+            FROM {block_grade_me_quiz_ngrade}
+            WHERE courseid = ?',
+            [$event->courseid]
+        );
+        self::delete_from_ids($allids);
     }
 
     /**
@@ -47,7 +76,13 @@ class quiz_observers {
     public static function course_reset_ended($event) {
         global $DB;
         if (!empty($event->other['reset_options']['reset_quiz_attempts'])) {
-            $DB->delete_records('block_grade_me_quiz_ngrade', ['courseid' => $event->other['reset_options']['courseid']]);
+            $allids = $DB->get_records_sql_menu('
+                SELECT DISTINCT id, id AS id2
+                FROM {block_grade_me_quiz_ngrade}
+                WHERE courseid = ?',
+                [$event->other['reset_options']['courseid']]
+            );
+            self::delete_from_ids($allids);
         }
     }
 
@@ -60,7 +95,13 @@ class quiz_observers {
     public static function course_module_deleted($event) {
         global $DB;
         if ($event->other['modulename'] == 'quiz') {
-            $DB->delete_records('block_grade_me_quiz_ngrade', ['quizid' => $event->other['instanceid']]);
+            $allids = $DB->get_records_sql_menu('
+                SELECT DISTINCT id, id AS id2
+                FROM {block_grade_me_quiz_ngrade}
+                WHERE quizid = ?',
+                [$event->other['instanceid']]
+            );
+            self::delete_from_ids($allids);
         }
     }
 
@@ -77,8 +118,13 @@ class quiz_observers {
         try {
             $attemptrecord = $event->get_record_snapshot('quiz_attempts', $event->objectid);
             if (!empty($attemptrecord)) {
-                $params = ['attemptid' => $attemptrecord->uniqueid];
-                $DB->delete_records('block_grade_me_quiz_ngrade', $params);
+                $allids = $DB->get_records_sql_menu('
+                    SELECT DISTINCT id, id AS id2
+                    FROM {block_grade_me_quiz_ngrade}
+                    WHERE attemptid = ?',
+                    [$attemptrecord->uniqueid]
+                );
+                self::delete_from_ids($allids);
             }
         } catch (\Exception $e) {
             return false;
@@ -123,8 +169,13 @@ class quiz_observers {
         $count = $DB->get_record_sql($sql, [$record->uniqueid]);
         // Delete attempts if all questions are graded for attempt, leave other attempts by user for quiz untouched.
         if (empty($count->attempts)) {
-            $DB->delete_records('block_grade_me_quiz_ngrade',
-                ['attemptid' => $record->uniqueid, 'quizid' => $event->other['quizid']]);
+            $allids = $DB->get_records_sql_menu('
+                SELECT DISTINCT id, id AS id2
+                FROM {block_grade_me_quiz_ngrade}
+                WHERE attemptid = ? AND quizid = ?',
+                [$record->uniqueid, $event->other['quizid']]
+            );
+            self::delete_from_ids($allids);
         }
     }
 }
