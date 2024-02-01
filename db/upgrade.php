@@ -108,5 +108,42 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
         // Grade me  savepoint reached.
         upgrade_block_savepoint(true, 2016120503, 'grade_me');
     }
+
+    if ($oldversion < 2024013100) {
+        $table = new xmldb_table('block_grade_me');
+
+        // Define key id (foreign) to be dropped form block_grade_me.
+        $key = new xmldb_key('id', XMLDB_KEY_FOREIGN, ['id'], 'grade_items', ['id']);
+
+        // Launch drop key id. There is no key_exists method.
+        $dbman->drop_key($table, $key);
+
+        // Define field itemid to be added to block_grade_me.
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'id');
+
+        // Conditionally launch add field itemid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Populate the itemid field.
+        $DB->execute('UPDATE {block_grade_me} SET itemid = id');
+
+        // Set itemid to notnull
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        // Define key gradeitemid (foreign) to be added to block_grade_me.
+        $key = new xmldb_key('gradeitemid', XMLDB_KEY_FOREIGN, ['itemid'], 'grade_items', ['id']);
+
+        // Launch add key gradeitemid. There is no key_exists method.
+        $dbman->add_key($table, $key);
+
+        // Grade_me savepoint reached.
+        upgrade_block_savepoint(true, 2024013100, 'grade_me');
+    }
+
     return true;
 }

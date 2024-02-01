@@ -263,7 +263,7 @@
         </row>
     </table>
     <table name="block_grade_me">
-        <column>id</column>
+        <column>itemid</column>
         <column>itemname</column>
         <column>itemtype</column>
         <column>itemmodule</column>
