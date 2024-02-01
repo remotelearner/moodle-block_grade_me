@@ -345,6 +345,7 @@ function block_grade_me_cache_grade_data() {
                 $fragment = 'itemtype = :itemtype AND itemmodule = :itemmodule AND ' .
                             'iteminstance = :iteminstance AND courseid = :courseid';
                 $params = array(
+                    'itemid' => $rec->itemid,
                     'itemname' => $rec->itemname,
                     'itemtype' => $rec->itemtype,
                     'itemmodule' => $rec->itemmodule,

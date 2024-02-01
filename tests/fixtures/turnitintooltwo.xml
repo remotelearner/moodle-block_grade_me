@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <table name="block_grade_me">
-        <column>id</column>
+        <column>itemid</column>
         <column>itemname</column>
         <column>itemtype</column>
         <column>itemmodule</column>

@@ -219,10 +219,10 @@ class block_grade_me_testcase extends advanced_testcase {
         // Partial query return from block_grade_me_query_assign.
         list($sql, $insqlparams) = block_grade_me_query_assign(array($users[0]->id));
         // Build full query.
-        $sql = "SELECT a.id, bgm.courseid $sql AND bgm.courseid = {$courses[0]->id} AND bgm.itemmodule = 'assign'";
+        $sql = "SELECT a.id as itemid, bgm.courseid $sql AND bgm.courseid = {$courses[0]->id} AND bgm.itemmodule = 'assign'";
 
         $rec = new stdClass();
-        $rec->id = $plugins[2]->id;
+        $rec->itemid = $plugins[2]->id;
         $rec->courseid = $courses[0]->id;
         $rec->submissionid = '2';
         $rec->userid = $users[0]->id;
@@ -231,7 +231,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec->maxattempts = '-1';
 
         $rec2 = new stdClass();
-        $rec2->id = $plugins[3]->id;
+        $rec2->itemid = $plugins[3]->id;
         $rec2->courseid = $courses[0]->id;
         $rec2->submissionid = '3';
         $rec2->userid = $users[0]->id;
@@ -241,7 +241,7 @@ class block_grade_me_testcase extends advanced_testcase {
 
         // Tests resubmission.
         $rec3 = new stdClass();
-        $rec3->id = $plugins[4]->id;
+        $rec3->itemid = $plugins[4]->id;
         $rec3->courseid = $courses[0]->id;
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
@@ -250,7 +250,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->maxattempts = '-1';
 
         $rec4 = new stdClass();
-        $rec4->id = $plugins[1]->id;
+        $rec4->itemid = $plugins[1]->id;
         $rec4->courseid = $courses[0]->id;
         $rec4->submissionid = '1';
         $rec4->userid = $users[0]->id;
@@ -258,7 +258,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec4->attemptnumber = '1';
         $rec4->maxattempts = '-1';
 
-        $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
+        $expected = array($rec->itemid => $rec, $rec2->itemid => $rec2, $rec3->itemid => $rec3, $rec4->itemid => $rec4);
         $actual = $DB->get_records_sql($sql, $insqlparams);
         $this->assertEquals($expected, $actual);
         $this->assertFalse(block_grade_me_query_assign(array()));
@@ -279,7 +279,7 @@ class block_grade_me_testcase extends advanced_testcase {
         list($users, $courses, $plugins) = $this->create_grade_me_data('block_grade_me.xml');
 
         $rec = new stdClass();
-        $rec->id = $plugins[2]->id;
+        $rec->itemid = $plugins[2]->id;
         $rec->courseid = $courses[0]->id;
         $rec->submissionid = '2';
         $rec->userid = $users[0]->id;
@@ -288,7 +288,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec->maxattempts = '-1';
 
         $rec2 = new stdClass();
-        $rec2->id = $plugins[3]->id;
+        $rec2->itemid = $plugins[3]->id;
         $rec2->courseid = $courses[0]->id;
         $rec2->submissionid = '3';
         $rec2->userid = $users[0]->id;
@@ -298,7 +298,7 @@ class block_grade_me_testcase extends advanced_testcase {
 
         // Tests resubmission.
         $rec3 = new stdClass();
-        $rec3->id = $plugins[4]->id;
+        $rec3->itemid = $plugins[4]->id;
         $rec3->courseid = $courses[0]->id;
         $rec3->submissionid = '7';
         $rec3->userid = $users[0]->id;
@@ -307,7 +307,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec3->maxattempts = '-1';
 
         $rec4 = new stdClass();
-        $rec4->id = $plugins[1]->id;
+        $rec4->itemid = $plugins[1]->id;
         $rec4->courseid = $courses[0]->id;
         $rec4->submissionid = '1';
         $rec4->userid = $users[0]->id;
@@ -315,7 +315,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rec4->attemptnumber = '1';
         $rec4->maxattempts = '-1';
 
-        $expected = array($rec->id => $rec, $rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
+        $expected = array($rec->itemid => $rec, $rec2->itemid => $rec2, $rec3->itemid => $rec3, $rec4->itemid => $rec4);
         list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
         $query = block_grade_me_query_prefix() . ', a.id as assignid ' . $sql . block_grade_me_query_suffix('assign');
         $values = array_merge($inparams, ['courseid' => $courses[0]->id]);
@@ -323,7 +323,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rs = $DB->get_recordset_sql($query, $values);
         foreach ($rs as $record) {
             $actual[$record->assignid] = (object)[
-                'id' => $record->assignid,
+                'itemid' => $record->assignid,
                 'courseid' => $record->courseid,
                 'submissionid' => $record->submissionid,
                 'userid' => $record->userid,
@@ -344,9 +344,9 @@ class block_grade_me_testcase extends advanced_testcase {
         // Set submission 2 to be older than configured max age.
         $DB->execute('UPDATE {assign_submission} SET timemodified = ' . ($oldesttimestamp - 1000) . ' WHERE id = 2');
         // Expected array should now not include $rec.
-        $expected = array($rec2->id => $rec2, $rec3->id => $rec3, $rec4->id => $rec4);
+        $expected = array($rec2->itemid => $rec2, $rec3->itemid => $rec3, $rec4->itemid => $rec4);
         foreach ($expected as $id => $record) {
-            $expected[$id]->timesubmitted = $now;
+            $expected[$id]->timesubmitted = (string) $now;
         }
         list($sql, $inparams) = block_grade_me_query_assign(array($users[0]->id));
         $query = block_grade_me_query_prefix() . ', a.id as assignid ' . $sql.block_grade_me_query_suffix('assign');
@@ -355,7 +355,7 @@ class block_grade_me_testcase extends advanced_testcase {
         $rs = $DB->get_recordset_sql($query, $values);
         foreach ($rs as $record) {
             $actual[$record->assignid] = (object)[
-                'id' => $record->assignid,
+                'itemid' => $record->assignid,
                 'courseid' => $record->courseid,
                 'submissionid' => $record->submissionid,
                 'userid' => $record->userid,
