@@ -36,3 +36,4 @@ $string['settings_enablepre'] = 'Mostrar';
 $string['settings_configenablepre'] = '¿Debería el bloque Califícame mostrar actividades sin evaluar del módulo "{$a->plugin_name}" ?';
 $string['grade_me:addinstance'] = 'Añadir un nuevo bloque Califícame';
 $string['grade_me:myaddinstance'] = 'Añadir un nuevo bloque Califícame a mi página personal';
+$string['grade_me:viewblock'] = 'Ver bloque';
