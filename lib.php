@@ -57,6 +57,7 @@ function block_grade_me_query_suffix($mod) {
         $maxtimesubmitted = time() - ((int)$maxage * DAYSECS);
         $query .= " WHERE allitems.timesubmitted >= " . $maxtimesubmitted;
     }
+    $query .= ' ORDER BY submissionid ASC';
     return $query;
 }
 
