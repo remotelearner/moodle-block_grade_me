@@ -41,8 +41,10 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid-questionattemptstepid" />
-        <INDEX NAME="userid-questionattemptstepid" UNIQUE="false" FIELDS="userid, questionattemptstepid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-questionattemptstepid" UNIQUE="false" FIELDS="userid, questionattemptstepid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

@@ -108,5 +108,19 @@ function xmldb_block_grade_me_upgrade($oldversion, $block) {
         // Grade me  savepoint reached.
         upgrade_block_savepoint(true, 2016120503, 'grade_me');
     }
+
+    if ($oldversion < 2026040800) {
+        // Define index userid-questionattemptstepid (notunique) to be added to grade_me_quiz_ngrade.
+        $table = new xmldb_table('block_grade_me_quiz_ngrade');
+        $index = new xmldb_index('userid-questionattemptstepid', XMLDB_INDEX_NOTUNIQUE, array('userid', 'questionattemptstepid'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Grade me  savepoint reached.
+        upgrade_block_savepoint(true, 2026040800, 'grade_me');
+    }
+
     return true;
 }
